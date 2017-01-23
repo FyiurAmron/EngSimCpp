@@ -35,7 +35,7 @@ void CGenIndividualFcnMin::Crossover( void *result, void *ind2 ) {
 }
 
 void CGenIndividualFcnMin::Mutate( ) {
-    double a;
+    //double a;
     int gen = rand( ) % props->nVars; ///(double)(RAND_MAX+1);
 
     vars[gen] = rand( ) / (double) RAND_MAX * ( props->constraints[gen][1] - props->constraints[gen][0] ) + props->constraints[gen][0];

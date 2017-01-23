@@ -1,6 +1,7 @@
 CC = g++
-FLAGS = -O3 -Wall -Wextra -c
-LIBS = gdiplus
+#FLAGS = -c -O3 -Wall -Wextra
+FLAGS = -c -O3 -Wall -Wno-unused-variable -Wno-unused-local-typedefs
+LIBS = -lgdi32 -lgdiplus
 
 SOURCEDIR = src
 BUILDDIR = build
@@ -21,7 +22,7 @@ dir:
 	mkdir -p $(BUILDDIR)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) -l$(LIBS) $^ -o $@
+	$(CC) $(LIBS) $^ -o $@
 
 $(OBJECTS): $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
 	$(CC) $(FLAGS) $< -o $@

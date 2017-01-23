@@ -1,11 +1,3 @@
-#define IN_MAIN
-#include "dos_main.h"
-#include "dos2win.h"
-//#include <process.h>
-#include <math.h>
-//#include <stdio.h>
-//#include <io.h>
-//#include <conio.h>
 /*-------------------------------------------------------------------------*/
 /* program CHOPPER.C - silnik obcowzbudny pradu stalego zasilany z        */
 /* przerywacza przez filtr dolnoprzepustowy				   */
@@ -17,12 +9,22 @@
 #include <stdio.h>
 #include <io.h>
 
-//#define p2 1.414213562  /* pierwiastek z 2 */
-//#define p3 1.732050808  /* pierwiastek z 3 */
-//#define p6 2.449489743  /* pierwiastek z 6 */
+#include "dos_main.h"
+#include "dos2win.h"
+
+double TIME_s, TIME;
+
+double temp, tempa, tempb, tempc, tempdelta;
+double uzas, u1, u2, izas, i1, i2, Ei2, i2zad, kp1, ki1, k;
+double gamma, fi, a0, a1, Lo;
+double t, tau; /* czas,czas wzgledny */
+double timebe;
+double omegaR;
+double m0; /* moment obciazenia */
 
 int Np = 1, Nk = 5;
 double Lf = 0.01, Cf = 0.00055, Rf = 0.1, Rt = 0.7, Lt = 0.0117, Et = 0.01, Ld = 0.01;
+
 /*---------------------------------------------*/
 /* Parametry ukladu przerywacza                */
 /*---------------------------------------------*/
@@ -51,11 +53,17 @@ double limit( double wejscie, double ograniczenie ) {
     double wyjscie;
 
     if ( wejscie >= 0 ) {
-        if ( wejscie > ograniczenie ) wyjscie = ograniczenie;
-        else wyjscie = wejscie;
+        if ( wejscie > ograniczenie ) {
+            wyjscie = ograniczenie;
+        } else {
+            wyjscie = wejscie;
+        }
     } else {
-        if ( wejscie<-ograniczenie ) wyjscie = -ograniczenie;
-        else wyjscie = wejscie;
+        if ( wejscie<-ograniczenie ) {
+            wyjscie = -ograniczenie;
+        } else {
+            wyjscie = wejscie;
+        }
     }
     return (wyjscie );
 }
@@ -81,14 +89,19 @@ void F2DERY( double DV[32], double V[32] ) {
     DV[5] = ki1*Ei2;
     gamma = limit( kp1 * Ei2 + V[5], 1 ); /* wsp. wypelnienia */
 
+    /* ograniczenie   0 =< gamma =< 1 */
+    if ( gamma < 0 ) {
+        gamma = 0;
+    } else if ( gamma > 1 ) {
+        gamma = 1;
+    }
 
-
-    if ( gamma < 0 ) gamma = 0; /* ograniczenie   0 =< gamma =< 1 */
-    if ( gamma > 1 ) gamma = 1;
-
-    u2 = gamma*u1; /* przerywacz idealny */
-    if ( u2 < 0.0 ) u2 = 0.0; /* napiecie u2 >= 0 */
-    i1 = gamma*i2;
+    u2 = gamma * u1; /* przerywacz idealny */
+    /* napiecie u2 >= 0 */
+    if ( u2 < 0.0 ) {
+        u2 = 0.0;
+    }
+    i1 = gamma * i2;
 
     DV[1] = 1; /* Czas */
     /* uklad przerywacz z filtrem */
@@ -106,11 +119,14 @@ void F2( int naa, int NAA, double HAA, double YAA[32] ) {
     int jaa;
     /* ----------------------------------------------------------------------- */
     F2DERY( DYAA, YAA );
-    for( jaa = naa; jaa <= NAA; jaa++ ) XAA[jaa] = YAA[jaa] + HAA * DYAA[jaa];
+    for( jaa = naa; jaa <= NAA; jaa++ ) {
+        XAA[jaa] = YAA[jaa] + HAA * DYAA[jaa];
+    }
     F2DERY( DXAA, XAA );
-    for( jaa = naa; jaa <= NAA; jaa++ ) YAA[jaa] = YAA[jaa] + HAA * ( .4 * DYAA[jaa] + .6 * DXAA[jaa] );
+    for( jaa = naa; jaa <= NAA; jaa++ ) {
+        YAA[jaa] = YAA[jaa] + HAA * ( .4 * DYAA[jaa] + .6 * DXAA[jaa] );
+    }
 }
-//#include "PAR.C"
 
 /*-------------------------------------------------------------------------*/
 /*--------------P R O G R A M   G L O W N Y--------------------------------*/
@@ -118,7 +134,7 @@ void F2( int naa, int NAA, double HAA, double YAA[32] ) {
 /*-------------------------------------------------------------------------*/
 int dos_main( ) {
     double Y[32]; /*zmienne calkowane */
-    int i, J; /* liczniki petli */
+    int j;
     int LL = 0;
     //Lf=0.01,Cf=0.00055,Rf=0.1,Rt=0.7,Lt=0.0117,Et=0.01,Ld=0.01;
     /*-------------------------------------------------------------------------*/
@@ -141,7 +157,9 @@ int dos_main( ) {
     /*-------------------------------------------------------------------------*/
     /*         Obliczanie warunkow poczatkowych do rownan rozniczkowych        */
     /*-------------------------------------------------------------------------*/
-    for( J = 0; J < ( Nk + 1 ); J++ ) Y[J] = 0;
+    for( j = 0; j < ( Nk + 1 ); j++ ) {
+        Y[j] = 0;
+    }
     Y[2] = 0; /* izas */
     Y[3] = 1; /* u1 */
     Y[4] = 0; /* i2 */
@@ -150,7 +168,7 @@ int dos_main( ) {
     /*                           Petla glowna                                  */
     /*-------------------------------------------------------------------------*/
     do {
-        //for (J=0;J<(Nk+1);J++) YY[J]=Y[J];
+        //for (j=0;j<(Nk+1);j++) YY[j]=Y[j];
         TIME += ht;
 
         if ( TIME > 400 ) i2zad = 1.0;
@@ -159,8 +177,6 @@ int dos_main( ) {
         if ( TIME > 2000 ) i2zad = 0.1;
         if ( TIME > 2200 ) i2zad = 2;
         if ( TIME > 2400 ) i2zad = 0.1;
-
-
 
         /*-------------------------------------------------------------------------*/
         /*             Rozwiazanie ukladu rownan rozniczkowych                     */

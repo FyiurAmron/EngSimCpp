@@ -48,7 +48,7 @@ double OnKeyChart( WPARAM keyCode, UINT message, UINT specialKeys, void *paramet
 }
 
 void CSimulationOK::PreCalc( ) {
-    double speed = 1;
+    //double speed = 1;
     int ptOutsideWnd;
 
 

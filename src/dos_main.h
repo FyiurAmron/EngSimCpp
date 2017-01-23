@@ -1,13 +1,9 @@
 #ifndef DOS_MAIN_H
 #define DOS_MAIN_H
 
-//PONIZEJ DEFINIUJEMY WSPOLDZIELONE ZMIENNE
 
 extern double TIME_s, TIME;
 
-/*---------------------------------------------*/
-/* Deklaracje zmiennych                        */
-/*---------------------------------------------*/
 extern double temp, tempa, tempb, tempc, tempdelta;
 extern double uzas, u1, u2, izas, i1, i2, Ei2, i2zad, kp1, ki1, k;
 extern double gamma, fi, a0, a1, Lo;

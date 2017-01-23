@@ -4,8 +4,8 @@
 
 void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat format ) {
     wchar_t delimiter = ';';
-    wchar_t formatBuffer[255];
-    int line = 0;
+    //wchar_t formatBuffer[255];
+    unsigned int line = 0;
     int finished = 1;
     int nSignal = 0;
     int *vectNums;
@@ -16,8 +16,8 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
         // NAGLOWEK
 
         if ( format == SaveSignalCSVOneTimeColumn ) printf( L"t%c", delimiter );
-        for( int i = 0; i < charts.size( ); i++ ) {
-            for( int j = 0; j < charts[i]->signals.size( ); j++ ) {
+        for( size_t i = 0; i < charts.size( ); i++ ) {
+            for( size_t j = 0; j < charts[i]->signals.size( ); j++ ) {
                 if ( format == SaveSignalCSVMultipleTimeColumn ) printf( L"t%c", delimiter );
                 printf( L"%s%c", charts[i]->signals[j]->sName.c_str( ), delimiter );
                 nSignal++;
@@ -33,8 +33,8 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
             line = 0;
             do {
                 finished = 1;
-                for( int i = 0; i < charts.size( ); i++ ) {
-                    for( int j = 0; j < charts[i]->signals.size( ); j++ ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
+                    for( size_t j = 0; j < charts[i]->signals.size( ); j++ ) {
                         if ( line < charts[i]->signals[j]->nSamples ) {
                             printf( L"%f%c%f%c", charts[i]->signals[j]->x[line], delimiter, charts[i]->signals[j]->y[line], delimiter );
                             finished = 0;
@@ -56,9 +56,9 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
                 finished = 1;
                 timeMin = std::numeric_limits<double>::infinity( );
                 nSignal = 0;
-                for( int i = 0; i < charts.size( ); i++ ) {
-                    for( int j = 0; j < charts[i]->signals.size( ); j++ ) {
-                        if ( vectNums[nSignal] < charts[i]->signals[j]->nSamples ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
+                    for( size_t j = 0; j < charts[i]->signals.size( ); j++ ) {
+                        if ( vectNums[nSignal] < (int) charts[i]->signals[j]->nSamples ) {
                             if ( charts[i]->signals[j]->x[vectNums[nSignal]] < timeMin ) timeMin = charts[i]->signals[j]->x[vectNums[nSignal]]; //poszukiwanie sygnalu z kolejnym najmniejszym czasem
                             finished = 0;
                             nSignal++;
@@ -72,8 +72,8 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
 
                 nSignal = 0;
                 printf( L"%f%c", timeMin, delimiter );
-                for( int i = 0; i < charts.size( ); i++ ) {
-                    for( int j = 0; j < charts[i]->signals.size( ); j++ ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
+                    for( size_t j = 0; j < charts[i]->signals.size( ); j++ ) {
                         if ( charts[i]->signals[j]->x[vectNums[nSignal]] <= timeMin ) {
                             vectNums[nSignal]++;
                         }

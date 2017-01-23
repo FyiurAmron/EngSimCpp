@@ -208,9 +208,10 @@ void CGDI::DrawPoints( float *x, float *y, int num ) {
 }
 
 int CGDI::DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right, double markerX ) {
-    ARGB nnn;
+    //ARGB nnn;
     PointF *points;
-    int i, k, first_i = 0;
+    int i, k;
+    //int first_i = 0;
     int markerNum = -1;
 
     //num=0;

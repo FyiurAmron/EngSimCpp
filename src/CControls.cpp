@@ -20,16 +20,16 @@ CControl::~CControl( ) {
 ControlAction CControl::ControlProc( HWND hWnd, int code ) {
     if ( code == BN_CLICKED ) //nacisniecie przycisku
     {
-        CButton *p;
-        if ( p = dynamic_cast<CButton*> ( controls[hWnd] ) ) {
+        CButton *p = dynamic_cast<CButton*> ( controls[hWnd] );
+        if ( p != NULL ) {
             ( (CPropWindow*) p->parent->*( p->onClickFcn ) )( );
         }
     }
 
     if ( code == EN_UPDATE ) //aktualizacja EDITa
     {
-        CInputNum *p;
-        if ( p = dynamic_cast<CInputNum*> ( controls[hWnd] ) ) {
+        CInputNum *p = dynamic_cast<CInputNum*> ( controls[hWnd] );
+        if ( p != NULL ) {
             if ( p->changedByPC ) {
                 p->changedByPC--;
             } else if ( p->trackbar ) {
@@ -41,8 +41,8 @@ ControlAction CControl::ControlProc( HWND hWnd, int code ) {
 
     if ( LOWORD( code ) == TB_THUMBTRACK ) //przesuniecie paska przez usera
     {
-        CTrackBar *p;
-        if ( p = dynamic_cast<CTrackBar*> ( controls[hWnd] ) ) {
+        CTrackBar *p = dynamic_cast<CTrackBar*> ( controls[hWnd] );
+        if ( p != NULL ) {
             p->UpdateValue( );
         }
     }
@@ -68,6 +68,8 @@ LRESULT CControl::CtrlStaticWndProc( HWND hWnd, UINT message, WPARAM wParam, LPA
                     }
                     break;
             }
+            break;
+        default:
             break;
     }
 

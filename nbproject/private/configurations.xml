@@ -356,7 +356,6 @@
         <in>dos_main.cpp</in>
         <in>dos_main.h</in>
         <in>stdafx.h</in>
-        <in>targetver.h</in>
       </df>
     </df>
   </logicalFolder>

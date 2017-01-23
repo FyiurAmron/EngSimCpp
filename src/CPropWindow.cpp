@@ -36,7 +36,6 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
     //if(hWnd != this->hWnd)
     switch( message ) {
         case WM_CREATE:
-            int i;
             wchar_t varTitle[255];
 
             this->hWnd = hWnd;
@@ -47,7 +46,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
             inputNums = new CInputNum[props->props.size( )];
             inputTracks = new CTrackBar[props->props.size( )];
             inputTexts = new CText[props->props.size( )];
-            for( i = 0; i < props->props.size( ); i++ ) {
+            for( size_t i = 0; i < props->props.size( ); i++ ) {
                 if ( props->props[i].shortcut ) {
                     wsprintf( varTitle, L"%s [%c]", props->props[i].name.c_str( ), props->props[i].shortcut );
                     inputTexts[i].Create( this, 10, 10 + i * ( 20 + 10 ), 50, 20, varTitle );
@@ -59,7 +58,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
                 inputTracks[i].SetRange( props->props[i].sliderMin, props->props[i].sliderMax );
                 inputTracks[i].Create( this, 110, 10 + i * ( 20 + 10 ), 250, 20, &inputNums[i] );
             }
-            resetButton.Create( this, 10, 10 + i * ( 20 + 10 ), 50, 20, L"Reset", &CPropWindow::OnButtonResetClick );
+            resetButton.Create( this, 10, 10 + props->props.size( ) * ( 20 + 10 ), 50, 20, L"Reset", &CPropWindow::OnButtonResetClick );
             break;
         case WM_COMMAND:
             if ( CControl::ControlProc( (HWND) lParam, HIWORD( wParam ) ) == ControlChangedValue ) {
@@ -76,10 +75,10 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
                     if ( GetKeyState( VK_CONTROL )&0x0100 ) //jesli ustawiony bit w starszym bajcie - nacisniety przycisk
                     {
                         CFile file;
-                        int line = 0;
+                        //int line = 0;
 
                         if ( file.SelectAndSave( ) ) {
-                            for( i = 0; i < props->props.size( ); i++ ) {
+                            for( size_t i = 0; i < props->props.size( ); i++ ) {
                                 file.printf( L"%s = %f\r\n", props->props[i].name.c_str( ), props->props[i].GetVal( ) );
                             }
 
@@ -91,12 +90,12 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
                     if ( GetKeyState( VK_CONTROL )&0x0100 ) //jesli ustawiony bit w starszym bajcie - nacisniety przycisk
                     {
                         CFile file;
-                        int line = 0;
+                        //int line = 0;
                         wchar_t name[255];
                         float val;
 
                         if ( file.SelectAndOpen( ) ) {
-                            for( i = 0; i < props->props.size( ); i++ ) {
+                            for( size_t i = 0; i < props->props.size( ); i++ ) {
                                 file.scanf( L"%s = %f\r\n", name, &val );
                                 inputNums[i].SetValue( val );
                                 //props->props[i].SetVal(val);
@@ -115,7 +114,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
 }
 
 void CPropWindow::RereadValues( ) {
-    for( int i = 0; i < props->props.size( ); i++ ) {
+    for( size_t i = 0; i < props->props.size( ); i++ ) {
         inputNums[i].changedByPC++;
         inputNums[i].SetValue( props->props[i].GetVal( ) );
         //inputTracks[i].Create(this,110,10+i*(20+10),250,20,&inputNums[i]);
@@ -132,8 +131,8 @@ void CPropWindow::KeyProc( WPARAM keyCode, UINT message, UINT specialKeys, void 
     wnd = (CPropWindow*) parameter;
 
     if ( message == WM_KEYDOWN ) {
-        for( int i = 0; i < wnd->props->props.size( ); i++ ) {
-            if ( keyCode == wnd->props->props[i].shortcut ) {
+        for( size_t i = 0; i < wnd->props->props.size( ); i++ ) {
+            if ( (char) keyCode == wnd->props->props[i].shortcut ) {
                 wnd->inputNums[i].SetFocus( SelectAll );
                 break;
             }

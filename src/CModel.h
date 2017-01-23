@@ -93,11 +93,13 @@ public:
     virtual void OnEnd( ) { }
 
     virtual void Calculate( double t ) {
-        UNREFERENCED_PARAMETER( t );
+        //UNREFERENCED_PARAMETER( t );
+        t = t;
     }
 
     virtual void Calculate2( double t ) {
-        UNREFERENCED_PARAMETER( t );
+        //UNREFERENCED_PARAMETER( t );
+        t = t;
     }
 
     void TriggerCalcOnce( ) {

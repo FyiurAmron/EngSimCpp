@@ -52,8 +52,8 @@ void CSignal::AddSample( double x, double y ) {
     //while(locked);	//zabezpieczenie przed dodawaniem nowych probek podczas przeskalowywania (przy pracy wielowatkowej)
 
     if ( sName == L"x11" ) {
-        int booo;
-        booo = yValues[0];
+        //int booo;
+        //booo = yValues[0];
     }
 
     this->xValues[nSamplesV] = x;
@@ -88,7 +88,7 @@ void CSignal::UpdateScale( double xStep ) {
 
     nSamples = 0;
 
-    for( int i = 0; i < nSamplesV; i++ ) {
+    for( unsigned int i = 0; i < nSamplesV; i++ ) {
         if ( xValues[i] >= time || signalType == SIGNAL_DOTS ) {
             x[nSamples] = xValues[i];
             y[nSamples] = yValues[i];
@@ -146,7 +146,7 @@ void CSignal::FindMargins( ) {
     maxX = -1e10;
     minY = INFINITE;
     maxY = -1e10;
-    for( int i = 0; i < nSamples; i++ ) {
+    for( unsigned int i = 0; i < nSamples; i++ ) {
         if ( x[i] < minX )minX = x[i];
         if ( x[i] > maxX )maxX = x[i];
         if ( y[i] < minY )minY = y[i];

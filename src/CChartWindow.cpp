@@ -34,32 +34,32 @@ void CChartWindow::AddCharts( int num ) {
 }
 
 void CChartWindow::ChangeXScale( double scale, int forceRecalc ) {
-    for( int i = 0; i < charts.size( ); i++ ) {
+    for( size_t i = 0; i < charts.size( ); i++ ) {
         charts[i]->ChangeScale( scale, 0, 0, forceRecalc );
     }
 }
 
 void CChartWindow::ChangeYScale( double scale ) {
-    for( int i = 0; i < charts.size( ); i++ ) {
+    for( size_t i = 0; i < charts.size( ); i++ ) {
         charts[i]->ChangeScale( 0, scale, 0, false );
     }
 }
 
 void CChartWindow::SetXPos( double x ) {
-    for( int i = 0; i < charts.size( ); i++ ) {
+    for( size_t i = 0; i < charts.size( ); i++ ) {
         //charts[i]->xWidth += x-charts[i]->x0;
         charts[i]->x0 = x;
     }
 }
 
 void CChartWindow::SetWidth( double width ) {
-    for( int i = 0; i < charts.size( ); i++ ) {
+    for( size_t i = 0; i < charts.size( ); i++ ) {
         charts[i]->SetWidth( width );
     }
 }
 
 void CChartWindow::SetColors( DWORD cBackground, DWORD cGrid, DWORD cLabels ) {
-    for( int i = 0; i < charts.size( ); i++ ) {
+    for( size_t i = 0; i < charts.size( ); i++ ) {
         charts[i]->SetColors( cBackground, cGrid, cLabels );
     }
 }
@@ -74,7 +74,8 @@ LRESULT CALLBACK CChartWindow::StaticChartWndProc( HWND hWnd, UINT message, WPAR
 
 LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) {
     //CChartWindow *window = allWindows[hWnd];
-    int wmId, wmEvent;
+    int wmId;
+    //int wmEvent;
 
     switch( message ) {
 
@@ -93,7 +94,7 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             break;
         case WM_COMMAND:
             wmId = LOWORD( wParam );
-            wmEvent = HIWORD( wParam );
+            //wmEvent = HIWORD( wParam );
             // Parse the menu selections:
             switch( wmId ) {
                 case IDM_INIT__GDI1:
@@ -151,7 +152,7 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
         case WM_KEYUP:
             switch( wParam ) {
                 case VK_CONTROL:
-                    for( int i = 0; i < charts.size( ); i++ ) {
+                    for( size_t i = 0; i < charts.size( ); i++ ) {
                         charts[i]->RewriteSignalsAfterScale( );
                     }
                     break;
@@ -165,7 +166,7 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             graph->SetTextColor( RGBA( 50, 50, 50, 128 ) );
             graph->DrawText( prevPosX, height - prevPosY, L"BOO!!!" );
 
-            for( int i = 0; i < charts.size( ); i++ ) {
+            for( size_t i = 0; i < charts.size( ); i++ ) {
                 charts[i]->SetArea( 0, height * i / charts.size( ), -1, height * ( i + 1 ) / charts.size( ) );
                 charts[i]->DrawChart( );
                 //charts[i]->SetArea(0,wMain.height*4/charts.size(),-1,wMain.height*5/charts.size());
@@ -238,17 +239,17 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             //InvalidateRect(hWnd,NULL,FALSE);
             break;
         case WM_LBUTTONDOWN:
-            for( int i = 0; i < charts.size( ); i++ ) {
+            for( size_t i = 0; i < charts.size( ); i++ ) {
                 if ( charts[i]->Contains( LOWORD( lParam ), HIWORD( lParam ) ) ) charts[i]->transforming = 1;
             }
             break;
         case WM_RBUTTONDOWN:
-            for( int i = 0; i < charts.size( ); i++ ) {
+            for( size_t i = 0; i < charts.size( ); i++ ) {
                 if ( charts[i]->Contains( LOWORD( lParam ), HIWORD( lParam ) ) ) charts[i]->transforming = 1;
             }
             break;
         case WM_RBUTTONUP:
-            for( int i = 0; i < charts.size( ); i++ ) {
+            for( size_t i = 0; i < charts.size( ); i++ ) {
                 charts[i]->RewriteSignalsAfterScale( );
             }
             break;
@@ -256,21 +257,21 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 
             if ( wParam == MK_LBUTTON ) {
-                for( int i = 0; i < charts.size( ); i++ ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
                     charts[i]->SetPlotOffset( ( prevPosX - LOWORD( lParam ) )*2, 0 );
                     if ( charts[i]->transforming ) charts[i]->SetPlotOffset( 0, ( prevPosY - HIWORD( lParam ) )*2 );
                 }
             }
 
             if ( wParam == MK_RBUTTON ) {
-                for( int i = 0; i < charts.size( ); i++ ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
                     charts[i]->ChangeScale( prevPosX - LOWORD( lParam ), 0, true, false );
                     if ( charts[i]->transforming ) charts[i]->ChangeScale( 0, -( prevPosY - HIWORD( lParam ) ), true, false );
                 }
             }
 
             if ( wParam != MK_RBUTTON && wParam != MK_LBUTTON ) {
-                for( int i = 0; i < charts.size( ); i++ ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
                     charts[i]->transforming = 0;
                     charts[i]->UpdateMarker( LOWORD( lParam ), HIWORD( lParam ) );
                 }
@@ -289,11 +290,11 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             nWheelMove = (short) HIWORD( wParam );
             if ( GetKeyState( VK_CONTROL )&0x0100 ) //jesli ustawiony bit w starszym bajcie - nacisniety przycisk
             {
-                for( int i = 0; i < charts.size( ); i++ ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
                     charts[i]->ChangeScale( -nWheelMove / WHEEL_DELTA * 25, 0, true, false );
                 }
             } else {
-                for( int i = 0; i < charts.size( ); i++ ) {
+                for( size_t i = 0; i < charts.size( ); i++ ) {
                     if ( charts[i]->Contains( prevPosX, prevPosY ) ) {
                         charts[i]->ChangeScale( 0, -nWheelMove / WHEEL_DELTA * 25, true, false );
                     }
@@ -349,7 +350,7 @@ int CChartWindow::PointOutsideWindowX( double x ) {
 }
 
 void CChartWindow::Autoscale( ) {
-    for( int chart = 0; chart < charts.size( ); chart++ ) {
+    for( size_t chart = 0; chart < charts.size( ); chart++ ) {
         charts[chart]->FindMargins( );
         charts[chart]->SetMargins( );
     }

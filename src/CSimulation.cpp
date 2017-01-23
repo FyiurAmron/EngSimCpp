@@ -45,7 +45,7 @@ void CSimulation::OnCalculate( ) {
 
     PreCalc( );
 
-    for( int i = 0; i < models.size( ); i++ ) {
+    for( size_t i = 0; i < models.size( ); i++ ) {
         model = models[i];
 
         if ( model->triggerCalcAlways || model->calcTrigger || ( model->orderedCalc && model->orderedCalcTime <= t ) ) {
@@ -96,7 +96,7 @@ void CSimulation::SetStep( double calcStep, double samplesStep, double simTime )
 
     nDefaultSignalSize = simTime / calcStep / nTicksToSkip + 1;
 
-    for( int i = 0; i < signals.size( ); i++ ) {
+    for( size_t i = 0; i < signals.size( ); i++ ) {
         signals[i].InitMemory( nDefaultSignalSize );
     }
 }
@@ -105,7 +105,7 @@ void CSimulation::StartSimulation( SimStart start ) {
     t = t_start;
 
     if ( start == SimStartWithInit ) {
-        for( int i = 0; i < models.size( ); i++ ) {
+        for( size_t i = 0; i < models.size( ); i++ ) {
             models[i]->OnInit( );
             models[i]->OnReset( );
         }
@@ -124,7 +124,7 @@ void CSimulation::EndSimulation( ) {
     DWORD exitCode;
 
 
-    for( int i = 0; i < models.size( ); i++ ) {
+    for( size_t i = 0; i < models.size( ); i++ ) {
         models[i]->OnEnd( );
     }
 
@@ -151,12 +151,12 @@ void CSimulation::ResetSimulation( ) {
 
     vOrderedCalcTimes.clear( );
 
-    for( int i = 0; i < models.size( ); i++ ) {
+    for( size_t i = 0; i < models.size( ); i++ ) {
         models[i]->Reset( );
         //models[i]->OnReset();
     }
 
-    for( int i = 0; i < signals.size( ); i++ ) {
+    for( size_t i = 0; i < signals.size( ); i++ ) {
         signals[i].Clear( );
     }
 
@@ -170,7 +170,7 @@ void CSimulation::PauseSimulation( ) {
     //WaitForSingleObject((HANDLE)threadHandle,INFINITE);
     terminateThread = 0;
 
-    for( int i = 0; i < models.size( ); i++ ) {
+    for( size_t i = 0; i < models.size( ); i++ ) {
         models[i]->OnPause( );
     }
 
@@ -180,7 +180,7 @@ void CSimulation::PauseSimulation( ) {
 void CSimulation::ResumeSimulation( ) {
     ResumeThread( threadHandle );
 
-    for( int i = 0; i < models.size( ); i++ ) {
+    for( size_t i = 0; i < models.size( ); i++ ) {
         models[i]->OnResume( );
     }
 
@@ -226,7 +226,7 @@ int CSimulation::RegisterSignal( const double *x, const double *y, wstring name,
 }
 
 CSignal* CSimulation::FindSignal( wstring name ) {
-    for( int i = 0; i < signals.size( ); i++ ) {
+    for( size_t i = 0; i < signals.size( ); i++ ) {
         if ( signals[i].sName.compare( name ) == 0 ) {
             return &signals[i];
         }
@@ -277,5 +277,5 @@ void CSimulation::RemoveOrederedCalc( ) {
 }
 
 void CSimulation::SetParameterValue( double *ptr, double val ) {
-    ;
+
 }

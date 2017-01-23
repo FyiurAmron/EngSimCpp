@@ -36,6 +36,8 @@ public:
     CGraphics( ) {
         scale = 1.0;
     }
+
+    virtual ~CGraphics( ) { };
     virtual BOOL Init( CWindow *window ) = 0;
     virtual void DeInit( ) = 0;
 

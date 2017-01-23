@@ -99,7 +99,7 @@ void CModel::AddDelayedInput( CDelayedInput *input ) {
 }
 
 void CModel::UpdateInputs( ) {
-    for( int i = 0; i < delayedInputs.size( ); i++ ) {
+    for( size_t i = 0; i < delayedInputs.size( ); i++ ) {
         delayedInputs[i]->Update( );
     }
 }
@@ -134,7 +134,7 @@ void CModel::Reset( ) {
     for( int i = 0; i < nDiffEqs; i++ ) x[i] = 0;
     orderedCalcTime = 0;
     orderedCalc = 0;
-    for( int i = 0; i < delayedInputs.size( ); i++ ) {
+    for( size_t i = 0; i < delayedInputs.size( ); i++ ) {
         delayedInputs[i]->delayedIn = 0;
     }
     InitModel( );

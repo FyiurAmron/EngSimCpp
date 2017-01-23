@@ -50,7 +50,7 @@ int CFile::printf( const wchar_t *format, ... ) {
 int CFile::scanf( const wchar_t *format, ... ) {
     DWORD bytesRead;
     wchar_t character;
-    int parametersFilled;
+    int parametersFilled = 0;
     void *arg1, *arg2, *arg3, *arg4, *arg5, *arg6, *arg7, *arg8;
     va_list arguments;
     va_start( arguments, format );
@@ -76,6 +76,8 @@ int CFile::scanf( const wchar_t *format, ... ) {
     char2wchar( read_buffer_ansi, read_buffer );
 
     bytesRead = swscanf( read_buffer, format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 );
+
+    // NOTE: currently unsupported, always returns 0
 
     return parametersFilled;
 }
