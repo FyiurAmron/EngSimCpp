@@ -32,26 +32,26 @@ public:
 class CPropertiesGroup
 {
 public:
-	std::vector<CProperty>	props;	//dynamiczna tablica parametrów/w³aœciwoœci
-	std::wstring	groupName;	//nazwa grupy parametrów/w³aœciwoœci
+	std::vector<CProperty>	props;	//dynamiczna tablica parametrÃ³w/wÅ‚aÅ›ciwoÅ›ci
+	std::wstring	groupName;	//nazwa grupy parametrÃ³w/wÅ‚aÅ›ciwoÅ›ci
 
-	/// <summary>Dodaje do grupy parametrów/w³aœciwoœci dodatkow¹ pozycjê</summary>
+	/// <summary>Dodaje do grupy parametrÃ³w/wÅ‚aÅ›ciwoÅ›ci dodatkowÄ… pozycjÄ™</summary>
 	///	<param name="pointer">wskaznik do parametru</param>
-	///	<param name="name">wyœwietlana nazwa parametru</param>
+	///	<param name="name">wyÅ›wietlana nazwa parametru</param>
 	void AddProperty(double *pointer, std::wstring name);
 
-	/// <summary>Dodaje do grupy parametrów/w³aœciwoœci dodatkow¹ pozycjê</summary>
+	/// <summary>Dodaje do grupy parametrÃ³w/wÅ‚aÅ›ciwoÅ›ci dodatkowÄ… pozycjÄ™</summary>
 	///	<param name="pointer">wskaznik do parametru</param>
-	///	<param name="name">wyœwietlana nazwa parametru</param>
-	///	<param name="shortcut">skrót do parametru, mo¿e byæ wielk¹ liter¹ lub cyfr¹, mo¿e przyj¹æ wartoœæ NULL - brak skrótu</param>
+	///	<param name="name">wyÅ›wietlana nazwa parametru</param>
+	///	<param name="shortcut">skrÃ³t do parametru, moÅ¼e byÄ‡ wielkÄ… literÄ… lub cyfrÄ…, moÅ¼e przyjÄ…Ä‡ wartoÅ›Ä‡ NULL - brak skrÃ³tu</param>
 	void AddProperty(double *pointer, std::wstring name, char shortcut);
 
-	/// <summary>Dodaje do grupy parametrów/w³aœciwoœci dodatkow¹ pozycjê</summary>
+	/// <summary>Dodaje do grupy parametrÃ³w/wÅ‚aÅ›ciwoÅ›ci dodatkowÄ… pozycjÄ™</summary>
 	///	<param name="pointer">wskaznik do parametru</param>
-	///	<param name="name">wyœwietlana nazwa parametru</param>
-	///	<param name="shortcut">skrót do parametru, mo¿e byæ wielk¹ liter¹ lub cyfr¹, mo¿e przyj¹æ wartoœæ NULL - brak skrótu</param>
-	///	<param name="sliderMin">minimalna wartoœæ suwaka</param>
-	///	<param name="sliderMax">maksymalna wartoœæ suwaka</param>
+	///	<param name="name">wyÅ›wietlana nazwa parametru</param>
+	///	<param name="shortcut">skrÃ³t do parametru, moÅ¼e byÄ‡ wielkÄ… literÄ… lub cyfrÄ…, moÅ¼e przyjÄ…Ä‡ wartoÅ›Ä‡ NULL - brak skrÃ³tu</param>
+	///	<param name="sliderMin">minimalna wartoÅ›Ä‡ suwaka</param>
+	///	<param name="sliderMax">maksymalna wartoÅ›Ä‡ suwaka</param>
 	void AddProperty(double *pointer, std::wstring name, char shortcut, double sliderMin, double sliderMax);
 };
 

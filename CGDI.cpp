@@ -80,7 +80,7 @@ BOOL CGDI::Init(CWindow *window)
 
 	gp->DrawLine(&pen,-0.10f,.0f,1.0f,0.0f);
 	gp->DrawLine(&pen,-0.00f,-0.10f,0.0f,1.0f);
-	//gp->DrawString(_T("Uga bug¹ga teœcik"),-1,&font,PointF(0.10,0.10),&brush);
+	//gp->DrawString(_T("Uga bugÄ…ga teÅ›cik"),-1,&font,PointF(0.10,0.10),&brush);
 
 	//gp->TranslateTransform(100,0);
 	

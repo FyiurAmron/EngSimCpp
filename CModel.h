@@ -15,19 +15,19 @@ extern class CDelayedInput;
 typedef void(CModel::*DIFF_EQUS_FCN)(double *dx, double *x);
 enum SolverType{SolverRK4};
 
-/// <summary>Wejœcie z opóŸnieniem</summary>
+/// <summary>WejÅ›cie z opÃ³Åºnieniem</summary>
 class CDelayedInput
 {
 public:
-	MODEL_IN in;			//wejœcie (wskaŸnik)
-	MODEL_OUT delayedIn;	//opóŸnione wejœcie
+	MODEL_IN in;			//wejÅ›cie (wskaÅºnik)
+	MODEL_OUT delayedIn;	//opÃ³Åºnione wejÅ›cie
 
 	CDelayedInput()
 	{
 		delayedIn=0;
 	}
 	CDelayedInput(CModel *model);
-	void Update();	//Aktualizuje stan opóŸnionego wejœcia przyjmuj¹c bie¿¹c¹ wartoœæ wskazywan¹ przez zmienna 'in'
+	void Update();	//Aktualizuje stan opÃ³Åºnionego wejÅ›cia przyjmujÄ…c bieÅ¼Ä…cÄ… wartoÅ›Ä‡ wskazywanÄ… przez zmienna 'in'
 	MODEL_OUT operator*()
 	{
 		return delayedIn;
@@ -40,10 +40,10 @@ public:
 	}
 };
 
-// Klasa zawieraj¹ce wspólne metody i pola obiektów. Powinna byæ dziedziczona przez nowe modele.
+// Klasa zawierajÄ…ce wspÃ³lne metody i pola obiektÃ³w. Powinna byÄ‡ dziedziczona przez nowe modele.
 class CModel
 {
-	/// <summary>Przydziela pamiêæ dla zmiennych stanu modelu</summary>
+	/// <summary>Przydziela pamiÄ™Ä‡ dla zmiennych stanu modelu</summary>
 	///	<param name="nStates">liczba zmiennych stanu</param>
 	void AssignMemory(int nStates);
 
@@ -54,19 +54,19 @@ protected:
 	void SolveF4();
 	
 public:
-	CSimulation *sim;	//wskaŸnik do symulacji, w której zarejestruje siê model
-	int		calcTrigger;	//okreœla czy w danym kroku model bêdzie obliczany (TRUE/FALSE)
-	int		inheritCalcTrigger; //okreœla czy kroki, w których wykonane bêda obliczenia modelu, s¹ dziedziczone z innego modelu (TRUE/FALSE)
-	int		triggerCalcAlways;	//okreœla czy obliczenia bêd¹ wykonywane w ka¿dym kroku (TRUE/FALSE)
-	int		nDiffEqs;	//liczba równañ ró¿niczkowych
-	CModel	*parentModel;	//wskaŸnik do modelu nadrzêdnego, z którego dziedziczone bêd¹ kroki obliczeñ
-	std::vector<CDelayedInput*> delayedInputs;	//wektor zawieraj¹cy wskaŸniki do wszystkich opóŸnionych wejœæ modelu
+	CSimulation *sim;	//wskaÅºnik do symulacji, w ktÃ³rej zarejestruje siÄ™ model
+	int		calcTrigger;	//okreÅ›la czy w danym kroku model bÄ™dzie obliczany (TRUE/FALSE)
+	int		inheritCalcTrigger; //okreÅ›la czy kroki, w ktÃ³rych wykonane bÄ™da obliczenia modelu, sÄ… dziedziczone z innego modelu (TRUE/FALSE)
+	int		triggerCalcAlways;	//okreÅ›la czy obliczenia bÄ™dÄ… wykonywane w kaÅ¼dym kroku (TRUE/FALSE)
+	int		nDiffEqs;	//liczba rÃ³wnaÅ„ rÃ³Å¼niczkowych
+	CModel	*parentModel;	//wskaÅºnik do modelu nadrzÄ™dnego, z ktÃ³rego dziedziczone bÄ™dÄ… kroki obliczeÅ„
+	std::vector<CDelayedInput*> delayedInputs;	//wektor zawierajÄ…cy wskaÅºniki do wszystkich opÃ³Åºnionych wejÅ›Ä‡ modelu
 
-	double	prevCalcTime;	//czas symulacji, w którym zakoñczono poprzedni krok obliczeñ
-	double	orderedCalcTime;	//czas, w którym wykonane bêdzie dodatkowe obliczenie na ¿¹danie
-	int		orderedCalc;	//czy zamówione zosta³o obliczanie na ¿¹danie (TRUE/FALSE)
+	double	prevCalcTime;	//czas symulacji, w ktÃ³rym zakoÅ„czono poprzedni krok obliczeÅ„
+	double	orderedCalcTime;	//czas, w ktÃ³rym wykonane bÄ™dzie dodatkowe obliczenie na Å¼Ä…danie
+	int		orderedCalc;	//czy zamÃ³wione zostaÅ‚o obliczanie na Å¼Ä…danie (TRUE/FALSE)
 
-	double	*x;	//tablica z wartoœciami zmiennych stanu
+	double	*x;	//tablica z wartoÅ›ciami zmiennych stanu
 	double	*xTemp;	//tablica pomocnicza
 	double	*dx;	//tablica z pochodnymi zmiennych stanu
 	double	*dxTemp;	//tablica pomocnicza
@@ -75,8 +75,8 @@ public:
 	CModel(int nDiffEqs);
 	CModel(CSimulation *sim, int nDiffEqs=0);
 
-	/// <summary>W³¹cza dziedziczenie kroków obliczeñ - obliczenia wykonywane w tych samych krokach co model nadrzêdny</summary>
-	///	<param name="parent">wskaŸnik do modelu nadrzêdnego</param>
+	/// <summary>WÅ‚Ä…cza dziedziczenie krokÃ³w obliczeÅ„ - obliczenia wykonywane w tych samych krokach co model nadrzÄ™dny</summary>
+	///	<param name="parent">wskaÅºnik do modelu nadrzÄ™dnego</param>
 	void InheritCalcTrigger(CModel *parent);
 	
 

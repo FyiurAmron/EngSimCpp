@@ -22,8 +22,8 @@
 CChartWindow wChartW;
 
 
-//***** PROSZÊ NIE EDYTOWAæ TEGO KODU ***********************
-//***** edycji nale¿y dokonywaæ w funkcji Simulations() *****
+//***** PROSZÄ˜ NIE EDYTOWAÄ‡ TEGO KODU ***********************
+//***** edycji naleÅ¼y dokonywaÄ‡ w funkcji Simulations() *****
 
 class CSimulationOK : public CSimulation
 {
@@ -107,10 +107,10 @@ void Simulations()
 
 
 
-	//dodawanie obszarów wykresów do okna
+	//dodawanie obszarÃ³w wykresÃ³w do okna
 	wChartW.AddCharts(5);
 
-	//definiowanie rejestrowanych i wyœwietlanych sygna³ów
+	//definiowanie rejestrowanych i wyÅ›wietlanych sygnaÅ‚Ã³w
 	wChartW.charts[0]->AddSignal(&gamma,_T("gamma"),RGB(240,0,220));
 	wChartW.charts[1]->AddSignal(&i1,_T("i1"),RGB(44,134,167));
 	wChartW.charts[2]->AddSignal(&i2,_T("i2"),RGB(0,255,255)); //TIME - czas symulacji dosowej _s ->/1000, bez => w sekundach

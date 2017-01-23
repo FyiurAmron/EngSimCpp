@@ -75,8 +75,8 @@ public:
 	//void ModelCalc2(double t);
 
 	/// <summary>Definiuje kroki oraz czas maksymalne czas symulacji</summary>
-	///	<param name="calcStep">maksymalny krok obliczeñ</param>
-	///	<param name="samplesStep">maksymalny okres miêdzy kolejnymi zapisanymi próbkami</param>
+	///	<param name="calcStep">maksymalny krok obliczeÅ„</param>
+	///	<param name="samplesStep">maksymalny okres miÄ™dzy kolejnymi zapisanymi prÃ³bkami</param>
 	///	<param name="simTime">przemieszczenie na osi x w jednostkach wykresu</param>
 	void SetStep(double calcStep, double samplesStep, double simTime);
 	void ResetSimulation();

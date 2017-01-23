@@ -80,78 +80,78 @@ public:
 	/// <summary>Zmienia skale wykresu.</summary>
 	///	<param name="x">gdy incremetal==false, nowa skala na osi X; gdy incremental==true, skala jest zmieniana wykladniczo wraz ze wzrostem wartosci x</param>
 	///	<param name="y">gdy incremetal==false, nowa skala na osi Y; gdy incremental==true, skala jest zmieniana wykladniczo wraz ze wzrostem wartosci y</param>
-	///	<param name="increment">okreœla czy nowa skala bêdzie równa wartoœciom parametrów x,y (wartosæ false), czy bêdzie zmieniana przyrostowo (wartoœæ true)</param>
-	///	<param name="forceRecalc">gdy true: tablicami z wyœwietlanymi wartoœciami bêdzie zaktualizowana tak by nie obci¹¿aæ procesora; gdy false: obliczenia nie jest przeprowadzane</param>
+	///	<param name="increment">okreÅ›la czy nowa skala bÄ™dzie rÃ³wna wartoÅ›ciom parametrÃ³w x,y (wartosÄ‡ false), czy bÄ™dzie zmieniana przyrostowo (wartoÅ›Ä‡ true)</param>
+	///	<param name="forceRecalc">gdy true: tablicami z wyÅ›wietlanymi wartoÅ›ciami bÄ™dzie zaktualizowana tak by nie obciÄ…Å¼aÄ‡ procesora; gdy false: obliczenia nie jest przeprowadzane</param>
 	void ChangeScale(double x, double y, int increment = false, int forceRecalc = true);
 	
 	
 	void SetArea(int x1, int y1, int x2, int y2);
 	
-	/// <summary>Definiuje nowy sygna³ do rejestracji oraz dodaje go do wykresu.</summary>
-	///	<param name="x">wskaŸnik do rejestrowanej zmiennej (oœ X)</param>
-	///	<param name="y">wskaŸnik do rejestrowanej zmiennej (oœ Y)</param>
-	///	<param name="name">nazwa sygna³u/przebiegu</param>
+	/// <summary>Definiuje nowy sygnaÅ‚ do rejestracji oraz dodaje go do wykresu.</summary>
+	///	<param name="x">wskaÅºnik do rejestrowanej zmiennej (oÅ› X)</param>
+	///	<param name="y">wskaÅºnik do rejestrowanej zmiennej (oÅ› Y)</param>
+	///	<param name="name">nazwa sygnaÅ‚u/przebiegu</param>
 	/// <param name="offset">pionowe przesuniecie wykresu</param>
 	/// <param name="scale">skalowanie przebiegu, wykonywane po przesunieciu</param>
-	///	<param name="color">kolor przebiegu, mo¿na u¿yæ makr: RGB, RGBA</param>
+	///	<param name="color">kolor przebiegu, moÅ¼na uÅ¼yÄ‡ makr: RGB, RGBA</param>
 	void AddSignal(const double *x, const double *y, std::wstring name, DWORD color, double offset=0, double scale=1);
 
-	/// <summary>Definiuje nowy sygna³ do rejestracji oraz dodaje go do wykresu. Automatycznie przyjmuje czas symulacji jako wartoœæ na osi X.</summary>
-	///	<param name="y">wskaŸnik do rejestrowanej zmiennej</param>
-	///	<param name="name">nazwa sygna³u/przebiegu</param>
+	/// <summary>Definiuje nowy sygnaÅ‚ do rejestracji oraz dodaje go do wykresu. Automatycznie przyjmuje czas symulacji jako wartoÅ›Ä‡ na osi X.</summary>
+	///	<param name="y">wskaÅºnik do rejestrowanej zmiennej</param>
+	///	<param name="name">nazwa sygnaÅ‚u/przebiegu</param>
 	/// <param name="offset">pionowe przesuniecie wykresu</param>
 	/// <param name="scale">skalowanie przebiegu, wykonywane po przesunieciu</param>
-	///	<param name="color">kolor przebiegu, mo¿na u¿yæ makr: RGB, RGBA</param>
+	///	<param name="color">kolor przebiegu, moÅ¼na uÅ¼yÄ‡ makr: RGB, RGBA</param>
 	void AddSignal(const double *y, std::wstring name, DWORD color, double offset=0, double scale=1);
 	
-	/// <summary>Dodaje istniej¹cy sygna³ do wykresu</summary>
-	///	<param name="signal">wskaŸnik do sygna³u</param>
-	///	<param name="color">kolor przebiegu, mo¿na u¿yæ makr: RGB, RGBA</param>
+	/// <summary>Dodaje istniejÄ…cy sygnaÅ‚ do wykresu</summary>
+	///	<param name="signal">wskaÅºnik do sygnaÅ‚u</param>
+	///	<param name="color">kolor przebiegu, moÅ¼na uÅ¼yÄ‡ makr: RGB, RGBA</param>
 	void AddSignal(CSignal *signal, DWORD color);
 
-	/// <summary>Dodaje istniej¹cy sygna³ do wykresu</summary>
-	///	<param name="signalVect">wskaŸnik do wektora zawieraj¹cego sygna³</param>
-	///	<param name="signalElement">index vectora z dodawanym sygna³em</param>
-	///	<param name="color">kolor przebiegu, mo¿na u¿yæ makr: RGB, RGBA</param>
+	/// <summary>Dodaje istniejÄ…cy sygnaÅ‚ do wykresu</summary>
+	///	<param name="signalVect">wskaÅºnik do wektora zawierajÄ…cego sygnaÅ‚</param>
+	///	<param name="signalElement">index vectora z dodawanym sygnaÅ‚em</param>
+	///	<param name="color">kolor przebiegu, moÅ¼na uÅ¼yÄ‡ makr: RGB, RGBA</param>
 	void AddSignal(std::vector<CSignal> *signalVect, int signalElement, DWORD color);
 	
-	/// <summary>Aktualizuje wskaŸniki do sygna³ów. Nale¿y wywo³aæ funkcjê po ka¿dej zmianie rozmiaru wektorów zawieraj¹cych wykresy.</summary>
+	/// <summary>Aktualizuje wskaÅºniki do sygnaÅ‚Ã³w. NaleÅ¼y wywoÅ‚aÄ‡ funkcjÄ™ po kaÅ¼dej zmianie rozmiaru wektorÃ³w zawierajÄ…cych wykresy.</summary>
 	void UpdateSignalsPointers();
 
-	/// <summary>Sprawdza czy kursor myszy znajduje siê nad obszarem wykresu</summary>
-	///	<param name="mouseX">po³o¿enie myszy na osi X wyra¿one w pixelach</param>
-	///	<param name="mouseY">po³o¿enie myszy na osi Y wyra¿one w pixelach</param>
-	/// <returns>zwraca: 1 - gdy kursor znajduje siê nad wykresem, 0 - kursor jest poza wykresem</returns>
+	/// <summary>Sprawdza czy kursor myszy znajduje siÄ™ nad obszarem wykresu</summary>
+	///	<param name="mouseX">poÅ‚oÅ¼enie myszy na osi X wyraÅ¼one w pixelach</param>
+	///	<param name="mouseY">poÅ‚oÅ¼enie myszy na osi Y wyraÅ¼one w pixelach</param>
+	/// <returns>zwraca: 1 - gdy kursor znajduje siÄ™ nad wykresem, 0 - kursor jest poza wykresem</returns>
 	int Contains(int mouseX, int mouseY);
 
-	/// <summary>Aktualizuje pozycjê znacznika prezentuj¹cego dok³adne wartoœci przebiegów</summary>
-	///	<param name="mouseX">po³o¿enie myszy na osi X wyra¿one w pixelach</param>
-	///	<param name="mouseY">po³o¿enie myszy na osi Y wyra¿one w pixelach</param>
+	/// <summary>Aktualizuje pozycjÄ™ znacznika prezentujÄ…cego dokÅ‚adne wartoÅ›ci przebiegÃ³w</summary>
+	///	<param name="mouseX">poÅ‚oÅ¼enie myszy na osi X wyraÅ¼one w pixelach</param>
+	///	<param name="mouseY">poÅ‚oÅ¼enie myszy na osi Y wyraÅ¼one w pixelach</param>
 	void UpdateMarker(int mouseX, int mouseY);
 	
-	/// <summary>Przeskalowuje wszystkie przebiegi przypisane do wykresu tak by ograniczyæ liczbê rysowanych punktów</summary>
+	/// <summary>Przeskalowuje wszystkie przebiegi przypisane do wykresu tak by ograniczyÄ‡ liczbÄ™ rysowanych punktÃ³w</summary>
 	void RewriteSignalsAfterScale();
 
-	/// <summary>Rysuje legendê w obszarze wykresu</summary>
-	///	<param name="transparency">przeŸroczystoœæ legendy: 0-255</param>
+	/// <summary>Rysuje legendÄ™ w obszarze wykresu</summary>
+	///	<param name="transparency">przeÅºroczystoÅ›Ä‡ legendy: 0-255</param>
 	void DrawLegend(int transparency);
 
-	/// <summary>Ustawia kolory obszaru wykresów</summary>
-	///	<param name="cBackground">kolor t³a, mo¿na u¿yæ makra RGBA lub RGB</param>
-	///	<param name="cGrid">kolor siatki, mo¿na u¿yæ makra RGBA lub RGB</param>
-	///	<param name="cLabels">kolor napisów, mo¿na u¿yæ makra RGBA lub RGB</param>
+	/// <summary>Ustawia kolory obszaru wykresÃ³w</summary>
+	///	<param name="cBackground">kolor tÅ‚a, moÅ¼na uÅ¼yÄ‡ makra RGBA lub RGB</param>
+	///	<param name="cGrid">kolor siatki, moÅ¼na uÅ¼yÄ‡ makra RGBA lub RGB</param>
+	///	<param name="cLabels">kolor napisÃ³w, moÅ¼na uÅ¼yÄ‡ makra RGBA lub RGB</param>
 	void SetColors(DWORD cBackground, DWORD cGrid, DWORD cLabels);
 
-	/// <summary>Ustawia wysokoœæ obszaru wykresu w jednostkach wykresu</summary>
-	///	<param name="height">wysokoœæ obszaru wykresu w jednostkach wykresu</param>
+	/// <summary>Ustawia wysokoÅ›Ä‡ obszaru wykresu w jednostkach wykresu</summary>
+	///	<param name="height">wysokoÅ›Ä‡ obszaru wykresu w jednostkach wykresu</param>
 	void SetHeight(double height); 
 
-	/// <summary>Ustawia szerokoœæ obszaru wykresu w jednostkach wykresu</summary>
-	///	<param name="width">szerokoœæ obszaru wykresu w jednostkach wykresu</param>
+	/// <summary>Ustawia szerokoÅ›Ä‡ obszaru wykresu w jednostkach wykresu</summary>
+	///	<param name="width">szerokoÅ›Ä‡ obszaru wykresu w jednostkach wykresu</param>
 	void SetWidth(double width); 
 
-	/// <summary>Ustawia wartoœæ na osi Y na dole obszaru wykresu</summary>
-	///	<param name="height">wartoœæ Y na dole obszaru wykresu</param>
+	/// <summary>Ustawia wartoÅ›Ä‡ na osi Y na dole obszaru wykresu</summary>
+	///	<param name="height">wartoÅ›Ä‡ Y na dole obszaru wykresu</param>
 	void SetYPos(double y); 
 	
 	void FindMargins();

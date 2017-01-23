@@ -267,8 +267,8 @@ CSignal* CSimulation::FindSignal(wstring name)
 	}
 
 	TCHAR	temp[100];
-	wsprintf(temp,_T("Nie mogê znaleŸæ sygna³u: %s"),name.c_str());
-	MessageBox(NULL,temp,_T("Nie znaleziono sygna³u"),MB_OK | MB_ICONWARNING);
+	wsprintf(temp,_T("Nie mogÄ™ znaleÅºÄ‡ sygnaÅ‚u: %s"),name.c_str());
+	MessageBox(NULL,temp,_T("Nie znaleziono sygnaÅ‚u"),MB_OK | MB_ICONWARNING);
 	return NULL;
 }
 

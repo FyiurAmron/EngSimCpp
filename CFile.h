@@ -47,14 +47,14 @@ public:
 	static unsigned int wchar2char(wchar_t *unicode, char *ansi, unsigned int unicodeSize=0xffffffff);
 
 	/// <summary>Otwiera okno dialogowe wyboru sciezki otwieranego pliku. Sciezka pliku zapisywana jest w polu fileName.</summary>
-	///	<param name="ext">domyúlne rozszerzeniu pliku, domyúlnie NULL - brak rozszerzenia</param>
-	///	<param name="desc">opis domyúlnego rozszerzenia pliku, domyúlnie NULL - brak opisu</param>
+	///	<param name="ext">domy≈õlne rozszerzeniu pliku, domy≈õlnie NULL - brak rozszerzenia</param>
+	///	<param name="desc">opis domy≈õlnego rozszerzenia pliku, domy≈õlnie NULL - brak opisu</param>
 	/// <returns>zwraca wartosc rozna od zera gdy poprawnie wybrano plik; zwraca 0 gdy otwieranie jest anulowane lub zakonczone niepowodzeniem</returns>
 	int OpenFilename(std::wstring ext = std::wstring(), std::wstring desc = std::wstring());
 
 	/// <summary>Otwiera okno dialogowe wyboru sciezki zapisywanego pliku. Sciezka pliku zapisywana jest w polu fileName.</summary>
-	///	<param name="ext">domyúlne rozszerzeniu pliku, domyúlnie NULL - brak rozszerzenia</param>
-	///	<param name="desc">opis domyúlnego rozszerzenia pliku, domyúlnie NULL - brak opisu</param>
+	///	<param name="ext">domy≈õlne rozszerzeniu pliku, domy≈õlnie NULL - brak rozszerzenia</param>
+	///	<param name="desc">opis domy≈õlnego rozszerzenia pliku, domy≈õlnie NULL - brak opisu</param>
 	/// <returns>zwraca wartosc rozna od zera gdy poprawnie wybrano plik; zwraca 0 gdy otwieranie jest anulowane lub zakonczone niepowodzeniem</returns>
 	int SaveFilename(std::wstring ext = std::wstring(), std::wstring desc = std::wstring());
 
@@ -65,14 +65,14 @@ public:
 	int OpenFile(TCHAR *fileName, FileAccess desiredAccess);
 
 	/// <summary>Otwiera okno dialogowe wyboru sciezki otwieranego pliku i otwiera plik do odczytu</summary>
-	///	<param name="ext">domyúlne rozszerzeniu pliku, domyúlnie NULL - brak rozszerzenia</param>
-	///	<param name="desc">opis domyúlnego rozszerzenia pliku, domyúlnie NULL - brak opisu</param>
+	///	<param name="ext">domy≈õlne rozszerzeniu pliku, domy≈õlnie NULL - brak rozszerzenia</param>
+	///	<param name="desc">opis domy≈õlnego rozszerzenia pliku, domy≈õlnie NULL - brak opisu</param>
 	/// <returns>Zwraca uchwyt do pliku (NIE DZIALA Z FUNKCJAMI fprintf itp.). W przypadku niepowodzenia lub anulowania zwraca 0.</returns>
 	int SelectAndOpen(std::wstring ext = std::wstring(), std::wstring desc = std::wstring());
 
 	/// <summary>Otwiera okno dialogowe wyboru sciezki zapisywanego pliku i otwiera plik do zapisu</summary>
-	///	<param name="ext">domyúlne rozszerzeniu pliku, domyúlnie NULL - brak rozszerzenia</param>
-	///	<param name="desc">opis domyúlnego rozszerzenia pliku, domyúlnie NULL - brak opisu</param>
+	///	<param name="ext">domy≈õlne rozszerzeniu pliku, domy≈õlnie NULL - brak rozszerzenia</param>
+	///	<param name="desc">opis domy≈õlnego rozszerzenia pliku, domy≈õlnie NULL - brak opisu</param>
 	/// <returns>Zwraca uchwyt do pliku (NIE DZIALA Z FUNKCJAMI fprintf itp.). W przypadku niepowodzenia lub anulowania zwraca 0.</returns>
 	int SelectAndSave(std::wstring ext = std::wstring(), std::wstring desc = std::wstring());
 	

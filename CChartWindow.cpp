@@ -218,34 +218,34 @@ LRESULT CChartWindow::ChartWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			
 			
 			line=0;
-			wsprintf(tempStr,_T("F1\tPomoc - wyœwietla to okno"));
+			wsprintf(tempStr,_T("F1\tPomoc - wyÅ›wietla to okno"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("Spacja\tKontynuacja obliczeñ"));
+			wsprintf(tempStr,_T("Spacja\tKontynuacja obliczeÅ„"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
 			wsprintf(tempStr,_T("Ctrl+Z\tAutomatyczny zoom"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("Ctrl+S\tZapis przebiegów do pliku"));
+			wsprintf(tempStr,_T("Ctrl+S\tZapis przebiegÃ³w do pliku"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("PageDown/Up\tPrzemieszczenie wykresów (oœ X)"));
+			wsprintf(tempStr,_T("PageDown/Up\tPrzemieszczenie wykresÃ³w (oÅ› X)"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("LPM+ruch\tPrzemieszczanie wykresów (oœ X i Y)"));
+			wsprintf(tempStr,_T("LPM+ruch\tPrzemieszczanie wykresÃ³w (oÅ› X i Y)"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("PPM+ruch\tSkalowanie wykresów (oœ X i Y)"));
+			wsprintf(tempStr,_T("PPM+ruch\tSkalowanie wykresÃ³w (oÅ› X i Y)"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("Rolka pionowa\tSkalowanie wykresów (oœ Y)"));
+			wsprintf(tempStr,_T("Rolka pionowa\tSkalowanie wykresÃ³w (oÅ› Y)"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("Ctrl+Rolka pionowa\tSkalowanie wykresów (oœ X)"));
+			wsprintf(tempStr,_T("Ctrl+Rolka pionowa\tSkalowanie wykresÃ³w (oÅ› X)"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
-			wsprintf(tempStr,_T("Esc\tWyjœcie z programu"));
+			wsprintf(tempStr,_T("Esc\tWyjÅ›cie z programu"));
 			graph->DrawText(40,graph->window->height-40-line*lineHeigth,tempStr);
 			line++;
 

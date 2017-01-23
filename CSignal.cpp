@@ -38,7 +38,7 @@ int CSignal::InitMemory(int samples)
 	}
 	catch(std::bad_alloc& exc)
 	{
-		MessageBox(NULL,_T("Nieudane przydzielanie pamiêci rejestrowanych sygna³ów.\nSpróbuj skróciæ czas symulacji, zwiêkszyæ krok lub zmniejszyæ liczbê rejestrowanych przebiegów."),_T("Przydzielanie pamiêci"),MB_OK|MB_ICONERROR);
+		MessageBox(NULL,_T("Nieudane przydzielanie pamiÄ™ci rejestrowanych sygnaÅ‚Ã³w.\nSprÃ³buj skrÃ³ciÄ‡ czas symulacji, zwiÄ™kszyÄ‡ krok lub zmniejszyÄ‡ liczbÄ™ rejestrowanych przebiegÃ³w."),_T("Przydzielanie pamiÄ™ci"),MB_OK|MB_ICONERROR);
 		exit(0);
 		return 0;
 	}
@@ -118,7 +118,7 @@ void CSignal::UpdateScale(double xStep)
 		}
 	}
 
-	//dodanie ostatniej próbki - zapewnia, ¿e ostatnia rzeczywista próbka jest obecna w uproszczonej tablicy
+	//dodanie ostatniej prÃ³bki - zapewnia, Å¼e ostatnia rzeczywista prÃ³bka jest obecna w uproszczonej tablicy
 	x[nSamples]=xValues[nSamplesV-1];
 	y[nSamples]=yValues[nSamplesV-1];
 	nSamples++;

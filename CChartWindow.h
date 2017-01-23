@@ -20,13 +20,13 @@ class CChartWindow : public CWindow
 
 	CGraphics				*graph;
 	double					scale;
-	int						orderedRedraw;	//okreœla czy zamówiono odœwie¿enie okna
+	int						orderedRedraw;	//okreÅ›la czy zamÃ³wiono odÅ›wieÅ¼enie okna
 	
 	
 public:
-	int						prevPosX;	//poprzednie po³o¿enie kursora myszki w pixelach
-	int						prevPosY;	//poprzednie po³o¿enie kursora myszki w pixelach
-	std::vector<CChart *>	charts;		//wektor obszarów wykresów
+	int						prevPosX;	//poprzednie poÅ‚oÅ¼enie kursora myszki w pixelach
+	int						prevPosY;	//poprzednie poÅ‚oÅ¼enie kursora myszki w pixelach
+	std::vector<CChart *>	charts;		//wektor obszarÃ³w wykresÃ³w
 	//std::wstring			customText,customText2;
 
 	
@@ -34,48 +34,48 @@ public:
 	CChartWindow(){;}
 
 	/// <summary>Tworzy okno z wykresami</summary>
-	///	<param name="szTitle">ci¹g znaków opisuj¹cy tytu³ okna na pasku okna</param>
-	///	<param name="nWidth">Szerokoœæ okna w pixelach.</param>
-	///	<param name="nHeight">Wysokoœæ okna w pixelach. Wysokoœæ uwzglêdnia tak¿e pasek tytu³owy, zatem obszar roboczy jest mniejszy ni¿ nHeight</param>
+	///	<param name="szTitle">ciÄ…g znakÃ³w opisujÄ…cy tytuÅ‚ okna na pasku okna</param>
+	///	<param name="nWidth">SzerokoÅ›Ä‡ okna w pixelach.</param>
+	///	<param name="nHeight">WysokoÅ›Ä‡ okna w pixelach. WysokoÅ›Ä‡ uwzglÄ™dnia takÅ¼e pasek tytuÅ‚owy, zatem obszar roboczy jest mniejszy niÅ¼ nHeight</param>
 	/// <returns>zwraca: uchwyt okna</returns>
 	HWND Create(LPCTSTR szTitle, int nWidth, int nHeight);
 
 	/// <summary>Zmienia skale na osi X</summary>
-	///	<param name="scale">liczba pixeli przypadaj¹ca na jednostkê wykresu</param>
-	///	<param name="forceRecalc">ustala czy zapisane w pamiêci przebiegi zostale ponownie przeskalowane tak, by wyœwietlaæ mniej punktów; mo¿liwe wartoœci: true/false; domyœlna wartoœæ: true</param>
+	///	<param name="scale">liczba pixeli przypadajÄ…ca na jednostkÄ™ wykresu</param>
+	///	<param name="forceRecalc">ustala czy zapisane w pamiÄ™ci przebiegi zostale ponownie przeskalowane tak, by wyÅ›wietlaÄ‡ mniej punktÃ³w; moÅ¼liwe wartoÅ›ci: true/false; domyÅ›lna wartoÅ›Ä‡: true</param>
 	void ChangeXScale(double scale, int forceRecalc = true);
 	
 	/// <summary>Zmienia skale na osi Y</summary>
-	///	<param name="scale">liczba pixeli przypadaj¹ca na jednostkê wykresu</param>
+	///	<param name="scale">liczba pixeli przypadajÄ…ca na jednostkÄ™ wykresu</param>
 	void ChangeYScale(double scale);
 	
-	/// <summary>Dodaje jeden obszar wykresów do okna</summary>
+	/// <summary>Dodaje jeden obszar wykresÃ³w do okna</summary>
 	void AddChart();
 
-	/// <summary>Dodaje obszary wykresów do okna</summary>
-	///	<param name="num">liczba dodawanych obszarów</param>
+	/// <summary>Dodaje obszary wykresÃ³w do okna</summary>
+	///	<param name="num">liczba dodawanych obszarÃ³w</param>
 	void AddCharts(int num);
 	
-	/// <summary>Ustawia wartoœæ X na pocz¹tku okna (po lewej stronie)</summary>
-	///	<param name="x">wartoœæ wyra¿ona w jednostkach wykresu</param>
+	/// <summary>Ustawia wartoÅ›Ä‡ X na poczÄ…tku okna (po lewej stronie)</summary>
+	///	<param name="x">wartoÅ›Ä‡ wyraÅ¼ona w jednostkach wykresu</param>
 	void SetXPos(double x);
 
-	/// <summary>Wymusza odœwie¿enie okna. Ewentualne odœwie¿enie wystêpuje nie czêœciej ni¿ co 50ms.</summary>
+	/// <summary>Wymusza odÅ›wieÅ¼enie okna. Ewentualne odÅ›wieÅ¼enie wystÄ™puje nie czÄ™Å›ciej niÅ¼ co 50ms.</summary>
 	void OrderRedraw();
 
-	/// <summary>Ustawia kolory obszaru wykresów</summary>
-	///	<param name="cBackground">kolor t³a, mo¿na u¿yæ makra RGBA lub RGB</param>
-	///	<param name="cGrid">kolor siatki, mo¿na u¿yæ makra RGBA lub RGB</param>
-	///	<param name="cLabels">kolor napisów, mo¿na u¿yæ makra RGBA lub RGB</param>
+	/// <summary>Ustawia kolory obszaru wykresÃ³w</summary>
+	///	<param name="cBackground">kolor tÅ‚a, moÅ¼na uÅ¼yÄ‡ makra RGBA lub RGB</param>
+	///	<param name="cGrid">kolor siatki, moÅ¼na uÅ¼yÄ‡ makra RGBA lub RGB</param>
+	///	<param name="cLabels">kolor napisÃ³w, moÅ¼na uÅ¼yÄ‡ makra RGBA lub RGB</param>
 	void SetColors(DWORD cBackground, DWORD cGrid, DWORD cLabels);
 
-	/// <summary>Ustawia szerokoœæ obszaru wszystkich wykresów okna w jednostkach wykresu</summary>
-	///	<param name="width">szerokoœæ obszaru wykresu w jednostkach wykresu</param>
+	/// <summary>Ustawia szerokoÅ›Ä‡ obszaru wszystkich wykresÃ³w okna w jednostkach wykresu</summary>
+	///	<param name="width">szerokoÅ›Ä‡ obszaru wykresu w jednostkach wykresu</param>
 	void SetWidth(double width);
 
-	/// <summary>Sprawdza czy wspó³rzêdna znajduje siê w aktualnie wyœwietlanym obszarze. Pod uwagê brany jest obszar pierwszego wykresu okna.</summary>
-	///	<param name="x">Wspó³rzêdna X wyra¿ona w jednostkach wykresu (nie w pixelach)</param>
-	/// <returns>zwraca: 0 - gdy punkt znajduje siê w obszarze okna, 1 - gdy punkt znajduje siê poza obszarem po prawej stronie, -1 - gdy punkt jest poza obszarem po lewej stronie, 2 - gdy okno nie ma zdefiniowanego ¿adnego wykresu</returns>
+	/// <summary>Sprawdza czy wspÃ³Å‚rzÄ™dna znajduje siÄ™ w aktualnie wyÅ›wietlanym obszarze. Pod uwagÄ™ brany jest obszar pierwszego wykresu okna.</summary>
+	///	<param name="x">WspÃ³Å‚rzÄ™dna X wyraÅ¼ona w jednostkach wykresu (nie w pixelach)</param>
+	/// <returns>zwraca: 0 - gdy punkt znajduje siÄ™ w obszarze okna, 1 - gdy punkt znajduje siÄ™ poza obszarem po prawej stronie, -1 - gdy punkt jest poza obszarem po lewej stronie, 2 - gdy okno nie ma zdefiniowanego Å¼adnego wykresu</returns>
 	int PointOutsideWindowX(double x);
 
 	void Autoscale();
