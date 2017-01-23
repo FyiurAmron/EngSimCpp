@@ -201,7 +201,7 @@ int CSimulation::RegisterSignal( const double *y, wstring name, double offset, d
     sig.sourceY = (double *) y;
     sig.sName = name;
     sig.sYLabel = name;
-    sig.sXLabel = wstring( _T( "t" ) );
+    sig.sXLabel = wstring( L"t" );
     sig.offset = offset;
     sig.scale = scale;
 
@@ -216,7 +216,7 @@ int CSimulation::RegisterSignal( const double *x, const double *y, wstring name,
     sig.sourceY = (double *) y;
     sig.sName = name;
     sig.sYLabel = name;
-    sig.sXLabel = wstring( _T( "t" ) );
+    sig.sXLabel = wstring( L"t" );
     sig.offset = offset;
     sig.scale = scale;
 
@@ -233,8 +233,8 @@ CSignal* CSimulation::FindSignal( wstring name ) {
     }
 
     wchar_t temp[100];
-    wsprintf( temp, _T( "Nie mogę znaleźć sygnału: %s" ), name.c_str( ) );
-    MessageBox( NULL, temp, _T( "Nie znaleziono sygnału" ), MB_OK | MB_ICONWARNING );
+    wsprintf( temp, L"Nie mogę znaleźć sygnału: %s", name.c_str( ) );
+    MessageBox( NULL, temp, L"Nie znaleziono sygnału", MB_OK | MB_ICONWARNING );
     return NULL;
 }
 

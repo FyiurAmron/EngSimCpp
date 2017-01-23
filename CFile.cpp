@@ -38,15 +38,11 @@ int CFile::printf( const wchar_t *format, ... ) {
     int size;
     va_list arguments;
     va_start( arguments, format );
-    size = SPRINTF( buffer, format, arguments );
+    size = vswprintf( buffer, format, arguments );
     va_end( arguments );
 
-    if ( isUnicode ) {
-        wchar2char( buffer, buffer_ansi );
-        WriteFile( file, (wchar_t*) buffer_ansi, size, &bytesWritten, NULL );
-    } else {
-        WriteFile( file, (wchar_t*) buffer, size, &bytesWritten, NULL );
-    }
+    wchar2char( buffer, buffer_ansi );
+    WriteFile( file, ( wchar_t* ) buffer_ansi, size, &bytesWritten, NULL );
 
     return bytesWritten;
 }
@@ -70,24 +66,16 @@ int CFile::scanf( const wchar_t *format, ... ) {
 
     dataSizeInReadBuffer = 0;
     character = 0;
-    if ( isUnicode ) {
-        do {
-            ReadFile( file, &character, 1, &bytesRead, NULL );
-            read_buffer_ansi[dataSizeInReadBuffer] = character;
-            dataSizeInReadBuffer++;
-        } while( bytesRead && character != '\n' );
-        read_buffer_ansi[dataSizeInReadBuffer] = 0;
-        char2wchar( read_buffer_ansi, read_buffer );
-    } else {
-        do {
-            ReadFile( file, &character, 1, &bytesRead, NULL );
-            read_buffer[dataSizeInReadBuffer] = character;
-            dataSizeInReadBuffer++;
-        } while( bytesRead && character != '\n' );
-        read_buffer[dataSizeInReadBuffer] = 0;
-    }
 
-    bytesRead = SSCANF( read_buffer, format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 );
+    do {
+        ReadFile( file, &character, 1, &bytesRead, NULL );
+        read_buffer_ansi[dataSizeInReadBuffer] = character;
+        dataSizeInReadBuffer++;
+    } while( bytesRead && character != '\n' );
+    read_buffer_ansi[dataSizeInReadBuffer] = 0;
+    char2wchar( read_buffer_ansi, read_buffer );
+
+    bytesRead = swscanf( read_buffer, format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 );
 
     return parametersFilled;
 }
@@ -118,24 +106,24 @@ int CFile::OpenFilename( std::wstring ext, std::wstring desc ) {
     browseDialogStruct.lStructSize = sizeof (browseDialogStruct );
     browseDialogStruct.hInstance = NULL;
     browseDialogStruct.hwndOwner = NULL;
-    browseDialogStruct.lpstrFilter = _T( "*.*\0" );
+    browseDialogStruct.lpstrFilter = L"*.*\0";
     browseDialogStruct.lpstrCustomFilter = NULL;
-    browseDialogStruct.nMaxCustFilter = NULL;
-    browseDialogStruct.nFilterIndex = NULL;
+    browseDialogStruct.nMaxCustFilter = 0;
+    browseDialogStruct.nFilterIndex = 0;
     browseDialogStruct.lpstrFile = fileName;
     browseDialogStruct.nMaxFile = MAX_FILENAME_PATH;
     browseDialogStruct.lpstrFileTitle = NULL;
     browseDialogStruct.nMaxFileTitle = 0;
     browseDialogStruct.lpstrInitialDir = NULL;
     browseDialogStruct.lpstrTitle = NULL;
-    browseDialogStruct.Flags = NULL;
+    browseDialogStruct.Flags = 0;
     //browseDialogStruct.nFileOffset;
     //browseDialogStruct.nFileExtension;
     browseDialogStruct.lpstrDefExt = NULL;
     //browseDialogStruct.lCustData;
     browseDialogStruct.lpfnHook = NULL;
     browseDialogStruct.lpTemplateName = NULL;
-    browseDialogStruct.FlagsEx = NULL;
+    //browseDialogStruct.FlagsEx = NULL;
 
 
     return GetOpenFileName( &browseDialogStruct );
@@ -148,13 +136,13 @@ int CFile::SaveFilename( std::wstring ext, std::wstring desc ) {
 
     if ( ext.length( ) > 0 ) {
         if ( desc.length( ) > 0 ) {
-            wsprintf( temp, _T( "%s (*.%s)%c*.%s%cAll Files (*.*)%c*.*%c%c" ), desc.c_str( ), ext.c_str( ), NULL, ext.c_str( ), NULL, NULL, NULL, NULL );
+            wsprintf( temp, L"%s (*.%s)%c*.%s%cAll Files (*.*)%c*.*%c%c", desc.c_str( ), ext.c_str( ), NULL, ext.c_str( ), NULL, NULL, NULL, NULL );
         } else {
-            wsprintf( temp, _T( "(*.%s)%c*.%s%cAll Files (*.*)%c*.*%c%c" ), ext.c_str( ), NULL, ext.c_str( ), NULL, NULL, NULL, NULL );
+            wsprintf( temp, L"(*.%s)%c*.%s%cAll Files (*.*)%c*.*%c%c", ext.c_str( ), NULL, ext.c_str( ), NULL, NULL, NULL, NULL );
         }
         browseDialogStruct.lpstrFilter = temp;
     } else {
-        browseDialogStruct.lpstrFilter = _T( "All Files (*.*)\0*.*\0\0" );
+        browseDialogStruct.lpstrFilter = L"All Files (*.*)\0*.*\0\0";
     }
 
     browseDialogStruct.lStructSize = sizeof (browseDialogStruct );
@@ -162,8 +150,8 @@ int CFile::SaveFilename( std::wstring ext, std::wstring desc ) {
     browseDialogStruct.hwndOwner = NULL;
 
     browseDialogStruct.lpstrCustomFilter = NULL;
-    browseDialogStruct.nMaxCustFilter = NULL;
-    browseDialogStruct.nFilterIndex = NULL;
+    browseDialogStruct.nMaxCustFilter = 0;
+    browseDialogStruct.nFilterIndex = 0;
     browseDialogStruct.lpstrFile = fileName;
     browseDialogStruct.nMaxFile = MAX_FILENAME_PATH;
     browseDialogStruct.lpstrFileTitle = NULL;
@@ -177,14 +165,14 @@ int CFile::SaveFilename( std::wstring ext, std::wstring desc ) {
     //browseDialogStruct.lCustData;
     browseDialogStruct.lpfnHook = NULL;
     browseDialogStruct.lpTemplateName = NULL;
-    browseDialogStruct.FlagsEx = NULL;
+    //browseDialogStruct.FlagsEx = NULL;
 
 
     retVal = GetSaveFileName( &browseDialogStruct );
     if ( ext.length( ) > 0 && browseDialogStruct.nFilterIndex == 1 && browseDialogStruct.nFileExtension == 0 ) {
         int i;
         i = wcslen( fileName );
-        ext_c_str = (wchar_t*) ext.c_str( );
+        ext_c_str = ( wchar_t* ) ext.c_str( );
         fileName[i++] = '.';
         for( int j = 0; ext_c_str[j] != 0; j++ ) {
             fileName[i] = ext_c_str[j];

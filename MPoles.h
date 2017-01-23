@@ -5,7 +5,7 @@
 #include "MIndMachObs.h"
 #define ARMA_USE_LAPACK
 #define ARMA_USE_BLAS
-#include <armadillo>
+#include "armadillo/armadillo.h"
 
 class MPoles : public CModel {
 public:

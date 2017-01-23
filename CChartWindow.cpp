@@ -8,7 +8,7 @@ std::map<HWND, CChartWindow*> CChartWindow::allWindows;
 
 HWND CChartWindow::Create( LPCTSTR szTitle, int nWidth, int nHeight ) {
     if ( !bWndClassRegistered ) RegisterWndClass( );
-    ( ( CWindow* )this )->Create( _T( "SimChartWindow" ), szTitle, nWidth, nHeight );
+    ( ( CWindow* )this )->Create( L"SimChartWindow", szTitle, nWidth, nHeight );
     if ( this->hWnd ) {
         allWindows[hWnd] = this;
     }
@@ -16,7 +16,7 @@ HWND CChartWindow::Create( LPCTSTR szTitle, int nWidth, int nHeight ) {
 }
 
 void CChartWindow::RegisterWndClass( ) {
-    CreateWndClass( _T( "SimChartWindow" ), StaticChartWndProc, NULL );
+    CreateWndClass( L"SimChartWindow", StaticChartWndProc, 0 );
     bWndClassRegistered = true;
 }
 
@@ -84,7 +84,7 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             graph = new CGDI( ( CWindow* )this ); //inicjalizacja grafiki (GDI)
             graph->SetBgColor( RGB_( 0, 0, 0 ) );
 
-            PostMessage( hWnd, WM_SIZE, NULL, NULL );
+            PostMessage( hWnd, WM_SIZE, 0, 0 );
             //srand((unsigned)time(NULL));
 
             SetTimer( hWnd, 1, 50, NULL );
@@ -163,7 +163,7 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
             //graph->DrawText(prevPosX,wMain.height-prevPosY,sErrorVal);
             graph->SetTextColor( RGBA( 50, 50, 50, 128 ) );
-            graph->DrawText( prevPosX, height - prevPosY, _T( "BOO!!!" ) );
+            graph->DrawText( prevPosX, height - prevPosY, L"BOO!!!" );
 
             for( int i = 0; i < charts.size( ); i++ ) {
                 charts[i]->SetArea( 0, height * i / charts.size( ), -1, height * ( i + 1 ) / charts.size( ) );
@@ -192,39 +192,39 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 
                 line = 0;
-                wsprintf( tempStr, _T( "F1\tPomoc - wyświetla to okno" ) );
+                wsprintf( tempStr, L"F1\tPomoc - wyświetla to okno" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "Spacja\tKontynuacja obliczeń" ) );
+                wsprintf( tempStr, L"Spacja\tKontynuacja obliczeń" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "Ctrl+Z\tAutomatyczny zoom" ) );
+                wsprintf( tempStr, L"Ctrl+Z\tAutomatyczny zoom" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "Ctrl+S\tZapis przebiegów do pliku" ) );
+                wsprintf( tempStr, L"Ctrl+S\tZapis przebiegów do pliku" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "PageDown/Up\tPrzemieszczenie wykresów (oś X)" ) );
+                wsprintf( tempStr, L"PageDown/Up\tPrzemieszczenie wykresów (oś X)" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "LPM+ruch\tPrzemieszczanie wykresów (oś X i Y)" ) );
+                wsprintf( tempStr, L"LPM+ruch\tPrzemieszczanie wykresów (oś X i Y)" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "PPM+ruch\tSkalowanie wykresów (oś X i Y)" ) );
+                wsprintf( tempStr, L"PPM+ruch\tSkalowanie wykresów (oś X i Y)" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "Rolka pionowa\tSkalowanie wykresów (oś Y)" ) );
+                wsprintf( tempStr, L"Rolka pionowa\tSkalowanie wykresów (oś Y)" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "Ctrl+Rolka pionowa\tSkalowanie wykresów (oś X)" ) );
+                wsprintf( tempStr, L"Ctrl+Rolka pionowa\tSkalowanie wykresów (oś X)" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
-                wsprintf( tempStr, _T( "Esc\tWyjście z programu" ) );
+                wsprintf( tempStr, L"Esc\tWyjście z programu" );
                 graph->DrawText( 40, graph->window->height - 40 - line*lineHeigth, tempStr );
                 line++;
 
                 graph->SetTextSize( 9 );
-                wsprintf( tempStr, _T( "Autor GUI: Daniel Wachowiak" ) );
+                wsprintf( tempStr, L"Autor GUI: Daniel Wachowiak" );
                 graph->DrawText( 280, graph->window->height - 320 + 15, tempStr );
             }
 

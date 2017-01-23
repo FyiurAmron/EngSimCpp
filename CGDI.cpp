@@ -2,6 +2,9 @@
 
 #include "CGDI.h"
 
+using std::min;
+using std::max;
+
 BOOL CGDI::PreInit( ) {
     //Status	res;
     //res = GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
@@ -21,7 +24,7 @@ BOOL CGDI::Init( CWindow *window ) {
     curPen->SetDashStyle( DashStyleSolid );
     curBrush = new SolidBrush( Color( 0, 0, 0 ) );
     curTextBrush = new SolidBrush( Color( 0, 0, 0 ) );
-    curFontF = new FontFamily( _T( "Arial" ) );
+    curFontF = new FontFamily( L"Arial" );
     curFont = new Font( curFontF, 14, FontStyleRegular, UnitPixel );
     bgColor = new Color( RGB_( 255, 255, 255 ) );
 
@@ -31,7 +34,7 @@ BOOL CGDI::Init( CWindow *window ) {
 
     Pen pen( Color( 126, 0, 0, 155 ) );
     SolidBrush brush( Color( 126, 0, 0, 5 ) );
-    FontFamily fontf( _T( "Arial" ) );
+    FontFamily fontf( L"Arial" );
     Font font( &fontf, 7, FontStyleRegular, UnitPixel );
 
     Matrix world;
@@ -100,7 +103,8 @@ BOOL CGDI::Begin( int doubleBuffer ) {
         bmp = new Bitmap( window->width, window->height );
         gp = new Graphics( bmp );
         //gp->DrawRectangle(&Pen(Color(0,0,0)),0,0,window->width,window->height);
-        gp->FillRectangle( &SolidBrush( *bgColor ), 0, 0, window->width, window->height );
+        SolidBrush sb( *bgColor );
+        gp->FillRectangle( &sb, 0, 0, window->width, window->height );
     } else {
         gp = new Graphics( hDC );
     }
@@ -251,8 +255,8 @@ int CGDI::DrawLines( float *x, float *y, int num, double x_lim_left, double x_li
 }
 
 void CGDI::DrawRect( float x1, float y1, float x2, float y2 ) {
-    gp->FillRectangle( curBrush, min( x1, x2 ), -max( y1, y2 ), abs( x1 - x2 ), abs( y2 - y1 ) );
-    gp->DrawRectangle( curPen, min( x1, x2 ), -max( y1, y2 ), abs( x1 - x2 ), abs( y2 - y1 ) );
+    gp->FillRectangle( curBrush, (REAL) min( x1, x2 ), ( REAL ) -max( y1, y2 ), (REAL) abs( x1 - x2 ), (REAL) abs( y2 - y1 ) );
+    gp->DrawRectangle( curPen, (REAL) min( x1, x2 ), ( REAL ) -max( y1, y2 ), (REAL) abs( x1 - x2 ), (REAL) abs( y2 - y1 ) );
 }
 
 void CGDI::DrawText( float x, float y, const wchar_t *string ) {

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CSignalsFile.h"
+#include <limits>
 
 void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat format ) {
     wchar_t delimiter = ';';
@@ -11,18 +12,18 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
 
     double time, timeMin;
 
-    if ( SelectAndSave( _T( "dat" ), _T( "Plik z przebiegami" ) ) ) {
+    if ( SelectAndSave( L"dat", L"Plik z przebiegami" ) ) {
         // NAGLOWEK
 
-        if ( format == SaveSignalCSVOneTimeColumn ) printf( _T( "t%c" ), delimiter );
+        if ( format == SaveSignalCSVOneTimeColumn ) printf( L"t%c", delimiter );
         for( int i = 0; i < charts.size( ); i++ ) {
             for( int j = 0; j < charts[i]->signals.size( ); j++ ) {
-                if ( format == SaveSignalCSVMultipleTimeColumn ) printf( _T( "t%c" ), delimiter );
-                printf( _T( "%s%c" ), charts[i]->signals[j]->sName.c_str( ), delimiter );
+                if ( format == SaveSignalCSVMultipleTimeColumn ) printf( L"t%c", delimiter );
+                printf( L"%s%c", charts[i]->signals[j]->sName.c_str( ), delimiter );
                 nSignal++;
             }
         }
-        printf( _T( "\r\n" ) );
+        printf( L"\r\n" );
 
 
 
@@ -35,14 +36,14 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
                 for( int i = 0; i < charts.size( ); i++ ) {
                     for( int j = 0; j < charts[i]->signals.size( ); j++ ) {
                         if ( line < charts[i]->signals[j]->nSamples ) {
-                            printf( _T( "%f%c%f%c" ), charts[i]->signals[j]->x[line], delimiter, charts[i]->signals[j]->y[line], delimiter );
+                            printf( L"%f%c%f%c", charts[i]->signals[j]->x[line], delimiter, charts[i]->signals[j]->y[line], delimiter );
                             finished = 0;
                         } else {
-                            printf( _T( ";;" ) );
+                            printf( L";;" );
                         }
                     }
                 }
-                printf( _T( "\r\n" ) );
+                printf( L"\r\n" );
                 line++;
             } while( !finished );
         } else
@@ -70,17 +71,17 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
                 time = timeMin;
 
                 nSignal = 0;
-                printf( _T( "%f%c" ), timeMin, delimiter );
+                printf( L"%f%c", timeMin, delimiter );
                 for( int i = 0; i < charts.size( ); i++ ) {
                     for( int j = 0; j < charts[i]->signals.size( ); j++ ) {
                         if ( charts[i]->signals[j]->x[vectNums[nSignal]] <= timeMin ) {
                             vectNums[nSignal]++;
                         }
-                        printf( _T( "%f%c" ), charts[i]->signals[j]->y[vectNums[nSignal]], delimiter );
+                        printf( L"%f%c", charts[i]->signals[j]->y[vectNums[nSignal]], delimiter );
                         nSignal++;
                     }
                 }
-                printf( _T( "\r\n" ) );
+                printf( L"\r\n" );
             } while( 1 ); //petla konczona brakeiem
 
             delete[] vectNums;

@@ -5,17 +5,6 @@
 #define FILE_SCANF_BUFFER_SIZE 1024
 #define MAX_FILENAME_PATH 255
 
-#include <wchar_t.h>
-
-#ifdef _UNICODE
-#define SPRINTF vswprintf
-#define SSCANF swscanf
-#define isUnicode 1
-#else
-#define SPRINTF vsprintf
-#define isUnicode 0
-#endif
-
 enum FileAccess {
     FileWrite, FileRead, FileReadWrite
 };

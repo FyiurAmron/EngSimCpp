@@ -5,9 +5,8 @@
 //#include "CWindow.h"
 #include <CommCtrl.h>
 
-
-extern class CPropWindow;
-extern class CTrackBar;
+class CPropWindow;
+class CTrackBar;
 
 typedef void(CPropWindow::*CTRLFCNPTR )( );
 
@@ -56,7 +55,7 @@ public:
         type = ControlTypeButton;
     }
     void Create( const CWindow *parent, int x, int y, int width, int height );
-    void Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *text, CTRLFCNPTR onClick );
+    void Create( const CWindow *parent, int x, int y, int width, int height, const wchar_t *text, CTRLFCNPTR onClick );
 };
 
 class CInputText : public CControl {
@@ -72,7 +71,7 @@ public:
         buff = 0;
     }
     void Create( const CWindow *parent, int x, int y, int width, int height );
-    void Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *initVal );
+    void Create( const CWindow *parent, int x, int y, int width, int height, const wchar_t *initVal );
     void SetValue( const wchar_t *str );
     void GetValue( wchar_t *str );
     void SetValue( );

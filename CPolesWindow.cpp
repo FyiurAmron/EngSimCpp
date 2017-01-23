@@ -6,7 +6,7 @@ std::map<HWND, CPolesWindow*> CPolesWindow::allWindows;
 
 HWND CPolesWindow::Create( LPCTSTR szTitle, int nWidth, int nHeight ) {
     if ( !bWndClassRegistered ) RegisterWndClass( );
-    ( ( CWindow* )this )->Create( _T( "SimChartWindow" ), szTitle, nWidth, nHeight );
+    ( ( CWindow* )this )->Create( L"SimChartWindow", szTitle, nWidth, nHeight );
     if ( this->hWnd ) {
         allWindows[hWnd] = this;
     }
@@ -14,7 +14,7 @@ HWND CPolesWindow::Create( LPCTSTR szTitle, int nWidth, int nHeight ) {
 }
 
 void CPolesWindow::RegisterWndClass( ) {
-    CreateWndClass( _T( "SimChartWindow" ), StaticChartWndProc, NULL );
+    CreateWndClass( L"SimChartWindow", StaticChartWndProc, 0 );
     bWndClassRegistered = true;
 }
 
@@ -54,7 +54,7 @@ LRESULT CPolesWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             graph = new CGDI( ( CWindow* )this ); //inicjalizacja grafiki (GDI)
             graph->SetBgColor( RGB_( 0, 0, 0 ) );
 
-            PostMessage( hWnd, WM_SIZE, NULL, NULL );
+            PostMessage( hWnd, WM_SIZE, 0, 0 );
             srand( (unsigned) time( NULL ) );
 
             SetTimer( hWnd, 1, 50, NULL );
@@ -107,7 +107,7 @@ LRESULT CPolesWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
             //graph->DrawText(prevPosX,wMain.height-prevPosY,sErrorVal);
             graph->SetTextColor( RGBA( 50, 50, 50, 128 ) );
-            graph->DrawText( prevPosX, height - prevPosY, _T( "BOO!!!" ) );
+            graph->DrawText( prevPosX, height - prevPosY, L"BOO!!!" );
 
             for( int i = 0; i < charts.size( ); i++ ) {
                 charts[i]->SetArea( 0, height * i / charts.size( ), -1, height * ( i + 1 ) / charts.size( ) );

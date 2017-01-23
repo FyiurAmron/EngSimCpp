@@ -7,7 +7,7 @@
 extern volatile int DOS_IS_STILL_CALCULATING;
 extern volatile int LOCK_DOS;
 
-void MDosSim::InitDosModel( CSimulation *sim, MAINFCN main, EVENTFCN onReset, double *time ) {
+void MDosSim::InitDosModel( CSimulation *sim, MAINFUNC main, EVENTFUNC onReset, double *time ) {
     this->main = main;
     dos_time_src = time;
     triggerCalcAlways = 1;

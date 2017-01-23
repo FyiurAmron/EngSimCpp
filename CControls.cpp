@@ -7,7 +7,7 @@ HFONT CControl::hCtrlFont;
 
 CControl::CControl( ) {
     if ( !hCtrlFont ) {
-        hCtrlFont = CreateFont( -11, 0, 0, 0, FW_DONTCARE, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, _T( "Ms Shell Dlg" ) );
+        hCtrlFont = CreateFont( -11, 0, 0, 0, FW_DONTCARE, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, L"Ms Shell Dlg" );
     }
 
     type = ControlTypeUndefined;
@@ -84,9 +84,9 @@ void CInputText::Create( const CWindow *parent, int x, int y, int width, int hei
     Create( parent, x, y, width, height, NULL );
 }
 
-void CInputText::Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *initVal ) {
+void CInputText::Create( const CWindow *parent, int x, int y, int width, int height, const wchar_t *initVal ) {
     //HWND hWnd;
-    hWnd = CreateWindowEx( 0, _T( "edit" ), initVal, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
+    hWnd = CreateWindowEx( 0, L"edit", initVal, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
         controls[hWnd] = this;
         SendMessage( hWnd, WM_SETFONT, (WPARAM) hCtrlFont, FALSE );
@@ -111,16 +111,16 @@ void CInputText::GetValue( ) {
 }
 
 void CInputNum::Create( const CWindow *parent, int x, int y, int width, int height ) {
-    Create( parent, x, y, width, height, NULL );
+    Create( parent, x, y, width, height, 0 );
 }
 
 void CInputNum::Create( const CWindow *parent, int x, int y, int width, int height, double initVal ) {
     //HWND hWnd;
     wchar_t temp[255];
 
-    swprintf( temp, _T( "%.3f" ), initVal );
+    swprintf( temp, L"%.3f", initVal );
 
-    hWnd = CreateWindowEx( 0, _T( "edit" ), temp, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
+    hWnd = CreateWindowEx( 0, L"edit", temp, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
         controls[hWnd] = this;
         SendMessage( hWnd, WM_SETFONT, (WPARAM) hCtrlFont, FALSE );
@@ -133,7 +133,7 @@ void CInputNum::Create( const CWindow *parent, int x, int y, int width, int heig
 void CInputNum::SetValue( double val ) {
     wchar_t temp[255];
 
-    swprintf( temp, _T( "%.3f" ), val );
+    swprintf( temp, L"%.3f", val );
     SetWindowText( hWnd, temp );
     if ( trackbar ) trackbar->SetValue( val );
 }
@@ -153,7 +153,7 @@ double CInputNum::ReadValue( ) {
         if ( temp[i] == 0 ) break;
         if ( temp[i] == ',' ) temp[i] = '.';
     }
-    swscanf( temp, _T( "%f" ), &temp_num );
+    swscanf( temp, L"%f", &temp_num );
     return temp_num;
 }
 
@@ -185,9 +185,9 @@ void CTrackBar::Create( const CWindow *parent, int x, int y, int width, int heig
 void CTrackBar::Create( const CWindow *parent, int x, int y, int width, int height, double initVal ) {
     wchar_t temp[255];
 
-    wsprintf( temp, _T( "%.3f" ), initVal );
+    wsprintf( temp, L"%.3f", initVal );
 
-    hWnd = CreateWindowEx( 0, TRACKBAR_CLASS, _T( "" ), WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
+    hWnd = CreateWindowEx( 0, TRACKBAR_CLASS, L"", WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
         controls[hWnd] = this;
         SendMessage( hWnd, WM_SETFONT, (WPARAM) hCtrlFont, FALSE );
@@ -251,10 +251,10 @@ void CButton::Create( const CWindow *parent, int x, int y, int width, int height
     Create( parent, x, y, width, height, NULL, NULL );
 }
 
-void CButton::Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *initVal, CTRLFCNPTR onClick ) {
+void CButton::Create( const CWindow *parent, int x, int y, int width, int height, const wchar_t *initVal, CTRLFCNPTR onClick ) {
     //HWND hWnd;
     this->onClickFcn = onClick;
-    hWnd = CreateWindowEx( 0, _T( "button" ), initVal, WS_CHILD | WS_VISIBLE | WS_TABSTOP, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
+    hWnd = CreateWindowEx( 0, L"button", initVal, WS_CHILD | WS_VISIBLE | WS_TABSTOP, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
         controls[hWnd] = this;
         SendMessage( hWnd, WM_SETFONT, (WPARAM) hCtrlFont, FALSE );
@@ -268,7 +268,7 @@ void CText::Create( const CWindow *parent, int x, int y, int width, int height )
 
 void CText::Create( const CWindow *parent, int x, int y, int width, int height, const wchar_t *initVal ) {
     //HWND hWnd;
-    hWnd = CreateWindowEx( 0, _T( "static" ), initVal, WS_CHILD | WS_VISIBLE | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
+    hWnd = CreateWindowEx( 0, L"static", initVal, WS_CHILD | WS_VISIBLE | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
         controls[hWnd] = this;
         SendMessage( hWnd, WM_SETFONT, (WPARAM) hCtrlFont, FALSE );

@@ -1,5 +1,5 @@
 # define a sample name for the application's name 
-target := app 
+target := EngSim 
  
 # define build options 
 # compile options 
@@ -7,7 +7,8 @@ CXXFLAGS :=
 # link options 
 LDFLAGS := -L../../../library
 # link libraries 
-LDLIBS := -lTCP -lboost_thread
+LDLIBS :=
+#-lTCP -lboost_thread etc.
  
 # construct list of .cpp and their corresponding .o and .d files 
 sources  := $(wildcard *.cpp) 
@@ -15,7 +16,6 @@ includes := -I../../../library
 objects  := $(sources:.cpp=.o) 
 dep_file := Makefile.dep
  
-
 # file disambiguity is achieved via the '.PHONY' directive 
 .PHONY : all clean 
 

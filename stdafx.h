@@ -11,9 +11,12 @@ version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' la
 //#include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define UNICODE
+#define _UNICODE
+
 // Windows Header Files:
-#define UNICODE 
-#include <windows.h>
+#include <Windows.h>
+#include <Commdlg.h>
 
 // C RunTime Header Files
 #include <stdlib.h>

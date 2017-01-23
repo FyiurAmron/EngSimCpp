@@ -14,7 +14,7 @@
 #include <armadillo>*/
 
 #include "dos2win.h"
-#include "dos/dos_MAIN.h"
+#include "dos_main.h"
 //#include "dos/main.h"
 
 //double m0=1;
@@ -27,9 +27,9 @@ CChartWindow wChartW;
 
 class CSimulationOK : public CSimulation {
 public:
-    MDosSim dos;
+    MDosSim mDosSim;
 
-    CSimulationOK( ) : dos( this, main, &TIME ) {
+    CSimulationOK( ) : mDosSim( this, dos_main, &TIME ) {
         ;
     }
     void PreCalc( );
@@ -52,7 +52,7 @@ void CSimulationOK::PreCalc( ) {
     int ptOutsideWnd;
 
 
-    dos.TriggerCalcOnce( );
+    mDosSim.TriggerCalcOnce( );
 
     ptOutsideWnd = wChartW.PointOutsideWindowX( t );
     if ( ptOutsideWnd == 0 ) {
@@ -77,17 +77,17 @@ void Simulations( ) {
     CPropWindow::sim = &sim;
     CChart::sim = &sim;
 
-    dos_model = &sim.dos;
+    dos_model = &sim.mDosSim;
 
-    propsGroup.groupName = _T( "Zmiana parametrow" );
-    propsGroup.AddProperty( &i2zad, _T( "i2zad" ), NULL, -2, 2 );
+    propsGroup.groupName = L"Zmiana parametrow";
+    propsGroup.AddProperty( &i2zad, L"i2zad", 0, -2, 2 );
     //propsGroup.AddProperty(&i2zad,_T("i2zad"),NULL,-2,2);
 
-    wProps.Create( _T( "Parametry" ), 400, 550, &propsGroup );
+    wProps.Create( L"Parametry", 400, 550, &propsGroup );
     wProps.SetParent( &wChartW );
 
     wChartW.AddKeyProc( OnKeyChart, NULL );
-    wChartW.Create( _T( "symulacja" ), 1280, 700 );
+    wChartW.Create( L"symulacja", 1280, 700 );
 
 
 
@@ -97,11 +97,11 @@ void Simulations( ) {
     wChartW.AddCharts( 5 );
 
     //definiowanie rejestrowanych i wyświetlanych sygnałów
-    wChartW.charts[0]->AddSignal( &gamma, _T( "gamma" ), RGB_( 240, 0, 220 ) );
-    wChartW.charts[1]->AddSignal( &i1, _T( "i1" ), RGB_( 44, 134, 167 ) );
-    wChartW.charts[2]->AddSignal( &i2, _T( "i2" ), RGB_( 0, 255, 255 ) ); //TIME - czas symulacji dosowej _s ->/1000, bez => w sekundach
-    wChartW.charts[3]->AddSignal( &uzas, _T( "uzas" ), RGB_( 44, 134, 167 ) );
-    wChartW.charts[4]->AddSignal( &u1, _T( "u1" ), RGB_( 44, 134, 167 ) );
+    wChartW.charts[0]->AddSignal( &gamma, L"gamma", RGB_( 240, 0, 220 ) );
+    wChartW.charts[1]->AddSignal( &i1, L"i1", RGB_( 44, 134, 167 ) );
+    wChartW.charts[2]->AddSignal( &i2, L"i2", RGB_( 0, 255, 255 ) ); //TIME - czas symulacji dosowej _s ->/1000, bez => w sekundach
+    wChartW.charts[3]->AddSignal( &uzas, L"uzas", RGB_( 44, 134, 167 ) );
+    wChartW.charts[4]->AddSignal( &u1, L"u1", RGB_( 44, 134, 167 ) );
     //wChartW.charts[3]->AddSignal(&TIME_s,&x21,_T("opis"),RGB_(44,134,167));
 
 

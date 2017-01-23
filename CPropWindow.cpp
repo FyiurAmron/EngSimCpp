@@ -9,7 +9,7 @@ CSimulation* CPropWindow::sim = 0;
 HWND CPropWindow::Create( LPCTSTR szTitle, int nWidth, int nHeight, CPropertiesGroup *props ) {
     if ( !bWndClassRegistered ) RegisterWndClass( );
     this->props = props;
-    ( ( CWindow* )this )->Create( _T( "SimPropsWindow" ), szTitle, nWidth, nHeight );
+    ( ( CWindow* )this )->Create( L"SimPropsWindow", szTitle, nWidth, nHeight );
     if ( this->hWnd ) {
         allWindows[hWnd] = this;
     }
@@ -18,7 +18,7 @@ HWND CPropWindow::Create( LPCTSTR szTitle, int nWidth, int nHeight, CPropertiesG
 }
 
 void CPropWindow::RegisterWndClass( ) {
-    CreateWndClass( _T( "SimPropsWindow" ), StaticPropsWndProc, NULL );
+    CreateWndClass( L"SimPropsWindow", StaticPropsWndProc, 0 );
     bWndClassRegistered = true;
 }
 
@@ -49,7 +49,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
             inputTexts = new CText[props->props.size( )];
             for( i = 0; i < props->props.size( ); i++ ) {
                 if ( props->props[i].shortcut ) {
-                    wsprintf( varTitle, _T( "%s [%c]" ), props->props[i].name.c_str( ), props->props[i].shortcut );
+                    wsprintf( varTitle, L"%s [%c]", props->props[i].name.c_str( ), props->props[i].shortcut );
                     inputTexts[i].Create( this, 10, 10 + i * ( 20 + 10 ), 50, 20, varTitle );
                 } else {
                     inputTexts[i].Create( this, 10, 10 + i * ( 20 + 10 ), 50, 20, props->props[i].name.c_str( ) );
@@ -59,7 +59,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
                 inputTracks[i].SetRange( props->props[i].sliderMin, props->props[i].sliderMax );
                 inputTracks[i].Create( this, 110, 10 + i * ( 20 + 10 ), 250, 20, &inputNums[i] );
             }
-            resetButton.Create( this, 10, 10 + i * ( 20 + 10 ), 50, 20, _T( "Reset" ), &CPropWindow::OnButtonResetClick );
+            resetButton.Create( this, 10, 10 + i * ( 20 + 10 ), 50, 20, L"Reset", &CPropWindow::OnButtonResetClick );
             break;
         case WM_COMMAND:
             if ( CControl::ControlProc( (HWND) lParam, HIWORD( wParam ) ) == ControlChangedValue ) {
@@ -80,7 +80,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
 
                         if ( file.SelectAndSave( ) ) {
                             for( i = 0; i < props->props.size( ); i++ ) {
-                                file.printf( _T( "%s = %f\r\n" ), props->props[i].name.c_str( ), props->props[i].GetVal( ) );
+                                file.printf( L"%s = %f\r\n", props->props[i].name.c_str( ), props->props[i].GetVal( ) );
                             }
 
                             file.CloseFile( );
@@ -97,7 +97,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
 
                         if ( file.SelectAndOpen( ) ) {
                             for( i = 0; i < props->props.size( ); i++ ) {
-                                file.scanf( _T( "%s = %f\r\n" ), name, &val );
+                                file.scanf( L"%s = %f\r\n", name, &val );
                                 inputNums[i].SetValue( val );
                                 //props->props[i].SetVal(val);
                             }

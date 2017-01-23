@@ -15,7 +15,7 @@ ATOM CWindow::CreateWndClass( LPCTSTR className, WNDPROC WndProc, WORD menuID ) 
     wcex.hIcon = LoadIcon( wcex.hInstance, MAKEINTRESOURCE( IDI_WINSIM ) );
     wcex.hCursor = LoadCursor( NULL, IDC_ARROW );
     wcex.hbrBackground = (HBRUSH) ( COLOR_WINDOW );
-    wcex.lpszMenuName = menuID ? MAKEINTRESOURCE( menuID ) : NULL;
+    wcex.lpszMenuName = ( menuID != 0 ) ? MAKEINTRESOURCE( menuID ) : NULL;
     wcex.lpszClassName = className;
     wcex.hIconSm = LoadIcon( wcex.hInstance, MAKEINTRESOURCE( IDI_SMALL ) );
 
@@ -25,7 +25,7 @@ ATOM CWindow::CreateWndClass( LPCTSTR className, WNDPROC WndProc, WORD menuID ) 
 ///
 
 HWND CWindow::Create( LPCTSTR szClassName, LPCTSTR szTitle, int nWidth, int nHeight ) {
-    hWnd = CreateWindowEx( NULL, szClassName, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, nWidth, nHeight, NULL, NULL, hInstance, this );
+    hWnd = CreateWindowEx( 0, szClassName, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, nWidth, nHeight, NULL, NULL, hInstance, this );
 
     ShowWindow( hWnd, SW_SHOW );
     //DWORD error = GetLastError();

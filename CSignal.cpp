@@ -6,18 +6,18 @@ CSignal::CSignal( ) : sName( ) {
     locked = 0;
     xStep = 0.001;
     signalType = SIGNAL_LINES;
-    xValues = nullptr;
-    yValues = nullptr;
-    x = nullptr;
-    y = nullptr;
+    xValues = NULL;
+    yValues = NULL;
+    x = NULL;
+    y = NULL;
     if ( !InitMemory( SIGNAL_DEF_LENGTH ) ) exit( 0 );
 }
 
 int CSignal::InitMemory( int samples ) {
-    if ( xValues != nullptr ) delete[] xValues;
-    if ( yValues != nullptr ) delete[] yValues;
-    if ( x != nullptr ) delete[] x;
-    if ( y != nullptr ) delete[] y;
+    if ( xValues != NULL ) delete[] xValues;
+    if ( yValues != NULL ) delete[] yValues;
+    if ( x != NULL ) delete[] x;
+    if ( y != NULL ) delete[] y;
 
     try {
         xValues = new float[samples];
@@ -32,7 +32,7 @@ int CSignal::InitMemory( int samples ) {
             y[i] = 0;
         }
     } catch ( std::bad_alloc& exc ) {
-        MessageBox( NULL, _T( "Nieudane przydzielanie pamięci rejestrowanych sygnałów.\nSpróbuj skrócić czas symulacji, zwiększyć krok lub zmniejszyć liczbę rejestrowanych przebiegów." ), _T( "Przydzielanie pamięci" ), MB_OK | MB_ICONERROR );
+        MessageBox( NULL, L"Nieudane przydzielanie pamięci rejestrowanych sygnałów.\nSpróbuj skrócić czas symulacji, zwiększyć krok lub zmniejszyć liczbę rejestrowanych przebiegów.", L"Przydzielanie pamięci", MB_OK | MB_ICONERROR );
         exit( 0 );
         return 0;
     }
@@ -51,7 +51,7 @@ int CSignal::InitMemory( int samples ) {
 void CSignal::AddSample( double x, double y ) {
     //while(locked);	//zabezpieczenie przed dodawaniem nowych probek podczas przeskalowywania (przy pracy wielowatkowej)
 
-    if ( sName == _T( "x11" ) ) {
+    if ( sName == L"x11" ) {
         int booo;
         booo = yValues[0];
     }

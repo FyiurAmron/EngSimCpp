@@ -8,9 +8,9 @@
 #define MODEL_OUT double
 #define MODEL_DELAYED_IN CDelayedInput
 
-extern class CSimulation;
-extern class CModel;
-extern class CDelayedInput;
+class CSimulation;
+class CModel;
+class CDelayedInput;
 
 typedef void(CModel::*DIFF_EQUS_FCN )(double *dx, double *x );
 

@@ -7,8 +7,8 @@
 
 #include "CSimulation.h"
 
-extern class CSignal;
-extern class CGraphics;
+class CSignal;
+class CGraphics;
 
 class CChart {
     std::string xLabel;

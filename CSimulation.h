@@ -25,7 +25,6 @@ enum SimStart {
 class CSimulation {
     int pause;
 
-
     static std::map<UINT_PTR, CSimulation *> timerMap;
 
     static void CALLBACK TimerProc( HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime );
@@ -84,8 +83,8 @@ public:
     int RegisterSignal( const double *x, const double *y, wstring name, double offset = 0, double scale = 1 );
     void AddModel( CModel *model );
     void InitTimer( UINT nMiliSeconds );
-    //cvxcvxcxvc
-    void StartSimulation( SimStart start = SimStartWithInit ); //cvxcvxcxvc2
+
+    void StartSimulation( SimStart start = SimStartWithInit );
     void EndSimulation( );
     void PauseSimulation( );
     void ResumeSimulation( );
