@@ -49,7 +49,7 @@ CChart::CChart(CGraphics *graph):signals(),signalsVect(),signalsElement(),plotCo
 	x2=-1;
 	y2=-1;
 
-	SetColors(RGB(0,0,0),RGB(255,255,255),RGB(255,255,255));
+	SetColors(RGB_(0,0,0),RGB_(255,255,255),RGB_(255,255,255));
 	resapleRequired=0;
 }
 
@@ -257,7 +257,7 @@ void CChart::DrawChart()
 
 	xWidth=clip.right-clip.left;
 	
-	graph->SetLine(RGB(255,150,150,128),LINE_SOLID);
+	graph->SetLine(RGB_(255,150,150,128),LINE_SOLID);
 	graph->DrawLine(markerX,clip.bottom,markerX,clip.top);
 	
 	int markerNum=-1;	//numer probki z markerem

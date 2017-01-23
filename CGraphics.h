@@ -7,8 +7,8 @@
 #define LINE_SOLID 2
 
 #define RGBA(r, g ,b, a)  ((DWORD) ((((BYTE) (b) | ((WORD) (g) << 8)) | (((DWORD) (BYTE) (r)) << 16)) | (((DWORD) (BYTE) (a)) << 24)))
-#define RGB(r, g ,b)  ((DWORD) ((((BYTE) (b) | ((WORD) (g) << 8)) | (((DWORD) (BYTE) (r)) << 16)) | (((DWORD) (BYTE) (255)) << 24)))
-#define DrawText DrawTextW
+#define RGB_(r, g ,b)  ((DWORD) ((((BYTE) (b) | ((WORD) (g) << 8)) | (((DWORD) (BYTE) (r)) << 16)) | (((DWORD) (BYTE) (255)) << 24)))
+//#define DrawText DrawTextW
 
 class CPoint
 {
@@ -30,9 +30,9 @@ public:
 class CGraphics
 {
 protected:
-	
+
 	HDC		hDC;
-	
+
 	double	scale;
 public:
 	CWindow	*window;

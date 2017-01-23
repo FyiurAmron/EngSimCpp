@@ -2,10 +2,11 @@
 <configurationDescriptor version="97">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df root="." name="0">
+      <df name="_misc">
+      </df>
       <df name="dos">
         <df name="zbiory">
           <in>Cpwm2.C</in>
-          <in>ELA.H</in>
           <in>F2.C</in>
           <in>F4.C</in>
           <in>GRAF2.C</in>
@@ -29,7 +30,6 @@
           <in>TRAPEZ.C</in>
         </df>
         <in>dos_MAIN.cpp</in>
-        <in>dos_MAIN.h</in>
         <in>dos_PWM_ALTE.cpp</in>
       </df>
       <in>CChart.cpp</in>

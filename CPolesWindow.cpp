@@ -64,7 +64,7 @@ LRESULT CPolesWindow::ChartWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	//*****************************************************************************************
 	case WM_CREATE:
 		graph = new CGDI((CWindow*)this);	//inicjalizacja grafiki (GDI)
-		graph->SetBgColor(RGB(0,0,0));
+		graph->SetBgColor(RGB_(0,0,0));
 
 		PostMessage(hWnd,WM_SIZE,NULL,NULL);
 		srand((unsigned)time(NULL));

@@ -102,7 +102,7 @@ LRESULT CChartWindow::ChartWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	//*****************************************************************************************
 	case WM_CREATE:
 		graph = new CGDI((CWindow*)this);	//inicjalizacja grafiki (GDI)
-		graph->SetBgColor(RGB(0,0,0));
+		graph->SetBgColor(RGB_(0,0,0));
 
 		PostMessage(hWnd,WM_SIZE,NULL,NULL);
 		//srand((unsigned)time(NULL));
@@ -208,7 +208,7 @@ LRESULT CChartWindow::ChartWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARA
 			graph->SetScale(1);
 			graph->SetClipping(0,graph->window->width,0,graph->window->height);
 		
-			graph->SetTextColor(RGB(255,255,255));
+			graph->SetTextColor(RGB_(255,255,255));
 			graph->SetTextSize(14);
 			lineHeigth=20;
 			graph->SetFillColor(RGBA(0,0,0,200));

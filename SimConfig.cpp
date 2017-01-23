@@ -111,12 +111,12 @@ void Simulations()
 	wChartW.AddCharts(5);
 
 	//definiowanie rejestrowanych i wyświetlanych sygnałów
-	wChartW.charts[0]->AddSignal(&gamma,_T("gamma"),RGB(240,0,220));
-	wChartW.charts[1]->AddSignal(&i1,_T("i1"),RGB(44,134,167));
-	wChartW.charts[2]->AddSignal(&i2,_T("i2"),RGB(0,255,255)); //TIME - czas symulacji dosowej _s ->/1000, bez => w sekundach
-	wChartW.charts[3]->AddSignal(&uzas,_T("uzas"),RGB(44,134,167));
-	wChartW.charts[4]->AddSignal(&u1,_T("u1"),RGB(44,134,167));
-	//wChartW.charts[3]->AddSignal(&TIME_s,&x21,_T("opis"),RGB(44,134,167));
+	wChartW.charts[0]->AddSignal(&gamma,_T("gamma"),RGB_(240,0,220));
+	wChartW.charts[1]->AddSignal(&i1,_T("i1"),RGB_(44,134,167));
+	wChartW.charts[2]->AddSignal(&i2,_T("i2"),RGB_(0,255,255)); //TIME - czas symulacji dosowej _s ->/1000, bez => w sekundach
+	wChartW.charts[3]->AddSignal(&uzas,_T("uzas"),RGB_(44,134,167));
+	wChartW.charts[4]->AddSignal(&u1,_T("u1"),RGB_(44,134,167));
+	//wChartW.charts[3]->AddSignal(&TIME_s,&x21,_T("opis"),RGB_(44,134,167));
 	
 
 
@@ -140,7 +140,7 @@ void Simulations()
 //	wChartW.charts[2]->SetHeight(2);
 
 	//definiowanie kolorow okna (tla,siatki,etykiet)
-	wChartW.SetColors(RGBA(0,0,0,128),RGBA(255,255,255,100),RGB(255,255,0));
+	wChartW.SetColors(RGBA(0,0,0,128),RGBA(255,255,255,100),RGB_(255,255,0));
 
 	
 	sim.SetStep(1e-5,5e-5,2.5);	//kroki oraz czas symulacji

@@ -26,7 +26,7 @@ BOOL CGDI::Init(CWindow *window)
 	curTextBrush = new SolidBrush(Color(0,0,0));
 	curFontF = new FontFamily(_T("Arial"));
 	curFont = new Font(curFontF,14,FontStyleRegular,UnitPixel);
-	bgColor = new Color(RGB(255,255,255));
+	bgColor = new Color(RGB_(255,255,255));
 	
 
 	return 1;
