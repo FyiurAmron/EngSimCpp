@@ -1,14 +1,15 @@
 CC = g++
 #FLAGS = -c -O3 -Wall -Wextra
 FLAGS = -c -O3 -Wall -Wno-unused-variable -Wno-unused-local-typedefs
-LIBS = -lcomdlg32 -lgdi32 -lgdiplus -Llib -llapack_win32_MT
+#LIBS = -Llib -lopenblas.dll -lcomdlg32 -lgdi32 -lgdiplus
+LIBS = -Llib -lcbia.lib.lapack.dyn.rel.x86.12 -lcomdlg32 -lgdi32 -lgdiplus
 INCLUDES = -Iinclude
 
 SOURCEDIR = src
 BUILDDIR = build
 
 EXECUTABLENAME = EngSim
-EXECUTABLE = $(EXECUTABLENAME)
+EXECUTABLE = bin/$(EXECUTABLENAME)
 SOURCES = $(wildcard $(SOURCEDIR)/*.cpp)
 OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp,$(BUILDDIR)/%.o,$(SOURCES))
 

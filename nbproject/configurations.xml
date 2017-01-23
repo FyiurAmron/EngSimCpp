@@ -27,6 +27,7 @@
         <in>WinMain.cpp</in>
         <in>dos2win.cpp</in>
       </df>
+      <in>readme.MD</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -55,13 +56,15 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f makefile</buildCommand>
           <cleanCommand>${MAKE} -f makefile clean</cleanCommand>
-          <executablePath></executablePath>
+          <executablePath>EngSim.exe</executablePath>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
+      <item path="readme.MD" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="src/CChart.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/CChartWindow.cpp" ex="false" tool="1" flavor2="0">

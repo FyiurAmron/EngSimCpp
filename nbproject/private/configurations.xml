@@ -4,6 +4,8 @@
     <df root="." name="0">
       <df name="_misc">
       </df>
+      <df name="bin">
+      </df>
       <df name="build">
       </df>
       <df name="include">
@@ -355,6 +357,7 @@
         <in>dos_main.h</in>
         <in>stdafx.h</in>
       </df>
+      <in>readme.MD</in>
     </df>
   </logicalFolder>
   <projectmakefile>makefile</projectmakefile>
@@ -382,6 +385,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>

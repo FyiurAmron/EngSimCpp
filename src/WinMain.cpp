@@ -70,18 +70,3 @@ int APIENTRY WinMain( HINSTANCE hInstance,
 
     return (int) msg.wParam;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
