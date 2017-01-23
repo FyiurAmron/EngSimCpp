@@ -3,7 +3,7 @@
 
 #include <GdiPlus.h>
 using namespace Gdiplus;
-#pragma comment (lib,"Gdiplus.lib")
+//#pragma comment (lib,"Gdiplus.lib")
 
 #include "CWindow.h"
 #include "CGraphics.h"

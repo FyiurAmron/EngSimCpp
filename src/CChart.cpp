@@ -233,8 +233,8 @@ void CChart::DrawChart( ) {
     int markerNum = -1; //numer probki z markerem
     for( int i = 0; i < nSignalNum; i++ ) {
         if ( signals[i]->sName == L"obserwator" ) {
-            int ggg;
-            ggg = 3;
+            //int ggg;
+            //ggg = 3;
         }
         graph->SetLine( plotColors[i], LINE_SOLID );
         switch( signals[i]->signalType ) {
@@ -294,7 +294,7 @@ void CChart::ChangeScale( double x, double y, int increment, int forceRecalc ) {
     }
 
     if ( forceRecalc && resapleRequired ) {
-        for( int i = 0; i < signals.size( ); i++ ) {
+        for( size_t i = 0; i < signals.size( ); i++ ) {
             signals[i]->UpdateScale( 1.0 / scaleX );
         }
         resapleRequired = 0;
@@ -303,7 +303,7 @@ void CChart::ChangeScale( double x, double y, int increment, int forceRecalc ) {
 
 void CChart::RewriteSignalsAfterScale( ) {
     if ( resapleRequired ) {
-        for( int i = 0; i < signals.size( ); i++ ) {
+        for( size_t i = 0; i < signals.size( ); i++ ) {
             signals[i]->UpdateScale( 1 / scaleX );
         }
     }
@@ -341,7 +341,7 @@ void CChart::AddSignal( const double *x, const double *y, std::wstring name, DWO
 }
 
 void CChart::UpdateSignalsPointers( ) {
-    for( int i = 0; i < signals.size( ); i++ ) {
+    for( size_t i = 0; i < signals.size( ); i++ ) {
         if ( signalsElement[i] >= 0 ) {
             //signals[i] = &(*(signalsVect[i])[signalsElement[i]]);
             signals[i] = &( *( signalsVect[i] ) )[signalsElement[i]];
@@ -391,7 +391,7 @@ void CChart::DrawLegend( int transparency ) {
             swprintf( temp, L"%s (offset:%.1f; scale:%.1f)", signals[i]->sName.c_str( ), signals[i]->offset, signals[i]->scale );
             strPtr = temp;
         } else {
-            strPtr = (wchar_t*) signals[i]->sName.c_str( );
+            strPtr = ( wchar_t* ) signals[i]->sName.c_str( );
         }
         graph->SetTextColor( ( (DWORD) plotColors[i] & ~( 255 << 24 ) ) | ( ( (DWORD) (BYTE) ( transparency ) ) << 24 ) );
         graph->DrawText( legendFrameX1 + 10, legendFrameY1 + 10 + ( i + 1 ) * fontHeight, strPtr );
@@ -399,17 +399,17 @@ void CChart::DrawLegend( int transparency ) {
 }
 
 void CChart::FindMargins( ) {
-    for( int signal = 0; signal < signals.size( ); signal++ ) {
+    for( size_t signal = 0; signal < signals.size( ); signal++ ) {
         signals[signal]->FindMargins( );
         minX = INFINITE;
         maxX = -1e10;
         minY = INFINITE;
         maxY = -1e10;
 
-        if ( signals[signal]->minX < minX )minX = signals[signal]->minX;
-        if ( signals[signal]->maxX > maxX )maxX = signals[signal]->maxX;
-        if ( signals[signal]->minY < minY )minY = signals[signal]->minY;
-        if ( signals[signal]->maxY > maxY )maxY = signals[signal]->maxY;
+        if ( signals[signal]->minX < minX ) minX = signals[signal]->minX;
+        if ( signals[signal]->maxX > maxX ) maxX = signals[signal]->maxX;
+        if ( signals[signal]->minY < minY ) minY = signals[signal]->minY;
+        if ( signals[signal]->maxY > maxY ) maxY = signals[signal]->maxY;
     }
 }
 

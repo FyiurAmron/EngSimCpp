@@ -11,8 +11,6 @@ class CSignal;
 class CGraphics;
 
 class CChart {
-    std::string xLabel;
-    std::string yLabel;
     int x1;
     int x2;
     int y1;
@@ -30,15 +28,12 @@ class CChart {
 
     bool resapleRequired;
 
-
-    std::vector<DWORD> plotColors;
-    std::vector<int> prevXNum;
-    std::vector<double> prevXVal;
     int nSignalNum;
 
     DWORD colorBackground;
     DWORD colorGrid;
     DWORD colorLabels;
+
     static int markerFontSize;
 
     //void Copy(const CChart& obj);
@@ -49,6 +44,12 @@ public:
     std::vector<CSignal *> signals;
     std::vector<std::vector<CSignal> *> signalsVect;
     std::vector<int> signalsElement;
+
+    std::vector<DWORD> plotColors;
+    std::vector<int> prevXNum;
+    std::vector<double> prevXVal;
+    std::string xLabel;
+    std::string yLabel;
 
     CGraphics *graph;
     int transforming; //czy bedzie skalowany i przesuwany (czy kliknieto mysza na tym wykresie)

@@ -10,8 +10,7 @@
 #include "CGDI.h"
 
 #include "CChart.h"
-#include "CNeuralNet.h"
-
+//#include "CNeuralNet.h"
 
 #define MAX_LOADSTRING 100
 
@@ -25,23 +24,23 @@ LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
 INT_PTR CALLBACK About( HWND, UINT, WPARAM, LPARAM );
 
 
-
 //CWindow wMain,wMain2,wChild;
 extern void Simulations( );
 
-int APIENTRY _tWinMain( HINSTANCE hInstance,
+int APIENTRY WinMain( HINSTANCE hInstance,
         HINSTANCE hPrevInstance,
-        LPTSTR lpCmdLine,
+        LPSTR lpCmdLine,
         int nCmdShow ) {
     UNREFERENCED_PARAMETER( hPrevInstance );
     UNREFERENCED_PARAMETER( lpCmdLine );
+    UNREFERENCED_PARAMETER( nCmdShow );
     GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
 
     // TODO: Place code here.
     MSG msg;
     HACCEL hAccelTable;
-    LCID myLangID;
+    //LCID myLangID;
     // Initialize global strings
     LoadString( hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING );
     LoadString( hInstance, IDC_WINSIM, szWindowClass, MAX_LOADSTRING );
@@ -50,16 +49,13 @@ int APIENTRY _tWinMain( HINSTANCE hInstance,
     CWindow::SetInstance( hInstance );
     GdiplusStartup( &gdiplusToken, &gdiplusStartupInput, NULL );
 
-    myLangID = GetThreadLocale( );
+    //myLangID = GetThreadLocale( );
 
     srand( (unsigned) time( NULL ) );
 
     Simulations( );
 
-
-
     hAccelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDC_WINSIM ) );
-
 
     // Main message loop:
     while( GetMessage( &msg, NULL, 0, 0 ) ) {

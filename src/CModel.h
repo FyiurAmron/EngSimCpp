@@ -80,36 +80,24 @@ public:
     ///	<param name="parent">wskaźnik do modelu nadrzędnego</param>
     void InheritCalcTrigger( CModel *parent );
 
-    virtual void OnCalculate( ) {
-        ;
-    }
+    virtual void OnCalculate( ) { }
 
-    virtual void OnReset( ) {
-        ;
-    }
+    virtual void OnReset( ) { }
 
-    virtual void OnInit( ) {
-        ;
-    }
+    virtual void OnInit( ) { }
 
-    virtual void OnPause( ) {
-        ;
-    }
+    virtual void OnPause( ) { }
 
-    virtual void OnResume( ) {
-        ;
-    }
+    virtual void OnResume( ) { }
 
-    virtual void OnEnd( ) {
-        ;
-    }
+    virtual void OnEnd( ) { }
 
     virtual void Calculate( double t ) {
-        ;
+        UNREFERENCED_PARAMETER( t );
     }
 
     virtual void Calculate2( double t ) {
-        ;
+        UNREFERENCED_PARAMETER( t );
     }
 
     void TriggerCalcOnce( ) {
