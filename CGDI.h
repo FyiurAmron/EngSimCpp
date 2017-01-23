@@ -8,74 +8,79 @@ using namespace Gdiplus;
 #include "CWindow.h"
 #include "CGraphics.h"
 
-class CGDI : public CGraphics
-{
-	PAINTSTRUCT			ps;
-	HDC					hDC;
+class CGDI : public CGraphics {
+    PAINTSTRUCT ps;
+    HDC hDC;
 
-	Graphics			*gp, *gp2;
-	Bitmap				*bmp;
+    Graphics *gp, *gp2;
+    Bitmap *bmp;
 
-	Matrix				mModel;
-	Matrix				mViewport;
+    Matrix mModel;
+    Matrix mViewport;
 
-	float				dashPattern[2];
+    float dashPattern[2];
 
-	int doubleBuffer;
+    int doubleBuffer;
 
-	BOOL Init(CWindow *window);
-	void DeInit();
+    BOOL Init( CWindow *window );
+    void DeInit( );
 
-	void UpdateWorldMatrix();
-	Color	*curPenColor, *curBrushColor;
-	Pen		*curPen;
-	Brush	*curBrush;
-	Brush	*curTextBrush;
-	Color	*bgColor;
-	FontFamily	*curFontF;
-	Font		*curFont;
+    void UpdateWorldMatrix( );
+    Color *curPenColor, *curBrushColor;
+    Pen *curPen;
+    Brush *curBrush;
+    Brush *curTextBrush;
+    Color *bgColor;
+    FontFamily *curFontF;
+    Font *curFont;
 public:
-	static BOOL PreInit();
-	static void AfterDeInit();
-	CGDI(CWindow *window){Init(window);}
-	~CGDI(){DeInit();}
+    static BOOL PreInit( );
+    static void AfterDeInit( );
 
-	BOOL Begin(int doubleBuffer = TRUE);
-	BOOL End();
+    CGDI( CWindow *window ) {
+        Init( window );
+    }
 
-	void ClearModelMatrix();
-	void ClearViewMatrix();
+    ~CGDI( ) {
+        DeInit( );
+    }
 
-	void SetClipping(float left, float right, float bottom, float top);
-	void GetClipping(CRect *rect);
-	void SetBgColor(DWORD color);
+    BOOL Begin( int doubleBuffer = TRUE );
+    BOOL End( );
 
-	void TranslateModel(double x, double y);
-	void RotateModel(double degrees);
-	void ScaleModel(double x, double y);
+    void ClearModelMatrix( );
+    void ClearViewMatrix( );
 
-	void TranslateView(double x, double y);
-	void RotateView(double degrees);
-	void ScaleView(double x, double y);
+    void SetClipping( float left, float right, float bottom, float top );
+    void GetClipping( CRect *rect );
+    void SetBgColor( DWORD color );
 
-	void DrawLine(float x1, float y1, float x2, float y2);
-	void DrawPoint(float x, float y);
-	void DrawPoints(float *x, float *y, int num);
-	void DrawLines(float *x, float *y, int num, double x_lim_left, double x_lim_right);
-	int DrawLines(float *x, float *y, int num, double x_lim_left, double x_lim_right, double markerX);
-	void DrawText(float x, float y, const TCHAR *string);
+    void TranslateModel( double x, double y );
+    void RotateModel( double degrees );
+    void ScaleModel( double x, double y );
 
-	void DrawRect(float x1, float y1, float x2, float y2);
-	void Cursor2Pos(int x, int y, CPoint *res);
+    void TranslateView( double x, double y );
+    void RotateView( double degrees );
+    void ScaleView( double x, double y );
 
-	void SetLineColor(DWORD color);
-	void SetLinePattern(int pattern);
-	void SetLine(DWORD color, int pattern);
-	void SetFillColor(DWORD color);
-	void SetTextColor(DWORD color);
-	void SetTextSize(int fontSize);
+    void DrawLine( float x1, float y1, float x2, float y2 );
+    void DrawPoint( float x, float y );
+    void DrawPoints( float *x, float *y, int num );
+    void DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right );
+    int DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right, double markerX );
+    void DrawText( float x, float y, const TCHAR *string );
 
-	int GetFontHeight();
+    void DrawRect( float x1, float y1, float x2, float y2 );
+    void Cursor2Pos( int x, int y, CPoint *res );
+
+    void SetLineColor( DWORD color );
+    void SetLinePattern( int pattern );
+    void SetLine( DWORD color, int pattern );
+    void SetFillColor( DWORD color );
+    void SetTextColor( DWORD color );
+    void SetTextSize( int fontSize );
+
+    int GetFontHeight( );
 };
 
 #endif

@@ -7,43 +7,40 @@
 #define ARMA_USE_BLAS
 #include <armadillo>
 
-class MPoles : public CModel
-{
+class MPoles : public CModel {
 public:
-	int size;
+    int size;
 
-	arma::mat		A,B;
-	arma::cx_vec	eig_vals;
-	arma::cx_mat	eig_vecs;
+    arma::mat A, B;
+    arma::cx_vec eig_vals;
+    arma::cx_mat eig_vecs;
 
-	double	*eig_values[2],*eig_values2[2];
+    double *eig_values[2], *eig_values2[2];
 
-	MIndMachObs *obs;
-	CSignal		*signal,*signal2;
-
-
-	double wa,wr,T;
-	double isd,isq,frd,frq;
-
-	double poles_qi;
-
-	double *wr_ptr,*T_ptr,*frq_ptr;
+    MIndMachObs *obs;
+    CSignal *signal, *signal2;
 
 
-	MPoles(CSimulation *sim) :
-		CModel(sim,0)
-	{
-		wr=1;
-		T=0.9;
-		frq=0.75;
-	}
+    double wa, wr, T;
+    double isd, isq, frd, frq;
 
-	void GetPoles();
-	void SetSize(int size);
-	void Update();
-	void OnCalculate();
-	void NewTick();
-	void SaveAsSignal();
+    double poles_qi;
+
+    double *wr_ptr, *T_ptr, *frq_ptr;
+
+    MPoles( CSimulation *sim ) :
+    CModel( sim, 0 ) {
+        wr = 1;
+        T = 0.9;
+        frq = 0.75;
+    }
+
+    void GetPoles( );
+    void SetSize( int size );
+    void Update( );
+    void OnCalculate( );
+    void NewTick( );
+    void SaveAsSignal( );
 };
 
 #endif

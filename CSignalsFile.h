@@ -7,12 +7,13 @@
 
 #include <vector>
 
-enum SaveSignalFormat {SaveSignalCSVOneTimeColumn,SaveSignalCSVMultipleTimeColumn};
+enum SaveSignalFormat {
+    SaveSignalCSVOneTimeColumn, SaveSignalCSVMultipleTimeColumn
+};
 
-class CSignalsFile : public CFile
-{
+class CSignalsFile : public CFile {
 public:
-	void SaveSignals(std::vector<CChart*> &charts, SaveSignalFormat format);
+    void SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat format );
 };
 
 #endif

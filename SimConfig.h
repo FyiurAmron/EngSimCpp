@@ -1,2 +1,2 @@
-void Simulations();
-void FinishSimulations();
+void Simulations( );
+void FinishSimulations( );

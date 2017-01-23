@@ -10,76 +10,75 @@
 #define RGB_(r, g ,b)  ((DWORD) ((((BYTE) (b) | ((WORD) (g) << 8)) | (((DWORD) (BYTE) (r)) << 16)) | (((DWORD) (BYTE) (255)) << 24)))
 //#define DrawText DrawTextW
 
-class CPoint
-{
+class CPoint {
 public:
-	double x;
-	double y;
+    double x;
+    double y;
 };
 
-class CRect
-{
+class CRect {
 public:
-	float left;
-	float right;
-	float bottom;
-	float top;
+    float left;
+    float right;
+    float bottom;
+    float top;
 };
 
-
-class CGraphics
-{
+class CGraphics {
 protected:
 
-	HDC		hDC;
+    HDC hDC;
 
-	double	scale;
+    double scale;
 public:
-	CWindow	*window;
-	CGraphics(){scale=1.0;}
-	virtual BOOL Init(CWindow *window) = 0;
-	virtual void DeInit() = 0;
+    CWindow *window;
 
-	virtual BOOL Begin(int doubleBuffer = TRUE) = 0;
-	virtual BOOL End() = 0;
+    CGraphics( ) {
+        scale = 1.0;
+    }
+    virtual BOOL Init( CWindow *window ) = 0;
+    virtual void DeInit( ) = 0;
 
-	virtual void ClearModelMatrix() = 0;
-	virtual void ClearViewMatrix() = 0;
+    virtual BOOL Begin( int doubleBuffer = TRUE ) = 0;
+    virtual BOOL End( ) = 0;
 
-	virtual void SetClipping(float left, float right, float bottom, float top) = 0;
-	virtual void GetClipping(CRect *rect) = 0;
-	virtual void SetBgColor(DWORD color) = 0;
+    virtual void ClearModelMatrix( ) = 0;
+    virtual void ClearViewMatrix( ) = 0;
 
-	virtual void TranslateModel(double x, double y) = 0;
-	virtual void RotateModel(double degrees) = 0;
-	virtual void ScaleModel(double x, double y) = 0;
+    virtual void SetClipping( float left, float right, float bottom, float top ) = 0;
+    virtual void GetClipping( CRect *rect ) = 0;
+    virtual void SetBgColor( DWORD color ) = 0;
 
-	virtual void TranslateView(double x, double y) = 0;
-	virtual void RotateView(double degrees) = 0;
-	virtual void ScaleView(double x, double y) = 0;
+    virtual void TranslateModel( double x, double y ) = 0;
+    virtual void RotateModel( double degrees ) = 0;
+    virtual void ScaleModel( double x, double y ) = 0;
 
-	virtual void SetScale(double scale);
+    virtual void TranslateView( double x, double y ) = 0;
+    virtual void RotateView( double degrees ) = 0;
+    virtual void ScaleView( double x, double y ) = 0;
 
-	virtual void DrawLine(float x1, float y1, float x2, float y2) = 0;
-	virtual void DrawLines(float *x, float *y, int num, double x_lim_left, double x_lim_right) = 0;
-	virtual int DrawLines(float *x, float *y, int num, double x_lim_left, double x_lim_right, double markerX) = 0;
-	virtual void DrawPoint(float x, float y) = 0;
-	virtual void DrawPoints(float *x, float *y, int num) = 0;
-	virtual void DrawText(float x, float y, const TCHAR *string) = 0;
-	void DrawNumber(float x, float y, int number);
-	void DrawNumber(float x, float y, float number, TCHAR *precision=_T(".3"));
+    virtual void SetScale( double scale );
 
-	virtual void DrawRect(float x1, float y1, float x2, float y2) = 0;
-	virtual void Cursor2Pos(int x, int y, CPoint *res) = 0;
+    virtual void DrawLine( float x1, float y1, float x2, float y2 ) = 0;
+    virtual void DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right ) = 0;
+    virtual int DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right, double markerX ) = 0;
+    virtual void DrawPoint( float x, float y ) = 0;
+    virtual void DrawPoints( float *x, float *y, int num ) = 0;
+    virtual void DrawText( float x, float y, const TCHAR *string ) = 0;
+    void DrawNumber( float x, float y, int number );
+    void DrawNumber( float x, float y, float number, TCHAR *precision = _T( ".3" ) );
 
-	virtual void SetLineColor(DWORD color) = 0;
-	virtual void SetLinePattern(int pattern) = 0;
-	virtual void SetLine(DWORD color, int pattern) = 0;
-	virtual void SetFillColor(DWORD color) = 0;
-	virtual void SetTextColor(DWORD color) = 0;
-	virtual void SetTextSize(int fontSize) = 0;
+    virtual void DrawRect( float x1, float y1, float x2, float y2 ) = 0;
+    virtual void Cursor2Pos( int x, int y, CPoint *res ) = 0;
 
-	virtual int GetFontHeight() = 0;
+    virtual void SetLineColor( DWORD color ) = 0;
+    virtual void SetLinePattern( int pattern ) = 0;
+    virtual void SetLine( DWORD color, int pattern ) = 0;
+    virtual void SetFillColor( DWORD color ) = 0;
+    virtual void SetTextColor( DWORD color ) = 0;
+    virtual void SetTextSize( int fontSize ) = 0;
+
+    virtual int GetFontHeight( ) = 0;
 };
 
 #endif
