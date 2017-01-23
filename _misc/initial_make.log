@@ -1,0 +1,410 @@
+g++  -I../../../library -c CChart.cpp -o CChart.o 
+In file included from CChart.cpp:3:0:
+CGraphics.h:10:0: warning: "RGB" redefined
+ #define RGB(r, g ,b)  ((DWORD) ((((BYTE) (b) | ((WORD) (g) << 8)) | (((DWORD) (BYTE) (r)) << 16)) | (((DWORD) (BYTE) (255)) << 24)))
+ ^
+In file included from e:\develop\c\mingw\include\windows.h:52:0,
+                 from stdafx.h:16,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\include\wingdi.h:2688:0: note: this is the location of the previous definition
+ #define RGB(r,g,b) ((COLORREF)((BYTE)(r)|((BYTE)(g) << 8)|((BYTE)(b) << 16)))
+ ^
+In file included from CChart.cpp:3:0:
+CGraphics.h:11:0: warning: "DrawText" redefined
+ #define DrawText DrawTextW
+ ^
+In file included from e:\develop\c\mingw\include\windows.h:55:0,
+                 from stdafx.h:16,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\include\winuser.h:4399:0: note: this is the location of the previous definition
+ #define DrawText DrawTextA
+ ^
+CChart.cpp:260:36: error: macro "RGB" passed 4 arguments, but takes just 3
+  graph->SetLine(RGB(255,150,150,128),LINE_SOLID);
+                                    ^
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CGraphics.h:70:70: warning: deprecated conversion from string constant to 'TCHAR* {aka char*}' [-Wwrite-strings]
+  void DrawNumber(float x, float y, float number, TCHAR *precision=_T(".3"));
+                                                                      ^
+In file included from CSimulation.h:5:0,
+                 from CChart.h:8,
+                 from CChartWindow.h:5,
+                 from CChart.cpp:4:
+CModel.h:11:14: error: a storage class can only be specified for objects and functions
+ extern class CSimulation;
+              ^
+CModel.h:12:14: error: a storage class can only be specified for objects and functions
+ extern class CModel;
+              ^
+CModel.h:13:14: error: a storage class can only be specified for objects and functions
+ extern class CDelayedInput;
+              ^
+In file included from CChartWindow.h:5:0,
+                 from CChart.cpp:4:
+CChart.h:10:14: error: a storage class can only be specified for objects and functions
+ extern class CSignal;
+              ^
+CChart.h:11:14: error: a storage class can only be specified for objects and functions
+ extern class CGraphics;
+              ^
+CChart.cpp: In member function 'void CChart::DrawChart()':
+CChart.cpp:207:49: error: cannot convert 'TCHAR* {aka char*}' to 'wchar_t*' for argument '1' to 'int swprintf(wchar_t*, const wchar_t*, ...)'
+    swprintf(wstr,_T("%.0f"),i*divXdigit*divXmult);
+                                                 ^
+CChart.cpp:214:40: error: cannot convert 'TCHAR* {aka char*}' to 'wchar_t*' for argument '1' to 'int swprintf(wchar_t*, const wchar_t*, ...)'
+    swprintf(wstr2,_T("%%.%df"),-divXpow);
+                                        ^
+CChart.cpp:215:44: error: cannot convert 'TCHAR* {aka char*}' to 'wchar_t*' for argument '1' to 'int swprintf(wchar_t*, const wchar_t*, ...)'
+    swprintf(wstr,wstr2,i*divXdigit*divXmult);
+                                            ^
+CChart.cpp:228:49: error: cannot convert 'TCHAR* {aka char*}' to 'wchar_t*' for argument '1' to 'int swprintf(wchar_t*, const wchar_t*, ...)'
+    swprintf(wstr,_T("%.0f"),i*divYdigit*divYmult);
+                                                 ^
+CChart.cpp:231:40: error: cannot convert 'TCHAR* {aka char*}' to 'wchar_t*' for argument '1' to 'int swprintf(wchar_t*, const wchar_t*, ...)'
+    swprintf(wstr2,_T("%%.%df"),-divYpow);
+                                        ^
+CChart.cpp:232:44: error: cannot convert 'TCHAR* {aka char*}' to 'wchar_t*' for argument '1' to 'int swprintf(wchar_t*, const wchar_t*, ...)'
+    swprintf(wstr,wstr2,i*divYdigit*divYmult);
+                                            ^
+CChart.cpp:260:17: error: 'RGB' was not declared in this scope
+  graph->SetLine(RGB(255,150,150,128),LINE_SOLID);
+                 ^
+CChart.cpp:266:23: error: no match for 'operator==' (operand types are 'std::wstring {aka std::basic_string<wchar_t>}' and 'const char [11]')
+   if(signals[i]->sName==_T("obserwator"))
+                       ^
+CChart.cpp:266:23: note: candidates are:
+In file included from e:\develop\c\mingw\include\ole2.h:9:0,
+                 from e:\develop\c\mingw\include\windows.h:114,
+                 from stdafx.h:16,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\include\objbase.h:78:13: note: BOOL operator==(const GUID&, const GUID&)
+ inline BOOL operator==(const GUID& guidOne, const GUID& guidOther)
+             ^
+e:\develop\c\mingw\include\objbase.h:78:13: note:   no known conversion for argument 1 from 'std::wstring {aka std::basic_string<wchar_t>}' to 'const GUID& {aka const _GUID&}'
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iterator:66:0,
+                 from CSimulation.h:10,
+                 from CChart.h:8,
+                 from CChartWindow.h:5,
+                 from CChart.cpp:4:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stream_iterator.h:130:5: note: template<class _Tp, class _CharT, class _Traits, class _Dist> bool std::operator==(const std::istream_iterator<_Tp, _CharT, _Traits, _Dist>&, const std::istream_iterator<_Tp, _CharT, _Traits, _Dist>&)
+     operator==(const istream_iterator<_Tp, _CharT, _Traits, _Dist>& __x,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stream_iterator.h:130:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::istream_iterator<_Tp, _CharT, _Traits, _Dist>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\map:62:0,
+                 from CSimulation.h:8,
+                 from CChart.h:8,
+                 from CChartWindow.h:5,
+                 from CChart.cpp:4:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_multimap.h:903:5: note: template<class _Key, class _Tp, class _Compare, class _Alloc> bool std::operator==(const std::multimap<_Key, _Tp, _Compare, _Alloc>&, const std::multimap<_Key, _Tp, _Compare, _Alloc>&)
+     operator==(const multimap<_Key, _Tp, _Compare, _Alloc>& __x,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_multimap.h:903:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::multimap<_Key, _Tp, _Compare, _Alloc>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\map:61:0,
+                 from CSimulation.h:8,
+                 from CChart.h:8,
+                 from CChartWindow.h:5,
+                 from CChart.cpp:4:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_map.h:1000:5: note: template<class _Key, class _Tp, class _Compare, class _Alloc> bool std::operator==(const std::map<_Key, _Tp, _Compare, _Alloc>&, const std::map<_Key, _Tp, _Compare, _Alloc>&)
+     operator==(const map<_Key, _Tp, _Compare, _Alloc>& __x,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_map.h:1000:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::map<_Key, _Tp, _Compare, _Alloc>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\map:60:0,
+                 from CSimulation.h:8,
+                 from CChart.h:8,
+                 from CChartWindow.h:5,
+                 from CChart.cpp:4:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_tree.h:970:5: note: template<class _Key, class _Val, class _KeyOfValue, class _Compare, class _Alloc> bool std::operator==(const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>&, const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>&)
+     operator==(const _Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>& __x,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_tree.h:970:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::_Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\map:60:0,
+                 from CSimulation.h:8,
+                 from CChart.h:8,
+                 from CChartWindow.h:5,
+                 from CChart.cpp:4:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_tree.h:323:5: note: template<class _Val> bool std::operator==(const std::_Rb_tree_iterator<_Tp>&, const std::_Rb_tree_const_iterator<_Val>&)
+     operator==(const _Rb_tree_iterator<_Val>& __x,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_tree.h:323:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::_Rb_tree_iterator<_Tp>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\vector:64:0,
+                 from CWindow.h:5,
+                 from CGraphics.h:4,
+                 from CChart.cpp:3:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_vector.h:1511:5: note: template<class _Tp, class _Alloc> bool std::operator==(const std::vector<_Tp, _Alloc>&, const std::vector<_Tp, _Alloc>&)
+     operator==(const vector<_Tp, _Alloc>& __x, const vector<_Tp, _Alloc>& __y)
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_vector.h:1511:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::vector<_Tp, _Alloc>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_facets.h:48:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_ios.h:37,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:44,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\streambuf_iterator.h:204:5: note: template<class _CharT, class _Traits> bool std::operator==(const std::istreambuf_iterator<_CharT, _Traits>&, const std::istreambuf_iterator<_CharT, _Traits>&)
+     operator==(const istreambuf_iterator<_CharT, _Traits>& __a,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\streambuf_iterator.h:204:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::istreambuf_iterator<_CharT, _Traits>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\string:52:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_classes.h:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\ios_base.h:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:42,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2538:5: note: template<class _CharT, class _Traits, class _Alloc> bool std::operator==(const std::basic_string<_CharT, _Traits, _Alloc>&, const _CharT*)
+     operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2538:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   deduced conflicting types for parameter 'const _CharT' ('wchar_t' and 'char')
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\string:52:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_classes.h:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\ios_base.h:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:42,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2526:5: note: template<class _CharT, class _Traits, class _Alloc> bool std::operator==(const _CharT*, const std::basic_string<_CharT, _Traits, _Alloc>&)
+     operator==(const _CharT* __lhs,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2526:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   mismatched types 'const _CharT*' and 'std::basic_string<wchar_t>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\string:52:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_classes.h:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\ios_base.h:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:42,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2512:5: note: template<class _CharT> typename __gnu_cxx::__enable_if<std::__is_char<_Tp>::__value, bool>::__type std::operator==(const std::basic_string<_CharT>&, const std::basic_string<_CharT>&)
+     operator==(const basic_string<_CharT>& __lhs,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2512:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   mismatched types 'const std::basic_string<_CharT>' and 'const char [11]'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\string:52:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_classes.h:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\ios_base.h:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:42,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2505:5: note: template<class _CharT, class _Traits, class _Alloc> bool std::operator==(const std::basic_string<_CharT, _Traits, _Alloc>&, const std::basic_string<_CharT, _Traits, _Alloc>&)
+     operator==(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\basic_string.h:2505:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   mismatched types 'const std::basic_string<_CharT, _Traits, _Alloc>' and 'const char [11]'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\string:41:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_classes.h:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\ios_base.h:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:42,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\allocator.h:133:5: note: template<class _Tp> bool std::operator==(const std::allocator<_CharT>&, const std::allocator<_CharT>&)
+     operator==(const allocator<_Tp>&, const allocator<_Tp>&)
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\allocator.h:133:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::allocator<_CharT>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\string:41:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_classes.h:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\ios_base.h:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:42,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\allocator.h:128:5: note: template<class _T1, class _T2> bool std::operator==(const std::allocator<_CharT>&, const std::allocator<_T2>&)
+     operator==(const allocator<_T1>&, const allocator<_T2>&)
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\allocator.h:128:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::allocator<_CharT>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_algobase.h:67:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\char_traits.h:39,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:342:5: note: template<class _IteratorL, class _IteratorR> bool std::operator==(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_IteratorR>&)
+     operator==(const reverse_iterator<_IteratorL>& __x,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:342:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_algobase.h:67:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\char_traits.h:39,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:292:5: note: template<class _Iterator> bool std::operator==(const std::reverse_iterator<_Iterator>&, const std::reverse_iterator<_Iterator>&)
+     operator==(const reverse_iterator<_Iterator>& __x,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:292:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::reverse_iterator<_Iterator>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_algobase.h:64:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\char_traits.h:39,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_pair.h:214:5: note: template<class _T1, class _T2> bool std::operator==(const std::pair<_T1, _T2>&, const std::pair<_T1, _T2>&)
+     operator==(const pair<_T1, _T2>& __x, const pair<_T1, _T2>& __y)
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_pair.h:214:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::pair<_T1, _T2>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iosfwd:40:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\postypes.h:216:5: note: template<class _StateT> bool std::operator==(const std::fpos<_StateT>&, const std::fpos<_StateT>&)
+     operator==(const fpos<_StateT>& __lhs, const fpos<_StateT>& __rhs)
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\postypes.h:216:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const std::fpos<_StateT>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\mingw32\bits\c++allocator.h:33:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\allocator.h:46,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\string:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\locale_classes.h:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\ios_base.h:41,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:42,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ext\new_allocator.h:139:5: note: template<class _Tp> bool __gnu_cxx::operator==(const __gnu_cxx::new_allocator<_Tp>&, const __gnu_cxx::new_allocator<_Tp>&)
+     operator==(const new_allocator<_Tp>&, const new_allocator<_Tp>&)
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ext\new_allocator.h:139:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const __gnu_cxx::new_allocator<_Tp>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_algobase.h:67:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\char_traits.h:39,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:815:5: note: template<class _Iterator, class _Container> bool __gnu_cxx::operator==(const __gnu_cxx::__normal_iterator<_Iterator, _Container>&, const __gnu_cxx::__normal_iterator<_Iterator, _Container>&)
+     operator==(const __normal_iterator<_Iterator, _Container>& __lhs,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:815:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const __gnu_cxx::__normal_iterator<_Iterator, _Container>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+In file included from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_algobase.h:67:0,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\char_traits.h:39,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ios:40,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\ostream:38,
+                 from e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\iostream:39,
+                 from stdafx.h:24,
+                 from CChart.cpp:1:
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:808:5: note: template<class _IteratorL, class _IteratorR, class _Container> bool __gnu_cxx::operator==(const __gnu_cxx::__normal_iterator<_IteratorL, _Container>&, const __gnu_cxx::__normal_iterator<_IteratorR, _Container>&)
+     operator==(const __normal_iterator<_IteratorL, _Container>& __lhs,
+     ^
+e:\develop\c\mingw\lib\gcc\mingw32\4.9.3\include\c++\bits\stl_iterator.h:808:5: note:   template argument deduction/substitution failed:
+In file included from stdafx.h:22:0,
+                 from CChart.cpp:1:
+CChart.cpp:266:28: note:   'std::wstring {aka std::basic_string<wchar_t>}' is not derived from 'const __gnu_cxx::__normal_iterator<_IteratorL, _Container>'
+   if(signals[i]->sName==_T("obserwator"))
+                            ^
+CChart.cpp:290:81: warning: deprecated conversion from string constant to 'TCHAR* {aka char*}' [-Wwrite-strings]
+    graph->DrawNumber(clip.left,signals[i]->y[markerNum],signals[i]->y[markerNum]);
+                                                                                 ^
+CChart.cpp:296:110: warning: deprecated conversion from string constant to 'TCHAR* {aka char*}' [-Wwrite-strings]
+   graph->DrawNumber(signals[nSignalNum-1]->x[markerNum],clip.top,signals[nSignalNum-1]->x[markerNum],_T(".6"));
+                                                                                                              ^
+CChart.cpp: In member function 'void CChart::DrawLegend(int)':
+CChart.cpp:453:115: error: cannot convert 'TCHAR* {aka char*}' to 'wchar_t*' for argument '1' to 'int swprintf(wchar_t*, const wchar_t*, ...)'
+    swprintf(temp,_T("%s (offset:%.1f; scale:%.1f)"),signals[i]->sName.c_str(),signals[i]->offset,signals[i]->scale);
+                                                                                                                   ^
+make: *** [CChart.o] Error 1

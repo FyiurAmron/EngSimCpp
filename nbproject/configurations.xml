@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="97">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name="dos">
+        <df name="zbiory">
+          <in>Cpwm2.C</in>
+          <in>F2.C</in>
+          <in>F4.C</in>
+          <in>GRAF2.C</in>
+          <in>GRAFFILE.C</in>
+          <in>GRAFFTXT.C</in>
+          <in>KAT_PLL.C</in>
+          <in>Kat.c</in>
+          <in>Limit.c</in>
+          <in>NZERO.C</in>
+          <in>PAR.C</in>
+          <in>PWM.C</in>
+          <in>PWM1.C</in>
+          <in>PWM2.C</in>
+          <in>PWM3.C</in>
+          <in>PWMO.C</in>
+          <in>PWMU_2W.C</in>
+          <in>PWMU_2WR.C</in>
+          <in>PWMU_2XY.C</in>
+          <in>PWM_I.C</in>
+          <in>Pwmu_3wr.c</in>
+          <in>TRAPEZ.C</in>
+        </df>
+        <in>dos_MAIN.cpp</in>
+        <in>dos_PWM_ALTE.cpp</in>
+      </df>
+      <in>CChart.cpp</in>
+      <in>CChartWindow.cpp</in>
+      <in>CControls.cpp</in>
+      <in>CFile.cpp</in>
+      <in>CGDI.cpp</in>
+      <in>CGenAlg.cpp</in>
+      <in>CGraphics.cpp</in>
+      <in>CModel.cpp</in>
+      <in>CNeuralNet.cpp</in>
+      <in>CPolesWindow.cpp</in>
+      <in>CPropWindow.cpp</in>
+      <in>CProperties.cpp</in>
+      <in>CSignal.cpp</in>
+      <in>CSignalsFile.cpp</in>
+      <in>CSimulation.cpp</in>
+      <in>CWindow.cpp</in>
+      <in>MDosSim.cpp</in>
+      <in>MIndMach.cpp</in>
+      <in>MIndMachObs.cpp</in>
+      <in>MPoles.cpp</in>
+      <in>SimConfig.cpp</in>
+      <in>WinMain.cpp</in>
+      <in>dos2win.cpp</in>
+      <in>stdafx.cpp</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>nbproject/private/launcher.properties</itemPath>
+      <itemPath>makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f makefile</buildCommand>
+          <cleanCommand>${MAKE} -f makefile clean</cleanCommand>
+          <executablePath></executablePath>
+        </makeTool>
+        <preBuild>
+          <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
+          <preBuildCommand></preBuildCommand>
+        </preBuild>
+      </makefileType>
+      <item path="CChart.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CChartWindow.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CControls.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CGDI.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CGenAlg.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CGraphics.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CModel.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CNeuralNet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CPolesWindow.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CPropWindow.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CProperties.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CSignal.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CSignalsFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CSimulation.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CWindow.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MDosSim.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MIndMach.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MIndMachObs.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MPoles.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SimConfig.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WinMain.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/dos_MAIN.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/dos_PWM_ALTE.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/Cpwm2.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/F2.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/F4.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/GRAF2.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/GRAFFILE.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/GRAFFTXT.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/KAT_PLL.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/Kat.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="dos/zbiory/Limit.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="dos/zbiory/NZERO.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PAR.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWM.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWM1.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWM2.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWM3.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWMO.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWMU_2W.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWMU_2WR.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWMU_2XY.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/PWM_I.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos/zbiory/Pwmu_3wr.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="dos/zbiory/TRAPEZ.C" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="dos2win.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="stdafx.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
