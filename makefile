@@ -1,7 +1,8 @@
 CC = g++
 #FLAGS = -c -O3 -Wall -Wextra
 FLAGS = -c -O3 -Wall -Wno-unused-variable -Wno-unused-local-typedefs
-LIBS = -lgdi32 -lgdiplus
+LIBS = -lcomdlg32 -lgdi32 -lgdiplus -Llib -llapack_win32_MT
+INCLUDES = -Iinclude
 
 SOURCEDIR = src
 BUILDDIR = build
@@ -22,10 +23,10 @@ dir:
 	mkdir -p $(BUILDDIR)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LIBS) $^ -o $@
+	$(CC) $^ -o $@ $(LIBS)
 
 $(OBJECTS): $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
-	$(CC) $(FLAGS) $< -o $@
+	$(CC) $(INCLUDES) $(FLAGS) $< -o $@
 
 clean:
 	rm -f $(BUILDDIR)/*.o $(EXECUTABLE)

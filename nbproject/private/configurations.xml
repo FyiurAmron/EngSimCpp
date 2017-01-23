@@ -6,11 +6,7 @@
       </df>
       <df name="build">
       </df>
-      <df name="dep">
-      </df>
-      <df name="obj">
-      </df>
-      <df name="src">
+      <df name="include">
         <df name="armadillo">
           <df name="armadillo_bits">
             <in>BaseCube_bones.hpp</in>
@@ -196,9 +192,7 @@
             <in>op_cov_meat.hpp</in>
             <in>op_cumsum_bones.hpp</in>
             <in>op_cumsum_meat.hpp</in>
-            <in>op_cx_scalar_bones (1).hpp</in>
             <in>op_cx_scalar_bones.hpp</in>
-            <in>op_cx_scalar_meat (1).hpp</in>
             <in>op_cx_scalar_meat.hpp</in>
             <in>op_diagmat_bones.hpp</in>
             <in>op_diagmat_meat.hpp</in>
@@ -306,6 +300,10 @@
           </df>
           <in>armadillo.h</in>
         </df>
+      </df>
+      <df name="lib">
+      </df>
+      <df name="src">
         <in>CChart.cpp</in>
         <in>CChart.h</in>
         <in>CChartWindow.cpp</in>
