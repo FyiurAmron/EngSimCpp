@@ -227,7 +227,7 @@ void CChart::DrawChart( ) {
 
     xWidth = clip.right - clip.left;
 
-    graph->SetLine( RGB_( 255, 150, 150, 128 ), LINE_SOLID );
+    graph->SetLine( RGBA( 255, 150, 150, 128 ), LINE_SOLID );
     graph->DrawLine( markerX, clip.bottom, markerX, clip.top );
 
     int markerNum = -1; //numer probki z markerem
