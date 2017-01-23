@@ -1,0 +1,47 @@
+CChart.o: CChart.cpp stdafx.h targetver.h CSignal.h CGraphics.h CWindow.h \
+ Resource.h CChartWindow.h CChart.h CSimulation.h CModel.h CGDI.h
+CChartWindow.o: CChartWindow.cpp stdafx.h targetver.h CChartWindow.h \
+ CWindow.h Resource.h CChart.h CSimulation.h CSignal.h CModel.h \
+ CGraphics.h CGDI.h CSignalsFile.h CFile.h
+CControls.o: CControls.cpp stdafx.h targetver.h CPropWindow.h CWindow.h \
+ Resource.h CControls.h CSimulation.h CSignal.h CModel.h CProperties.h
+CFile.o: CFile.cpp stdafx.h targetver.h CFile.h
+CGDI.o: CGDI.cpp stdafx.h targetver.h CGDI.h CWindow.h Resource.h \
+ CGraphics.h
+CGenAlg.o: CGenAlg.cpp stdafx.h targetver.h CGenAlg.h
+CGraphics.o: CGraphics.cpp stdafx.h targetver.h CGraphics.h CWindow.h \
+ Resource.h
+CModel.o: CModel.cpp stdafx.h targetver.h CModel.h CSimulation.h \
+ CSignal.h
+CNeuralNet.o: CNeuralNet.cpp stdafx.h targetver.h CNeuralNet.h
+CPolesWindow.o: CPolesWindow.cpp stdafx.h targetver.h CPolesWindow.h \
+ CChartWindow.h CWindow.h Resource.h CChart.h CSimulation.h CSignal.h \
+ CModel.h CGraphics.h CGDI.h
+CPropWindow.o: CPropWindow.cpp stdafx.h targetver.h CPropWindow.h \
+ CWindow.h Resource.h CControls.h CSimulation.h CSignal.h CModel.h \
+ CProperties.h CFile.h
+CProperties.o: CProperties.cpp stdafx.h targetver.h CProperties.h
+CSignal.o: CSignal.cpp stdafx.h targetver.h CSignal.h
+CSignalsFile.o: CSignalsFile.cpp stdafx.h targetver.h CSignalsFile.h \
+ CFile.h CSignal.h CChart.h CSimulation.h CModel.h
+CSimulation.o: CSimulation.cpp stdafx.h targetver.h CSimulation.h \
+ CSignal.h CModel.h
+CWindow.o: CWindow.cpp stdafx.h targetver.h CWindow.h Resource.h
+MDosSim.o: MDosSim.cpp stdafx.h targetver.h MDosSim.h CModel.h \
+ CSimulation.h CSignal.h dos2win.h
+MIndMach.o: MIndMach.cpp stdafx.h targetver.h MIndMach.h CModel.h \
+ CSimulation.h CSignal.h
+MIndMachObs.o: MIndMachObs.cpp stdafx.h targetver.h MIndMachObs.h \
+ CModel.h CSimulation.h CSignal.h
+MPoles.o: MPoles.cpp stdafx.h targetver.h MPoles.h CModel.h CSimulation.h \
+ CSignal.h MIndMachObs.h
+SimConfig.o: SimConfig.cpp stdafx.h targetver.h SimConfig.h \
+ CChartWindow.h CWindow.h Resource.h CChart.h CSimulation.h CSignal.h \
+ CModel.h CGraphics.h CGDI.h CPropWindow.h CControls.h CProperties.h \
+ CFile.h MDosSim.h dos2win.h dos/dos_MAIN.h
+WinMain.o: WinMain.cpp stdafx.h targetver.h WinMain.h resource.h \
+ SimConfig.h CWindow.h Resource.h CChartWindow.h CChart.h CSimulation.h \
+ CSignal.h CModel.h CGraphics.h CGDI.h CNeuralNet.h
+dos2win.o: dos2win.cpp stdafx.h targetver.h dos2win.h MDosSim.h CModel.h \
+ CSimulation.h CSignal.h
+stdafx.o: stdafx.cpp stdafx.h targetver.h
