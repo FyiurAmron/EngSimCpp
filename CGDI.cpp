@@ -255,7 +255,7 @@ void CGDI::DrawRect( float x1, float y1, float x2, float y2 ) {
     gp->DrawRectangle( curPen, min( x1, x2 ), -max( y1, y2 ), abs( x1 - x2 ), abs( y2 - y1 ) );
 }
 
-void CGDI::DrawText( float x, float y, const TCHAR *string ) {
+void CGDI::DrawText( float x, float y, const wchar_t *string ) {
     PointF p( x, -y );
     Matrix temp, mIdentity;
     //FontFamily	fontf(_T("Arial"));

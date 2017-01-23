@@ -8,15 +8,15 @@ void CGraphics::SetScale( double scale ) {
 }
 
 void CGraphics::DrawNumber( float x, float y, int number ) {
-    TCHAR str_tmp[100];
+    wchar_t str_tmp[100];
 
-    swprintf( str_tmp, _T( "%d" ), number );
+    swprintf( str_tmp, L"%d", number );
     DrawText( x, y, str_tmp );
 }
 
-void CGraphics::DrawNumber( float x, float y, float number, TCHAR *precision ) {
-    TCHAR str_tmp[100], str_tmp2[100];
-    swprintf( str_tmp2, _T( "%%%sf" ), precision );
+void CGraphics::DrawNumber( float x, float y, float number, const wchar_t *precision ) {
+    wchar_t str_tmp[100], str_tmp2[100];
+    swprintf( str_tmp2, L"%%%sf", precision );
     swprintf( str_tmp, str_tmp2, number );
     DrawText( x, y, str_tmp );
 }

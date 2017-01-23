@@ -68,7 +68,7 @@ public:
     void DrawPoints( float *x, float *y, int num );
     void DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right );
     int DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right, double markerX );
-    void DrawText( float x, float y, const TCHAR *string );
+    void DrawText( float x, float y, const wchar_t *string );
 
     void DrawRect( float x1, float y1, float x2, float y2 );
     void Cursor2Pos( int x, int y, CPoint *res );

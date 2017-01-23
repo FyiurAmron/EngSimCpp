@@ -84,7 +84,7 @@ void CInputText::Create( const CWindow *parent, int x, int y, int width, int hei
     Create( parent, x, y, width, height, NULL );
 }
 
-void CInputText::Create( const CWindow *parent, int x, int y, int width, int height, TCHAR *initVal ) {
+void CInputText::Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *initVal ) {
     //HWND hWnd;
     hWnd = CreateWindowEx( 0, _T( "edit" ), initVal, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
@@ -94,11 +94,11 @@ void CInputText::Create( const CWindow *parent, int x, int y, int width, int hei
     }
 }
 
-void CInputText::SetValue( const TCHAR *str ) {
+void CInputText::SetValue( const wchar_t *str ) {
     SetWindowText( hWnd, str );
 }
 
-void CInputText::GetValue( TCHAR *str ) {
+void CInputText::GetValue( wchar_t *str ) {
     GetWindowText( hWnd, str, 255 );
 }
 
@@ -116,7 +116,7 @@ void CInputNum::Create( const CWindow *parent, int x, int y, int width, int heig
 
 void CInputNum::Create( const CWindow *parent, int x, int y, int width, int height, double initVal ) {
     //HWND hWnd;
-    TCHAR temp[255];
+    wchar_t temp[255];
 
     swprintf( temp, _T( "%.3f" ), initVal );
 
@@ -131,7 +131,7 @@ void CInputNum::Create( const CWindow *parent, int x, int y, int width, int heig
 }
 
 void CInputNum::SetValue( double val ) {
-    TCHAR temp[255];
+    wchar_t temp[255];
 
     swprintf( temp, _T( "%.3f" ), val );
     SetWindowText( hWnd, temp );
@@ -145,7 +145,7 @@ double CInputNum::GetValue( ) {
 }
 
 double CInputNum::ReadValue( ) {
-    TCHAR temp[255];
+    wchar_t temp[255];
     float temp_num;
 
     GetWindowText( hWnd, temp, 255 );
@@ -158,7 +158,7 @@ double CInputNum::ReadValue( ) {
 }
 
 void CInputNum::SetValue( ) {
-    /*TCHAR temp[255];
+    /*wchar_t temp[255];
 
     swprintf(temp,_T("%.3f"),buff);
     if(buff) SetWindowText(hWnd,temp);*/
@@ -183,7 +183,7 @@ void CTrackBar::Create( const CWindow *parent, int x, int y, int width, int heig
 }
 
 void CTrackBar::Create( const CWindow *parent, int x, int y, int width, int height, double initVal ) {
-    TCHAR temp[255];
+    wchar_t temp[255];
 
     wsprintf( temp, _T( "%.3f" ), initVal );
 
@@ -251,7 +251,7 @@ void CButton::Create( const CWindow *parent, int x, int y, int width, int height
     Create( parent, x, y, width, height, NULL, NULL );
 }
 
-void CButton::Create( const CWindow *parent, int x, int y, int width, int height, TCHAR *initVal, CTRLFCNPTR onClick ) {
+void CButton::Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *initVal, CTRLFCNPTR onClick ) {
     //HWND hWnd;
     this->onClickFcn = onClick;
     hWnd = CreateWindowEx( 0, _T( "button" ), initVal, WS_CHILD | WS_VISIBLE | WS_TABSTOP, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
@@ -266,7 +266,7 @@ void CText::Create( const CWindow *parent, int x, int y, int width, int height )
     Create( parent, x, y, width, height, NULL );
 }
 
-void CText::Create( const CWindow *parent, int x, int y, int width, int height, const TCHAR *initVal ) {
+void CText::Create( const CWindow *parent, int x, int y, int width, int height, const wchar_t *initVal ) {
     //HWND hWnd;
     hWnd = CreateWindowEx( 0, _T( "static" ), initVal, WS_CHILD | WS_VISIBLE | ES_LEFT, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
@@ -277,6 +277,6 @@ void CText::Create( const CWindow *parent, int x, int y, int width, int height, 
 
 }
 
-void CText::SetValue( const TCHAR *str ) {
+void CText::SetValue( const wchar_t *str ) {
     SetWindowText( hWnd, str );
 }

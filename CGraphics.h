@@ -64,9 +64,9 @@ public:
     virtual int DrawLines( float *x, float *y, int num, double x_lim_left, double x_lim_right, double markerX ) = 0;
     virtual void DrawPoint( float x, float y ) = 0;
     virtual void DrawPoints( float *x, float *y, int num ) = 0;
-    virtual void DrawText( float x, float y, const TCHAR *string ) = 0;
+    virtual void DrawText( float x, float y, const wchar_t *string ) = 0;
     void DrawNumber( float x, float y, int number );
-    void DrawNumber( float x, float y, float number, TCHAR *precision = _T( ".3" ) );
+    void DrawNumber( float x, float y, float number, const wchar_t *precision = L".3" );
 
     virtual void DrawRect( float x1, float y1, float x2, float y2 ) = 0;
     virtual void Cursor2Pos( int x, int y, CPoint *res ) = 0;

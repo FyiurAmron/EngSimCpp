@@ -37,7 +37,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
     switch( message ) {
         case WM_CREATE:
             int i;
-            TCHAR varTitle[255];
+            wchar_t varTitle[255];
 
             this->hWnd = hWnd;
             //but.Create(this,10,10,50,20,_T("TestButton"),&CPropWindow::OnButtonOKClick);
@@ -92,7 +92,7 @@ LRESULT CPropWindow::PropsWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARA
                     {
                         CFile file;
                         int line = 0;
-                        TCHAR name[255];
+                        wchar_t name[255];
                         float val;
 
                         if ( file.SelectAndOpen( ) ) {

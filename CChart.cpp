@@ -92,7 +92,7 @@ void CChart::DrawChart( ) {
 
     int mouseX;
 
-    TCHAR wstr[100], wstr2[100];
+    wchar_t wstr[100], wstr2[100];
 
     UpdateSignalsPointers( );
 
@@ -179,12 +179,12 @@ void CChart::DrawChart( ) {
         graph->DrawLine( frameX1 + ( i + divShift ) * divXdigit * divXmult * scaleX + marginLeft, frameY1 + marginBottom, frameX1 + ( i + divShift ) * divXdigit * divXmult * scaleX + marginLeft, frameY2 - marginTop );
 
         if ( divXpow >= 0 ) {
-            swprintf( wstr, _T( "%.0f" ), i * divXdigit * divXmult );
+            swprintf( wstr, L"%.0f", i * divXdigit * divXmult );
         } else {
             if ( divXpow > 5 ) {
                 divXpow++;
             }
-            swprintf( wstr2, _T( "%%.%df" ), -divXpow );
+            swprintf( wstr2, L"%%.%df", -divXpow );
             swprintf( wstr, wstr2, i * divXdigit * divXmult );
         }
         graph->DrawText( ( i + divShift ) * divXdigit * divXmult * scaleX + marginLeft, frameY1 + 17, wstr );
@@ -196,9 +196,9 @@ void CChart::DrawChart( ) {
         graph->DrawLine( frameX1 + marginLeft, frameY1 + ( i + divShift ) * divYdigit * divYmult * scaleY + marginBottom, frameX2 - marginRight, frameY1 + ( i + divShift ) * divYdigit * divYmult * scaleY + marginBottom );
 
         if ( divYpow >= 0 ) {
-            swprintf( wstr, _T( "%.0f" ), i * divYdigit * divYmult );
+            swprintf( wstr, L"%.0f", i * divYdigit * divYmult );
         } else {
-            swprintf( wstr2, _T( "%%.%df" ), -divYpow );
+            swprintf( wstr2, L"%%.%df", -divYpow );
             swprintf( wstr, wstr2, i * divYdigit * divYmult );
         }
         graph->DrawText( frameX1 + 22, frameY1 + ( i + divShift ) * divYdigit * divYmult * scaleY + marginBottom, wstr );
@@ -232,7 +232,7 @@ void CChart::DrawChart( ) {
 
     int markerNum = -1; //numer probki z markerem
     for( int i = 0; i < nSignalNum; i++ ) {
-        if ( signals[i]->sName == _T( "obserwator" ) ) {
+        if ( signals[i]->sName == L"obserwator" ) {
             int ggg;
             ggg = 3;
         }
@@ -258,7 +258,7 @@ void CChart::DrawChart( ) {
     }
     if ( markerNum >= 0 ) {
         graph->SetTextColor( colorLabels );
-        graph->DrawNumber( signals[nSignalNum - 1]->x[markerNum], clip.top, signals[nSignalNum - 1]->x[markerNum], _T( ".6" ) );
+        graph->DrawNumber( signals[nSignalNum - 1]->x[markerNum], clip.top, signals[nSignalNum - 1]->x[markerNum], L".6" );
     }
     mouseX = ( (CChartWindow*) ( graph->window ) )->prevPosX;
     DrawLegend( ( mouseX < frameX2 - 150 ) ? ( mouseX > ( frameX2 - frameX1 ) / 2 ) ? ( ( frameX2 - 150 - mouseX )*255 / ( frameX2 - 150 - frameX1 - ( frameX2 - frameX1 ) / 2 ) ) : 255 : 0 );
@@ -364,8 +364,8 @@ void CChart::DrawLegend( int transparency ) {
     int fontHeight;
     int n;
     int legendFrameX1, legendFrameX2, legendFrameY1, legendFrameY2;
-    TCHAR temp[255];
-    TCHAR *strPtr;
+    wchar_t temp[255];
+    wchar_t *strPtr;
 
     graph->SetTextSize( 11 );
     fontHeight = graph->GetFontHeight( );
@@ -388,10 +388,10 @@ void CChart::DrawLegend( int transparency ) {
 
     for( int i = 0; i < n; i++ ) {
         if ( signals[i]->offset != 0 || signals[i]->scale != 1 ) {
-            swprintf( temp, _T( "%s (offset:%.1f; scale:%.1f)" ), signals[i]->sName.c_str( ), signals[i]->offset, signals[i]->scale );
+            swprintf( temp, L"%s (offset:%.1f; scale:%.1f)", signals[i]->sName.c_str( ), signals[i]->offset, signals[i]->scale );
             strPtr = temp;
         } else {
-            strPtr = (TCHAR*) signals[i]->sName.c_str( );
+            strPtr = (wchar_t*) signals[i]->sName.c_str( );
         }
         graph->SetTextColor( ( (DWORD) plotColors[i] & ~( 255 << 24 ) ) | ( ( (DWORD) (BYTE) ( transparency ) ) << 24 ) );
         graph->DrawText( legendFrameX1 + 10, legendFrameY1 + 10 + ( i + 1 ) * fontHeight, strPtr );

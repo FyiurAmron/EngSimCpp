@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CFile.h"
 
-int CFile::OpenFile( TCHAR *fileName, FileAccess desiredAccess ) {
+int CFile::OpenFile( wchar_t *fileName, FileAccess desiredAccess ) {
     DWORD access;
 
     switch( desiredAccess ) {
@@ -33,7 +33,7 @@ void CFile::CloseFile( ) {
     }
 }
 
-int CFile::printf( const TCHAR *format, ... ) {
+int CFile::printf( const wchar_t *format, ... ) {
     DWORD bytesWritten;
     int size;
     va_list arguments;
@@ -43,17 +43,17 @@ int CFile::printf( const TCHAR *format, ... ) {
 
     if ( isUnicode ) {
         wchar2char( buffer, buffer_ansi );
-        WriteFile( file, (TCHAR*) buffer_ansi, size, &bytesWritten, NULL );
+        WriteFile( file, (wchar_t*) buffer_ansi, size, &bytesWritten, NULL );
     } else {
-        WriteFile( file, (TCHAR*) buffer, size, &bytesWritten, NULL );
+        WriteFile( file, (wchar_t*) buffer, size, &bytesWritten, NULL );
     }
 
     return bytesWritten;
 }
 
-int CFile::scanf( const TCHAR *format, ... ) {
+int CFile::scanf( const wchar_t *format, ... ) {
     DWORD bytesRead;
-    TCHAR character;
+    wchar_t character;
     int parametersFilled;
     void *arg1, *arg2, *arg3, *arg4, *arg5, *arg6, *arg7, *arg8;
     va_list arguments;
@@ -143,8 +143,8 @@ int CFile::OpenFilename( std::wstring ext, std::wstring desc ) {
 
 int CFile::SaveFilename( std::wstring ext, std::wstring desc ) {
     int retVal;
-    TCHAR temp[511];
-    TCHAR *ext_c_str;
+    wchar_t temp[511];
+    wchar_t *ext_c_str;
 
     if ( ext.length( ) > 0 ) {
         if ( desc.length( ) > 0 ) {
@@ -184,7 +184,7 @@ int CFile::SaveFilename( std::wstring ext, std::wstring desc ) {
     if ( ext.length( ) > 0 && browseDialogStruct.nFilterIndex == 1 && browseDialogStruct.nFileExtension == 0 ) {
         int i;
         i = wcslen( fileName );
-        ext_c_str = (TCHAR*) ext.c_str( );
+        ext_c_str = (wchar_t*) ext.c_str( );
         fileName[i++] = '.';
         for( int j = 0; ext_c_str[j] != 0; j++ ) {
             fileName[i] = ext_c_str[j];

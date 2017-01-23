@@ -5,7 +5,7 @@
 #define FILE_SCANF_BUFFER_SIZE 1024
 #define MAX_FILENAME_PATH 255
 
-#include <tchar.h>
+#include <wchar_t.h>
 
 #ifdef _UNICODE
 #define SPRINTF vswprintf
@@ -23,11 +23,11 @@ enum FileAccess {
 class CFile {
     OPENFILENAME browseDialogStruct;
     HANDLE file; //uchwyt do pliku
-    TCHAR buffer[FILE_PRINTF_BUFFER_SIZE]; //bufor danych pliku wykorzystywany przez funkcje typu *printf
+    wchar_t buffer[FILE_PRINTF_BUFFER_SIZE]; //bufor danych pliku wykorzystywany przez funkcje typu *printf
     char buffer_ansi[FILE_PRINTF_BUFFER_SIZE]; //tymczasowy bufor zapisu wykorzystywany do konwersji z UNICODE do ANSI
-    TCHAR read_buffer[FILE_SCANF_BUFFER_SIZE]; //bufor odczytywanych danych
+    wchar_t read_buffer[FILE_SCANF_BUFFER_SIZE]; //bufor odczytywanych danych
     char read_buffer_ansi[FILE_SCANF_BUFFER_SIZE]; //tymczasowy bufor odczytu wykorzystywany do konwersji z UNICODE do ANSI
-    TCHAR fileName[MAX_FILENAME_PATH]; //sciezka do pliku
+    wchar_t fileName[MAX_FILENAME_PATH]; //sciezka do pliku
     DWORD dataSizeInReadBuffer;
 public:
 
@@ -36,7 +36,7 @@ public:
         file = 0;
     }
 
-    CFile( TCHAR *fileName, FileAccess desiredAccess ) {
+    CFile( wchar_t *fileName, FileAccess desiredAccess ) {
         OpenFile( fileName, desiredAccess );
     }
 
@@ -70,7 +70,7 @@ public:
     ///	<param name="fileName">Sciezka pliku</param>
     ///	<param name="desiredAccess">Porzadany dostep do pliku. Mozliwe opcje: FileWrite,FileRead,FileReadWrite</param>
     /// <returns>Zwraca uchwyt do pliku (NIE DZIALA Z FUNKCJAMI fprintf itp.). W przypadku niepowodzenia zwraca 0.</returns>
-    int OpenFile( TCHAR *fileName, FileAccess desiredAccess );
+    int OpenFile( wchar_t *fileName, FileAccess desiredAccess );
 
     /// <summary>Otwiera okno dialogowe wyboru sciezki otwieranego pliku i otwiera plik do odczytu</summary>
     ///	<param name="ext">domyślne rozszerzeniu pliku, domyślnie NULL - brak rozszerzenia</param>
@@ -89,13 +89,13 @@ public:
 
     //Funkcja zapisuje dane do pliku - parametry jak dla funkcji printf.
     //Liczba znakow dla jednego wywolania funkcji ograniczona stala FILE_PRINTF_BUFFER_SIZE
-    int printf( const TCHAR *format, ... );
+    int printf( const wchar_t *format, ... );
 
     //Funkcja odczytuje dane z pliku - parametry jak dla funkcji scanf.
     //Ograniczenie do 8 parametrow.
     //Kazde wywolanie powoduje odczytanie calego wiersza i przejscie do nastepnego.
     //Liczba znakow dla jednego wywolania funkcji ograniczona stala FILE_SCANF_BUFFER_SIZE
-    int scanf( const TCHAR *format, ... );
+    int scanf( const wchar_t *format, ... );
 };
 
 #endif

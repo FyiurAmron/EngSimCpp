@@ -232,7 +232,7 @@ CSignal* CSimulation::FindSignal( wstring name ) {
         }
     }
 
-    TCHAR temp[100];
+    wchar_t temp[100];
     wsprintf( temp, _T( "Nie mogę znaleźć sygnału: %s" ), name.c_str( ) );
     MessageBox( NULL, temp, _T( "Nie znaleziono sygnału" ), MB_OK | MB_ICONWARNING );
     return NULL;

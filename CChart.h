@@ -65,7 +65,7 @@ public:
     CChart( );
 
     ~CChart( ) {
-        MessageBox( NULL, _T( "sdf" ), _T( "sdf" ), MB_OK );
+        MessageBox( NULL, L"sdf", L"sdf", MB_OK );
     }
     //CChart(const CChart& obj);
     CChart( CGraphics *graph );

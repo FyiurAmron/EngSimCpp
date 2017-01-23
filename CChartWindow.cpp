@@ -173,7 +173,7 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 
             if ( GetKeyState( VK_F1 )&0x0100 ) {
-                TCHAR tempStr[255];
+                wchar_t tempStr[255];
                 int line;
                 int lineHeigth;
 

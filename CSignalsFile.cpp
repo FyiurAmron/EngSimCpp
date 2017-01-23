@@ -2,8 +2,8 @@
 #include "CSignalsFile.h"
 
 void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat format ) {
-    TCHAR delimiter = ';';
-    TCHAR formatBuffer[255];
+    wchar_t delimiter = ';';
+    wchar_t formatBuffer[255];
     int line = 0;
     int finished = 1;
     int nSignal = 0;

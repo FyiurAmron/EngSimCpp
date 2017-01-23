@@ -56,12 +56,12 @@ public:
         type = ControlTypeButton;
     }
     void Create( const CWindow *parent, int x, int y, int width, int height );
-    void Create( const CWindow *parent, int x, int y, int width, int height, TCHAR *text, CTRLFCNPTR onClick );
+    void Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *text, CTRLFCNPTR onClick );
 };
 
 class CInputText : public CControl {
 public:
-    TCHAR *buff;
+    wchar_t *buff;
 
     CInputText( ) {
         buff = 0;
@@ -72,9 +72,9 @@ public:
         buff = 0;
     }
     void Create( const CWindow *parent, int x, int y, int width, int height );
-    void Create( const CWindow *parent, int x, int y, int width, int height, TCHAR *initVal );
-    void SetValue( const TCHAR *str );
-    void GetValue( TCHAR *str );
+    void Create( const CWindow *parent, int x, int y, int width, int height, wchar_t *initVal );
+    void SetValue( const wchar_t *str );
+    void GetValue( wchar_t *str );
     void SetValue( );
     void GetValue( );
 };
@@ -142,8 +142,8 @@ public:
 class CText : public CControl {
 public:
     void Create( const CWindow *parent, int x, int y, int width, int height );
-    void Create( const CWindow *parent, int x, int y, int width, int height, const TCHAR *initVal );
-    void SetValue( const TCHAR *str );
+    void Create( const CWindow *parent, int x, int y, int width, int height, const wchar_t *initVal );
+    void SetValue( const wchar_t *str );
 };
 
 #endif

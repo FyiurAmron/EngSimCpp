@@ -17,8 +17,8 @@
 
 // Global Variables:
 HINSTANCE hInst; // current instance
-TCHAR szTitle[MAX_LOADSTRING]; // The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING]; // the main window class name
+wchar_t szTitle[MAX_LOADSTRING]; // The title bar text
+wchar_t szWindowClass[MAX_LOADSTRING]; // the main window class name
 
 // Forward declarations of functions included in this code module:
 LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
