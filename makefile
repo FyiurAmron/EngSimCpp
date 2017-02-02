@@ -23,6 +23,9 @@ printmakevars:
 dir:
 	mkdir -p $(BUILDDIR)
 
+run:
+	$(EXECUTABLE)
+
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $^ -o $@ $(LIBS)
 

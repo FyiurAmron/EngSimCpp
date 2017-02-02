@@ -29,8 +29,6 @@ public:
 
     void InitDosModel( CSimulation *sim, MAINFUNC main, EVENTFUNC onReset, double *time );
 
-
-
     void OnCalculate( );
     void OnEnd( );
     void OnInit( );

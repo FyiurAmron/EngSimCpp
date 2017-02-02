@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "MDosSim.h"
-//#include "dos_MAIN.h"
 #include "dos2win.h"
-
 
 extern volatile int DOS_IS_STILL_CALCULATING;
 extern volatile int LOCK_DOS;
@@ -19,12 +17,6 @@ void MDosSim::InitDosModel( CSimulation *sim, MAINFUNC main, EVENTFUNC onReset, 
 DWORD WINAPI MDosSim::DosThread( void *args ) {
     ( (MDosSim*) args )->main( );
 
-    /*while(1)
-    {
-     *((MDosSim*)args)->dos_time_src+=0.001;
-    ((MDosSim*)args)->UpdateDosTime();
-    }*/
-
     return 1;
 }
 
@@ -33,12 +25,7 @@ void MDosSim::UpdateDosTime( ) {
 }
 
 void MDosSim::OnCalculate( ) {
-    //volatile int i=0;
-    while( dos_time_real < sim->t ); //{MessageBeep(NULL);}
-
-
-    //while(DOS_IS_STILL_CALCULATING);
-    //LOCK_DOS=0;
+    while( dos_time_real < sim->t ) { }
 }
 
 void MDosSim::OnEnd( ) {

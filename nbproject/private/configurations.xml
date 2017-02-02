@@ -353,6 +353,7 @@
         <in>WinMain.h</in>
         <in>dos2win.cpp</in>
         <in>dos2win.h</in>
+        <in>dos_main.c</in>
         <in>dos_main.cpp</in>
         <in>dos_main.h</in>
         <in>stdafx.h</in>
@@ -385,8 +386,6 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
-        <gdb_signals>
-        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
@@ -402,7 +401,7 @@
         </runcommandpicklist>
         <runcommand>"${OUTPUT_PATH}"</runcommand>
         <rundir>.</rundir>
-        <buildfirst>false</buildfirst>
+        <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
         <remove-instrumentation>0</remove-instrumentation>
         <environment>

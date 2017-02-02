@@ -21,17 +21,11 @@
 
 CChartWindow wChartW;
 
-
-//***** PROSZĘ NIE EDYTOWAć TEGO KODU ***********************
-//***** edycji należy dokonywać w funkcji Simulations() *****
-
 class CSimulationOK : public CSimulation {
 public:
     MDosSim mDosSim;
 
-    CSimulationOK( ) : mDosSim( this, dos_main, &TIME ) {
-        ;
-    }
+    CSimulationOK( ) : mDosSim( this, dos_main, &TIME ) { }
     void PreCalc( );
 };
 CSimulationOK sim;
@@ -57,18 +51,12 @@ void CSimulationOK::PreCalc( ) {
     ptOutsideWnd = wChartW.PointOutsideWindowX( t );
     if ( ptOutsideWnd == 0 ) {
         wChartW.OrderRedraw( );
-    }
-    else if ( ptOutsideWnd == 1 ) {
+    } else if ( ptOutsideWnd == 1 ) {
         PauseSimulation( );
     }
 }
 
-void Interface( ) {
-    ;
-}
-
-//***** KONIEC ZAKAZU EDYCJI ***********************
-//**************************************************
+void Interface( ) { }
 
 void Simulations( ) {
     static CPropWindow wProps;
@@ -80,54 +68,61 @@ void Simulations( ) {
     dos_model = &sim.mDosSim;
 
     propsGroup.groupName = L"Zmiana parametrow";
-    propsGroup.AddProperty( &i2zad, L"i2zad", 0, -2, 2 );
+    //propsGroup.AddProperty( &i2zad, L"i2zad", 0, -2, 2 );
     //propsGroup.AddProperty(&i2zad,_T("i2zad"),NULL,-2,2);
 
     wProps.Create( L"Parametry", 400, 550, &propsGroup );
     wProps.SetParent( &wChartW );
 
     wChartW.AddKeyProc( OnKeyChart, NULL );
-    wChartW.Create( L"symulacja", 1280, 700 );
-
-
-
-
+    wChartW.Create( L"symulacja", 1280, 1000 );
 
     //dodawanie obszarów wykresów do okna
-    wChartW.AddCharts( 5 );
+    wChartW.AddCharts( 8 );
 
     //definiowanie rejestrowanych i wyświetlanych sygnałów
+#if 0
     wChartW.charts[0]->AddSignal( &gamma, L"gamma", RGB_( 240, 0, 220 ) );
     wChartW.charts[1]->AddSignal( &i1, L"i1", RGB_( 44, 134, 167 ) );
-    wChartW.charts[2]->AddSignal( &i2, L"i2", RGB_( 0, 255, 255 ) ); //TIME - czas symulacji dosowej _s ->/1000, bez => w sekundach
+    wChartW.charts[2]->AddSignal( &i2, L"i2", RGB_( 0, 255, 255 ) );
     wChartW.charts[3]->AddSignal( &uzas, L"uzas", RGB_( 44, 134, 167 ) );
     wChartW.charts[4]->AddSignal( &u1, L"u1", RGB_( 44, 134, 167 ) );
+    //TIME - czas symulacji dosowej _s ->/1000, bez => w sekundach
     //wChartW.charts[3]->AddSignal(&TIME_s,&x21,_T("opis"),RGB_(44,134,167));
+#endif
 
-
-
-
-
+    wChartW.charts[7]->AddSignal( &x11, L"x11", RGB_( 240, 0, 220 ) );
+    wChartW.charts[6]->AddSignal( &x11z, L"x11z", RGB_( 240, 0, 220 ) );
+    wChartW.charts[5]->AddSignal( &x12, L"x12", RGB_( 44, 134, 167 ) );
+    wChartW.charts[4]->AddSignal( &x12z, L"x12z", RGB_( 44, 134, 167 ) );
+    wChartW.charts[3]->AddSignal( &x21, L"x21", RGB_( 0, 255, 255 ) );
+    wChartW.charts[2]->AddSignal( &x21z, L"x21z", RGB_( 0, 255, 255 ) );
+    wChartW.charts[1]->AddSignal( &x22, L"x22", RGB_( 44, 134, 167 ) );
+    wChartW.charts[0]->AddSignal( &x22z, L"x22z", RGB_( 44, 134, 167 ) );
 
     //definiowanie poczatkowego polozenia wykresow
     //polozenie na osi X ustawia sie dla wszystkich okien jednoczesnie
     //polozenia na osi Y okresla sie dla kazdego wykresu oddzielnie
     wChartW.SetXPos( 0 );
-    wChartW.charts[0]->SetYPos( -1 );
-    wChartW.charts[1]->SetYPos( 0 );
-    //wChartW.charts[2]->SetYPos(-1);
+    wChartW.charts[5]->SetYPos( -2.2 );
+    wChartW.charts[4]->SetYPos( -2.2 );
 
     //definiowanie poczatkowej skali wykresow
     //skale na osi X ustawia sie dla wszystkich okien jednoczesnie, podajac szerokosc w jednostkach wykresu (w sekundach w tym przypadku)
     //skale na osi Y okresla sie dla kazdego wykresu oddzielnie
     wChartW.SetWidth( 1 );
-    wChartW.charts[0]->SetHeight( 2 );
-    wChartW.charts[1]->SetHeight( 2 );
-    //	wChartW.charts[2]->SetHeight(2);
+    wChartW.charts[7]->SetHeight( 1.1 );
+    wChartW.charts[6]->SetHeight( 1.1 );
+    wChartW.charts[5]->SetHeight( 4.4 );
+    wChartW.charts[4]->SetHeight( 4.4 );
+    wChartW.charts[3]->SetHeight( 1.1 );
+    wChartW.charts[2]->SetHeight( 1.1 );
+    wChartW.charts[1]->SetHeight( 2.2 );
+    wChartW.charts[0]->SetHeight( 2.2 );
 
+    //////////
     //definiowanie kolorow okna (tla,siatki,etykiet)
     wChartW.SetColors( RGBA( 0, 0, 0, 128 ), RGBA( 255, 255, 255, 100 ), RGB_( 255, 255, 0 ) );
-
 
     sim.SetStep( 1e-5, 5e-5, 2.5 ); //kroki oraz czas symulacji
     sim.StartSimulation( ); //rozpoczecie symulacji

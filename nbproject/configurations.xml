@@ -26,6 +26,7 @@
         <in>SimConfig.cpp</in>
         <in>WinMain.cpp</in>
         <in>dos2win.cpp</in>
+        <in>dos_main.cpp</in>
       </df>
       <in>readme.MD</in>
     </df>
@@ -56,7 +57,7 @@
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
           <buildCommand>${MAKE} -f makefile</buildCommand>
           <cleanCommand>${MAKE} -f makefile clean</cleanCommand>
-          <executablePath>EngSim.exe</executablePath>
+          <executablePath>bin/EngSim.exe</executablePath>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
@@ -110,6 +111,8 @@
       <item path="src/WinMain.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/dos2win.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/dos_main.cpp" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
   </confs>

@@ -7,10 +7,6 @@
 
 extern MDosSim *dos_model;
 
-inline double dosT2realT( double dosT );
 void main_mon( );
-void clrscr( );
-void gotoxy( int, int );
-//void printf(char*,...);
 
 #endif
