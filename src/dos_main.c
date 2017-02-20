@@ -20,7 +20,7 @@ double Rs = 0.0584, Rr = 0.0559, Lm = 2.171, Ls = 2.246, Lr = 2.246, JJ = 38.4 *
 double i3ph[3], u3ph[3];
 
 double ht = 0.005, h; /*Krok calkowania ht w milisekundach */
-double Timp; /*Okres impulsowania do generowania napiecia*/
+double tImp; /*Okres impulsowania do generowania napiecia*/
 double timeCnt;
 bool sterowanie = true;
 //double impuls;
@@ -29,7 +29,7 @@ int Np = 0, Nk = 7; //calkowanie regulatorow
 int M = 8; /* liczba calkowanych zmiennych - model silnika */
 
 double ud = 1.52; //napiecie obwodu posredniczacego
-double US, rhoU; // modul i predkosc wirowania wektroa napiecia do pwm
+double uS, rhoU; // modul i predkosc wirowania wektroa napiecia do pwm
 double usx, usy; //napiecia zasilania silnika
 double isx, isy, frx, fry; //rownania modelu silnika
 double omegaR;
@@ -80,7 +80,7 @@ inline double wrapAngle( const double angleRad ) {
     return mod >= 0 ? mod : mod + 2 * M_PI;
 }
 
-void F4Dery( double DV[32], double V[32] ) {
+void F4Dery( double dV[32], double V[32] ) {
     tau = V[1]; /* zmienne calkowane */
     isx = V[2];
     isy = V[3];
@@ -88,39 +88,39 @@ void F4Dery( double DV[32], double V[32] ) {
     fry = V[5];
     omegaR = V[6];
 
-    DV[1] = 1; /* Czas */
+    dV[1] = 1; /* Czas */
     /* rownania modelu silnika */
-    DV[2] = a1 * isx + a2 * frx + omegaR * a3 * fry + a4*usx;
-    DV[3] = a1 * isy + a2 * fry - omegaR * a3 * frx + a4*usy;
-    DV[4] = a5 * frx + a6 * isx - omegaR*fry;
-    DV[5] = a5 * fry + a6 * isy + omegaR*frx;
-    DV[6] = ( ( frx * isy - fry * isx ) * Lm / Lr - m0 ) / JJ;
+    dV[2] = a1 * isx + a2 * frx + omegaR * a3 * fry + a4 * usx;
+    dV[3] = a1 * isy + a2 * fry - omegaR * a3 * frx + a4 * usy;
+    dV[4] = a5 * frx + a6 * isx - omegaR * fry;
+    dV[5] = a5 * fry + a6 * isy + omegaR * frx;
+    dV[6] = ( ( frx * isy - fry * isx ) * Lm / Lr - m0 ) / JJ;
 }
 
-void F4( int MM, double HF, double Z[32] ) {
+void F4( int varCount, double h, double Z[32] ) {
     static double DZ[32];
     static double Q[5][32];
-    int I;
+
     F4Dery( DZ, Z );
-    for( I = 0; I < MM; I += 1 ) {
-        Q[0][I] = Z[I];
-        Q[1][I] = HF * DZ[I];
-        Z[I] = Q[0][I] + 0.5 * Q[1][I];
+    for( int i = 0; i < varCount; i++ ) {
+        Q[0][i] = Z[i];
+        Q[1][i] = h * DZ[i];
+        Z[i] = Q[0][i] + 0.5 * Q[1][i];
     }
     F4Dery( DZ, Z );
-    for( I = 0; I < MM; I += 1 ) {
-        Q[2][I] = HF * DZ[I];
-        Z[I] = Q[0][I] + 0.5 * Q[2][I];
+    for( int i = 0; i < varCount; i++ ) {
+        Q[2][i] = h * DZ[i];
+        Z[i] = Q[0][i] + 0.5 * Q[2][i];
     }
     F4Dery( DZ, Z );
-    for( I = 0; I < MM; I += 1 ) {
-        Q[3][I] = HF * DZ[I];
-        Z[I] = Q[0][I] + Q[3][I];
+    for( int i = 0; i < varCount; i++ ) {
+        Q[3][i] = h * DZ[i];
+        Z[i] = Q[0][i] + Q[3][i];
     }
     F4Dery( DZ, Z );
-    for( I = 0; I < MM; I += 1 ) {
-        Q[4][I] = HF * DZ[I];
-        Z[I] = ( Q[1][I] + Q[4][I] ) / 6 + ( Q[2][I] + Q[3][I] ) / 3 + Q[0][I];
+    for( int i = 0; i < varCount; i++ ) {
+        Q[4][i] = h * DZ[i];
+        Z[i] = 1.0 / 6 * ( Q[1][i] + Q[4][i] ) + 1.0 / 3 * ( Q[2][i] + Q[3][i] ) + Q[0][i];
     }
 }
 
@@ -129,27 +129,27 @@ void TrapDery( double DX[10], double X[10] ) {
     //x11z = 1;
     e11 = x11z - x11;
     X[3] = limit( X[3], 2.0 );
-    x12z = limit( X[3] + kp11*e11, 2.0 );
-    DX[3] = e11*ki11;
+    x12z = limit( X[3] + kp11 * e11, 2.0 );
+    DX[3] = e11 * ki11;
 
     //regulator x12
     e12 = x12z - x12;
     X[2] = limit( X[2], 2.0 );
-    v1 = limit( X[2] + kp12*e12, 2.0 );
-    DX[2] = e12*ki12;
+    v1 = limit( X[2] + kp12 * e12, 2.0 );
+    DX[2] = e12 * ki12;
 
     //regulator x21
     //x21z = 1;
     e21 = x21z - x21;
     X[1] = limit( X[1], 2.0 );
-    x22z = limit( X[1] + kp21*e21, 2.0 );
-    DX[1] = e21*ki21;
+    x22z = limit( X[1] + kp21 * e21, 2.0 );
+    DX[1] = e21 * ki21;
 
     //regulator x22
     e22 = x22z - x22;
     X[0] = limit( X[0], 2.0 );
-    v2 = limit( X[0] + kp22*e22, 2.0 );
-    DX[0] = e22*ki22;
+    v2 = limit( X[0] + kp22 * e22, 2.0 );
+    DX[0] = e22 * ki22;
 }
 
 /* n,N-pierwsze i ostatnie rownanie do calkowania,H-krok,Y-zmienne */
@@ -210,25 +210,23 @@ const double ux_out[] = {
     0
 };
 
-void PWM( double tImpMax, double uS, double rhoU, double ud, double h ) {
-    /*-------------------------------------------------------------------------*/
-    /*                Wyznaczenie czasow zalaczen wektorow                     */
-    /*-------------------------------------------------------------------------*/
-    static double tImp;
+void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
+    static double t;
 
     static int rhoUN;
     static bool cykl = true;
     static int stan_pocz, stan_konc, stan_konc_a, stan_konc_b, stan_konc_c;
+    static double komp_ia, komp_ib, komp_ic;
     static double t1, t2, t0;
     static double tA, tB, tC;
 
-    double td = 0; // UWAGA: nie ma symulacji td
-    double sgn_ia_komp = 0, sgn_ib_komp = 0, sgn_ic_komp = 0;
-    double sgn_ia = 0, sgn_ib = 0, sgn_ic = 0;
+    const double td = 0;
+    const double sgn_ia_komp = 0, sgn_ib_komp = 0, sgn_ic_komp = 0;
+    const double sgn_ia = 0, sgn_ib = 0, sgn_ic = 0;
 
-    tImp += h;
+    t += h;
 
-    if ( tImp > tImpMax ) { // co okres impulsowania
+    if ( t > tImp ) { // co okres impulsowania
         rhoU = wrapAngle( rhoU );
         rhoUN = floor( rhoU / ( ( 2 * M_PI ) / 6 ) ); // ktory sektor?
         int idu1 = rhoUN + 1;
@@ -236,14 +234,14 @@ void PWM( double tImpMax, double uS, double rhoU, double ud, double h ) {
 
         double uSX = uS * cos( rhoU );
         double uSY = uS * sin( rhoU ); // to opoznienie symuluje czas na obl sterowania
-        double wt = ud * ( ux[idu1] * uy[idu2] - uy[idu1] * ux[idu2] );
-        double k = tImpMax / ( ud * wt );
+        double wt = ux[idu1] * uy[idu2] - uy[idu1] * ux[idu2];
+        double k = tImp / ( ud * wt );
         t1 = k * ( uSX * uy[idu2] - uSY * ux[idu2] );
         t2 = -k * ( uSX * uy[idu1] - uSY * ux[idu1] );
 
-        t0 = ( tImpMax - t1 - t2 ) / 2;
+        t0 = ( tImp - t1 - t2 ) / 2;
         cykl = !cykl;
-        sterowanie = true; // uruchomia sterowanie
+        sterowanie = true; //pozwala na uruchomienie sterowania
     }
 
     if ( cykl ) {
@@ -255,31 +253,26 @@ void PWM( double tImpMax, double uS, double rhoU, double ud, double h ) {
                 tB = t0 + t1;
                 tC = t0 + t1 + t2;
                 break;
-
             case 1:
                 tA = t0 + t2;
                 tB = t0;
                 tC = t0 + t1 + t2;
                 break;
-
             case 2:
                 tA = t0 + t1 + t2;
                 tB = t0;
                 tC = t0 + t1;
                 break;
-
             case 3:
                 tA = t0 + t1 + t2;
                 tB = t0 + t2;
                 tC = t0;
                 break;
-
             case 4:
                 tA = t0 + t1;
                 tB = t0 + t1 + t2;
                 tC = t0;
                 break;
-
             case 5:
                 tA = t0;
                 tB = t0 + t1 + t2;
@@ -305,31 +298,26 @@ void PWM( double tImpMax, double uS, double rhoU, double ud, double h ) {
                 tB = t0 + t2;
                 tC = t0;
                 break;
-
             case 1:
                 tA = t0 + t1;
                 tB = t0 + t1 + t2;
                 tC = t0;
                 break;
-
             case 2:
                 tA = t0;
                 tB = t0 + t1 + t2;
                 tC = t0 + t2;
                 break;
-
             case 3:
                 tA = t0;
                 tB = t0 + t1;
                 tC = t0 + t1 + t2;
                 break;
-
             case 4:
                 tA = t0 + t2;
                 tB = t0;
                 tC = t0 + t1 + t2;
                 break;
-
             case 5:
                 tA = t0 + t1 + t2;
                 tB = t0;
@@ -349,27 +337,27 @@ void PWM( double tImpMax, double uS, double rhoU, double ud, double h ) {
     }
 
     //	PWM_ALTERA();
-    if ( tImp <= tA ) {
+    if ( t <= tA ) {
         stan_konc_a = stan_pocz;
-    } else if ( tImp <= tA + td ) {
+    } else if ( t <= tA + td ) {
         stan_konc_a = ( sgn_ia > 0 ) ? 0 : 1;
-    } else if ( tImp <= tImpMax ) {
+    } else if ( t <= tImp ) {
         stan_konc_a = !stan_pocz;
     }
 
-    if ( tImp <= tB ) {
+    if ( t <= tB ) {
         stan_konc_b = stan_pocz;
-    } else if ( tImp <= tB + td ) {
+    } else if ( t <= tB + td ) {
         stan_konc_b = ( sgn_ib > 0 ) ? 0 : 1;
-    } else if ( tImp <= tImpMax ) {
+    } else if ( t <= tImp ) {
         stan_konc_b = !stan_pocz;
     }
 
-    if ( tImp <= tC ) {
+    if ( t <= tC ) {
         stan_konc_c = stan_pocz;
-    } else if ( tImp <= tC + td ) {
+    } else if ( t <= tC + td ) {
         stan_konc_c = ( sgn_ic > 0 ) ? 0 : 1;
-    } else if ( tImp <= tImpMax ) {
+    } else if ( t <= tImp ) {
         stan_konc_c = !stan_pocz;
     }
 
@@ -378,8 +366,8 @@ void PWM( double tImpMax, double uS, double rhoU, double ud, double h ) {
     usx = ux_out[stan_konc] * ud;
     usy = uy_out[stan_konc] * ud;
 
-    if ( tImp > tImpMax ) {
-        tImp = 0; //czyli co okres impulsowania
+    if ( t > tImp ) {
+        t = 0; //czyli co okres impulsowania
     }
 }
 
@@ -387,14 +375,14 @@ int dos_main( ) {
     double x[32]; /*zmienne calkowane */
     double y[32]; /*zmienne calkowane */
     //int LL=0;
-    int i;
+
     /*------------------------------------*/
     /*  Obliczanie warunkow poczatkowych  */
     /*------------------------------------*/
-    for( i = 0; i < M; i++ ) {
+    for( int i = 0; i < M; i++ ) {
         x[i] = 0; // dla zmiennych ukladu sterowania - zerowe
     }
-    for( i = 0; i < M; i++ ) {
+    for( int i = 0; i < M; i++ ) {
         y[i] = 0; // zerowe warunki poczatkowe
     }
 
@@ -417,8 +405,8 @@ int dos_main( ) {
 
     h = 0.1 * M_PI * ht; /* ht w milisekundach */
     //tmin=.006*.1*M_PI;
-    Timp = .15 * 0.1 * M_PI;
-    US = .91;
+    tImp = .15 * 0.1 * M_PI;
+    uS = .91;
 
     //LL = 0;
     //#include "warpocz.c"
@@ -496,7 +484,7 @@ int dos_main( ) {
         }
 
         if ( sterowanie ) {
-            rhoU += US * Timp;
+            rhoU += uS * tImp;
             rhoU = wrapAngle( rhoU );
 
             //zmienne multiskalarne
@@ -506,7 +494,7 @@ int dos_main( ) {
             x22 = frx * isx + fry * isy;
 
             if ( timeCnt > 10 ) {
-                Trapez( Np, Nk, Timp, x );
+                Trapez( Np, Nk, tImp, x );
                 //REGULATORY();
 
                 //odsprzezenie
@@ -521,7 +509,7 @@ int dos_main( ) {
                 usx_zad = limit( usx_zad, 1.5 );
                 usy_zad = limit( usy_zad, 1.5 );
 
-                US = sqrt( usx_zad * usx_zad + usy_zad * usy_zad );
+                uS = sqrt( usx_zad * usx_zad + usy_zad * usy_zad );
                 rhoU = getRho( usx_zad, usy_zad );
             }
             sterowanie = false;
@@ -529,7 +517,7 @@ int dos_main( ) {
 
         ///PWM
         //if (TIME<350)
-        PWM( Timp, US, rhoU, ud, h );
+        PWM( tImp, uS, rhoU, ud, h );
         //if (TIME>350)
         //{usx=usx_zad; usy=usy_zad;}
 
