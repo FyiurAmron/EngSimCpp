@@ -204,6 +204,8 @@ const double ux_out[] = {
     0
 };
 
+#define PHASES  3
+
 void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     static double t;
     static int rhoUN;
@@ -211,11 +213,13 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     static double t1, t2, t0;
 
     int stan_pocz;
-    double tA, tB, tC;
+    double tX[PHASES] = { 0 };
 
     const double td = 0;
-    const double sgn_ia_komp = 0, sgn_ib_komp = 0, sgn_ic_komp = 0;
-    const double sgn_ia = 0, sgn_ib = 0, sgn_ic = 0;
+    const double sgn_iX_komp[PHASES] = { 0 };
+    const double sgn_iX[PHASES] = { 0 };
+
+    //////////
 
     t += h;
 
@@ -242,127 +246,105 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
 
         switch( rhoUN ) {
             case 0:
-                tA = t0;
-                tB = t0 + t1;
-                tC = t0 + t1 + t2;
+                tX[0] = t0;
+                tX[1] = t0 + t1;
+                tX[2] = t0 + t1 + t2;
                 break;
             case 1:
-                tA = t0 + t2;
-                tB = t0;
-                tC = t0 + t1 + t2;
+                tX[0] = t0 + t2;
+                tX[1] = t0;
+                tX[2] = t0 + t1 + t2;
                 break;
             case 2:
-                tA = t0 + t1 + t2;
-                tB = t0;
-                tC = t0 + t1;
+                tX[0] = t0 + t1 + t2;
+                tX[1] = t0;
+                tX[2] = t0 + t1;
                 break;
             case 3:
-                tA = t0 + t1 + t2;
-                tB = t0 + t2;
-                tC = t0;
+                tX[0] = t0 + t1 + t2;
+                tX[1] = t0 + t2;
+                tX[2] = t0;
                 break;
             case 4:
-                tA = t0 + t1;
-                tB = t0 + t1 + t2;
-                tC = t0;
+                tX[0] = t0 + t1;
+                tX[1] = t0 + t1 + t2;
+                tX[2] = t0;
                 break;
             case 5:
-                tA = t0;
-                tB = t0 + t1 + t2;
-                tC = t0 + t2;
+                tX[0] = t0;
+                tX[1] = t0 + t1 + t2;
+                tX[2] = t0 + t2;
                 break;
         }
 
-        if ( sgn_ia_komp > 0 ) {
-            tA -= td;
-        }
-        if ( sgn_ib_komp > 0 ) {
-            tB -= td;
-        }
-        if ( sgn_ic_komp > 0 ) {
-            tC -= td;
+        for( int i = 0; i < PHASES; i++ ) {
+            if ( sgn_iX_komp[i] > 0 ) {
+                tX[i] -= td;
+            }
         }
     } else {
         stan_pocz = 1;
 
         switch( rhoUN ) {
             case 0:
-                tA = t0 + t1 + t2;
-                tB = t0 + t2;
-                tC = t0;
+                tX[0] = t0 + t1 + t2;
+                tX[1] = t0 + t2;
+                tX[2] = t0;
                 break;
             case 1:
-                tA = t0 + t1;
-                tB = t0 + t1 + t2;
-                tC = t0;
+                tX[0] = t0 + t1;
+                tX[1] = t0 + t1 + t2;
+                tX[2] = t0;
                 break;
             case 2:
-                tA = t0;
-                tB = t0 + t1 + t2;
-                tC = t0 + t2;
+                tX[0] = t0;
+                tX[1] = t0 + t1 + t2;
+                tX[2] = t0 + t2;
                 break;
             case 3:
-                tA = t0;
-                tB = t0 + t1;
-                tC = t0 + t1 + t2;
+                tX[0] = t0;
+                tX[1] = t0 + t1;
+                tX[2] = t0 + t1 + t2;
                 break;
             case 4:
-                tA = t0 + t2;
-                tB = t0;
-                tC = t0 + t1 + t2;
+                tX[0] = t0 + t2;
+                tX[1] = t0;
+                tX[2] = t0 + t1 + t2;
                 break;
             case 5:
-                tA = t0 + t1 + t2;
-                tB = t0;
-                tC = t0 + t1;
+                tX[0] = t0 + t1 + t2;
+                tX[1] = t0;
+                tX[2] = t0 + t1;
                 break;
         }
 
-        if ( sgn_ia_komp < 0 ) {
-            tA -= td;
-        }
-        if ( sgn_ib_komp < 0 ) {
-            tB -= td;
-        }
-        if ( sgn_ic_komp < 0 ) {
-            tC -= td;
+        for( int i = 0; i < PHASES; i++ ) {
+            if ( sgn_iX_komp[i] < 0 ) {
+                tX[i] -= td;
+            }
         }
     }
 
-    int bitA, bitB, bitC;
+    static int bit[PHASES] = { 0 };
+    int bits = 0;
 
-    //	PWM_ALTERA();
-    if ( t <= tA ) {
-        bitA = stan_pocz;
-    } else if ( t <= tA + td ) {
-        bitA = ( sgn_ia > 0 ) ? 0 : 1;
-    } else if ( t <= tImp ) {
-        bitA = !stan_pocz;
+    for( int i = PHASES - 1; i >= 0; i-- ) {
+        if ( t <= tX[i] ) {
+            bit[i] = stan_pocz;
+        } else if ( t <= tX[i] + td ) {
+            bit[i] = ( sgn_iX[i] > 0 ) ? 0 : 1;
+        } else if ( t <= tImp ) {
+            bit[i] = !stan_pocz;
+        }
+        bits <<= 1;
+        bits |= bit[i];
     }
 
-    if ( t <= tB ) {
-        bitB = stan_pocz;
-    } else if ( t <= tB + td ) {
-        bitB = ( sgn_ib > 0 ) ? 0 : 1;
-    } else if ( t <= tImp ) {
-        bitB = !stan_pocz;
-    }
-
-    if ( t <= tC ) {
-        bitC = stan_pocz;
-    } else if ( t <= tC + td ) {
-        bitC = ( sgn_ic > 0 ) ? 0 : 1;
-    } else if ( t <= tImp ) {
-        bitC = !stan_pocz;
-    }
-
-    int bitsAll = bitC << 2 | bitB << 1 | bitA;
-
-    usx = ux_out[bitsAll] * ud;
-    usy = uy_out[bitsAll] * ud;
+    usx = ux_out[bits] * ud;
+    usy = uy_out[bits] * ud;
 
     if ( t > tImp ) {
-        t = 0; //czyli co okres impulsowania
+        t = 0;
     }
 }
 
@@ -478,7 +460,6 @@ int dos_main( ) {
 
             if ( timeCnt > 10 ) {
                 Trapez( integrationArgCount, tImp, x );
-                //REGULATORY();
 
                 // odsprzezenie
                 u1 = ( -v1 * ( a1 + a5 ) + x11 * ( x22 + a3 * x21 ) ) / a4;
