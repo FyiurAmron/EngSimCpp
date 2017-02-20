@@ -23,13 +23,15 @@ printmakevars:
 dir:
 	mkdir -p $(BUILDDIR)
 
+buildrun: all run
+
 run:
 	$(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS)
+$(EXECUTABLE) : $(OBJECTS)
 	$(CC) $^ -o $@ $(LIBS)
 
-$(OBJECTS): $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
+$(OBJECTS) : $(BUILDDIR)/%.o : $(SOURCEDIR)/%.cpp
 	$(CC) $(INCLUDES) $(FLAGS) $< -o $@
 
 clean:

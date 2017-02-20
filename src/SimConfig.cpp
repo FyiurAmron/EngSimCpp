@@ -25,7 +25,7 @@ class CSimulationOK : public CSimulation {
 public:
     MDosSim mDosSim;
 
-    CSimulationOK( ) : mDosSim( this, dos_main, &TIME ) { }
+    CSimulationOK( ) : mDosSim( this, dos_main, &timeCnt ) { }
     void PreCalc( );
 };
 CSimulationOK sim;

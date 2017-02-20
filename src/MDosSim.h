@@ -17,17 +17,17 @@ class MDosSim : public CModel {
 public:
     volatile double dos_time_real;
 
-    MDosSim( CSimulation *sim, MAINFUNC main, double *time ) :
+    MDosSim( CSimulation *sim, MAINFUNC main, double *timeCnt ) :
     CModel( sim, 0 ) {
-        InitDosModel( sim, main, NULL, time );
+        InitDosModel( sim, main, NULL, timeCnt );
     }
 
-    MDosSim( CSimulation *sim, MAINFUNC main, EVENTFUNC onReset, double *time ) :
+    MDosSim( CSimulation *sim, MAINFUNC main, EVENTFUNC onReset, double *timeCnt ) :
     CModel( sim, 0 ) {
-        InitDosModel( sim, main, onReset, time );
+        InitDosModel( sim, main, onReset, timeCnt );
     }
 
-    void InitDosModel( CSimulation *sim, MAINFUNC main, EVENTFUNC onReset, double *time );
+    void InitDosModel( CSimulation *sim, MAINFUNC main, EVENTFUNC onReset, double *timeCnt );
 
     void OnCalculate( );
     void OnEnd( );

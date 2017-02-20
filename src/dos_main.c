@@ -216,7 +216,6 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     static int rhoUN;
     static bool cykl = true;
     static int stan_pocz, stan_konc, stan_konc_a, stan_konc_b, stan_konc_c;
-    static double komp_ia, komp_ib, komp_ic;
     static double t1, t2, t0;
     static double tA, tB, tC;
 
