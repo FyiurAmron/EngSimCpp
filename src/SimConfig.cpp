@@ -95,8 +95,10 @@ void Simulations( ) {
     wChartW.charts[6]->AddSignal( &x11z, L"x11z", RGB_( 240, 0, 220 ) );
     wChartW.charts[5]->AddSignal( &x12, L"x12", RGB_( 44, 134, 167 ) );
     wChartW.charts[4]->AddSignal( &x12z, L"x12z", RGB_( 44, 134, 167 ) );
-    wChartW.charts[3]->AddSignal( &x21, L"x21", RGB_( 0, 255, 255 ) );
-    wChartW.charts[2]->AddSignal( &x21z, L"x21z", RGB_( 0, 255, 255 ) );
+    //wChartW.charts[3]->AddSignal( &x21, L"x21", RGB_( 0, 255, 255 ) );
+    //wChartW.charts[2]->AddSignal( &x21z, L"x21z", RGB_( 0, 255, 255 ) );
+    wChartW.charts[3]->AddSignal( &usx, L"usx", RGB_( 0, 255, 255 ) );
+    wChartW.charts[2]->AddSignal( &usy, L"usy", RGB_( 0, 255, 255 ) );
     wChartW.charts[1]->AddSignal( &x22, L"x22", RGB_( 44, 134, 167 ) );
     wChartW.charts[0]->AddSignal( &x22z, L"x22z", RGB_( 44, 134, 167 ) );
 
@@ -106,6 +108,8 @@ void Simulations( ) {
     wChartW.SetXPos( 0 );
     wChartW.charts[5]->SetYPos( -2.2 );
     wChartW.charts[4]->SetYPos( -2.2 );
+    wChartW.charts[3]->SetYPos( -1.25 );
+    wChartW.charts[2]->SetYPos( -1.1 );
 
     //definiowanie poczatkowej skali wykresow
     //skale na osi X ustawia sie dla wszystkich okien jednoczesnie, podajac szerokosc w jednostkach wykresu (w sekundach w tym przypadku)
@@ -115,8 +119,10 @@ void Simulations( ) {
     wChartW.charts[6]->SetHeight( 1.1 );
     wChartW.charts[5]->SetHeight( 4.4 );
     wChartW.charts[4]->SetHeight( 4.4 );
-    wChartW.charts[3]->SetHeight( 1.1 );
-    wChartW.charts[2]->SetHeight( 1.1 );
+    //wChartW.charts[3]->SetHeight( 1.1 );
+    //wChartW.charts[2]->SetHeight( 1.1 );
+    wChartW.charts[3]->SetHeight( 2.5 );
+    wChartW.charts[2]->SetHeight( 2.2 );
     wChartW.charts[1]->SetHeight( 2.2 );
     wChartW.charts[0]->SetHeight( 2.2 );
 

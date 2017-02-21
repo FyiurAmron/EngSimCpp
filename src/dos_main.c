@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <ctype.h>
 #ifdef _WIN32
 #include "dos2win.h"
 #endif
@@ -23,7 +24,7 @@ double tImp; /* Okres impulsowania do generowania napiecia */
 double timeCnt;
 bool sterowanie = true;
 
-int integrationArgCount = 8; /* liczba calkowanych zmiennych - model silnika */
+int PWM_DAMAGE = 42;
 
 double ud = 1.52; //napiecie obwodu posredniczacego
 double uS, rhoU; // modul i predkosc wirowania wektroa napiecia do pwm
@@ -295,12 +296,9 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
         } else {
             bit[i] = !bitInit;
         }
-#define PWM_DAMAGE  2
-#ifdef PWM_DAMAGE
         if ( i == PWM_DAMAGE ) {
             bit[i] = 0;
         }
-#endif
         bits <<= 1;
         bits |= bit[i];
     }
@@ -367,6 +365,10 @@ int dos_main( ) {
 
     if ( fpSetup != NULL ) {
         inputChar = fgetc( fpSetup );
+        if ( isdigit( inputChar ) ) {
+            PWM_DAMAGE = inputChar - '0';
+            inputChar = fgetc( fpSetup );
+        }
         while( inputChar == '#' ) {
             inputChar = fgetc( fpSetup );
             while( inputChar != '\n' && inputChar != EOF ) {

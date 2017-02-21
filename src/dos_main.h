@@ -14,6 +14,8 @@ extern double m0; /* moment obciazenia */
 extern double x11, x12, x21, x22;
 extern double x11z, x12z, x21z, x22z;
 
+extern double usx, usy;
+
 extern double timeCnt;
 
 int dos_main( );
