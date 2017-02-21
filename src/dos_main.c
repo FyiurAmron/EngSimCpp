@@ -162,28 +162,26 @@ void Trapez( int varCount, double h, double z[32] ) {
     }
 }
 
-// 000, 001, 011, 010, 110, 100, 101, 111
+//////////
+
+// 001, 011, 010, 110, 100, 101 (sekwencja zalaczen)
 const double ux[] = {
-    0,
     SQRT2DIV3,
     SQRT2DIV3 / 2,
     -SQRT2DIV3 / 2,
     -SQRT2DIV3,
     -SQRT2DIV3 / 2,
     SQRT2DIV3 / 2,
-    0
 }, uy[] = {
     0,
-    0,
     SQRT2 / 2,
     SQRT2 / 2,
     0,
     -SQRT2 / 2,
     -SQRT2 / 2,
-    0
 };
 
-// 000, 001, 010, 011, 100, 101, 110, 111
+// 000, 001, 010, 011, 100, 101, 110, 111 (wszystkie permutacje wektorow)
 const double ux_out[] = {
     0,
     SQRT2DIV3,
@@ -207,12 +205,12 @@ const double ux_out[] = {
 #define PHASES  3
 
 void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
-    static double t;
-    static int rhoUN;
-    static int cykl = 1;
+    static double t = tImp; // force update
     static double t1, t2, t0;
+    static double tX[PHASES] = { 0 };
 
-    double tX[PHASES] = { 0 };
+    static int sign = 1;
+    static int bitInit = 0;
 
     const double td = 0;
     const double sgn_iX_komp[PHASES] = { 0 };
@@ -223,70 +221,68 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     t += h;
 
     if ( t > tImp ) {
-        rhoU = wrapAngle( rhoU );
-        rhoUN = floor( rhoU / ( ( 2 * M_PI ) / 6 ) );
-        int idu1 = rhoUN + 1;
-        int idu2 = idu1 % 6 + 1;
+        t -= tImp; // see how the regulation error decreased after this!!!
+        int n1 = floor( wrapAngle( rhoU ) / ( ( 2 * M_PI ) / ( PHASES * 2 ) ) ); // or just do % ( PHASES * 2 ) instead of wrapAngle() here
+        int n2 = ( n1 + 1 ) % ( PHASES * 2 );
 
         double uSX = uS * cos( rhoU );
         double uSY = uS * sin( rhoU ); // opoznienie symulujace czas na obliczenie sterowania
-        double wt = ux[idu1] * uy[idu2] - uy[idu1] * ux[idu2];
-        double k = tImp / ( ud * wt );
-        t1 = k * ( uSX * uy[idu2] - uSY * ux[idu2] );
-        t2 = -k * ( uSX * uy[idu1] - uSY * ux[idu1] );
+        double k = tImp / ( ud * ( ux[n1] * uy[n2] - uy[n1] * ux[n2] ) );
+        t1 = k * ( uSX * uy[n2] - uSY * ux[n2] );
+        t2 = -k * ( uSX * uy[n1] - uSY * ux[n1] );
+        t0 = 0.5 * ( tImp - t1 - t2 );
 
-        t0 = ( tImp - t1 - t2 ) / 2;
-        cykl = -cykl;
-        sterowanie = true; // uruchomia sterowanie
-    }
+        sign = -sign;
+        sterowanie = true;
 
-    int n, bitInit;
-    if ( cykl == 1 ) {
-        bitInit = 0;
-        n = rhoUN;
-    } else {
-        bitInit = 1;
-        n = ( rhoUN + 3 ) % 6;
-    }
-
-    switch( n ) {
-        case 0:
-            tX[0] = t0;
-            tX[1] = t0 + t1;
-            tX[2] = t0 + t1 + t2;
-            break;
-        case 1:
-            tX[0] = t0 + t2;
-            tX[1] = t0;
-            tX[2] = t0 + t1 + t2;
-            break;
-        case 2:
-            tX[0] = t0 + t1 + t2;
-            tX[1] = t0;
-            tX[2] = t0 + t1;
-            break;
-        case 3:
-            tX[0] = t0 + t1 + t2;
-            tX[1] = t0 + t2;
-            tX[2] = t0;
-            break;
-        case 4:
-            tX[0] = t0 + t1;
-            tX[1] = t0 + t1 + t2;
-            tX[2] = t0;
-            break;
-        case 5:
-            tX[0] = t0;
-            tX[1] = t0 + t1 + t2;
-            tX[2] = t0 + t2;
-            break;
-    }
-
-    for( int i = 0; i < PHASES; i++ ) {
-        if ( sgn_iX_komp[i] * cykl < 0 ) {
-            tX[i] -= td;
+        int n;
+        if ( sign == 1 ) {
+            bitInit = 0;
+            n = n1;
+        } else {
+            bitInit = 1;
+            n = ( n1 + PHASES ) % ( PHASES * 2 );
         }
-    }
+
+        switch( n ) {
+            case 0:
+                tX[0] = t0;
+                tX[1] = t0 + t1;
+                tX[2] = t0 + t1 + t2;
+                break;
+            case 1:
+                tX[0] = t0 + t2;
+                tX[1] = t0;
+                tX[2] = t0 + t1 + t2;
+                break;
+            case 2:
+                tX[0] = t0 + t1 + t2;
+                tX[1] = t0;
+                tX[2] = t0 + t1;
+                break;
+            case 3:
+                tX[0] = t0 + t1 + t2;
+                tX[1] = t0 + t2;
+                tX[2] = t0;
+                break;
+            case 4:
+                tX[0] = t0 + t1;
+                tX[1] = t0 + t1 + t2;
+                tX[2] = t0;
+                break;
+            case 5:
+                tX[0] = t0;
+                tX[1] = t0 + t1 + t2;
+                tX[2] = t0 + t2;
+                break;
+        }
+
+        for( int i = 0; i < PHASES; i++ ) {
+            if ( sgn_iX_komp[i] * sign < 0 ) {
+                tX[i] -= td;
+            }
+        }
+    } // if ( t > tImp )
 
     static int bit[PHASES] = { 0 };
     int bits = 0;
@@ -296,20 +292,24 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
             bit[i] = bitInit;
         } else if ( t <= tX[i] + td ) {
             bit[i] = ( sgn_iX[i] > 0 ) ? 0 : 1;
-        } else if ( t <= tImp ) {
+        } else {
             bit[i] = !bitInit;
         }
+#define PWM_DAMAGE  2
+#ifdef PWM_DAMAGE
+        if ( i == PWM_DAMAGE ) {
+            bit[i] = 0;
+        }
+#endif
         bits <<= 1;
         bits |= bit[i];
     }
 
     usx = ux_out[bits] * ud;
     usy = uy_out[bits] * ud;
-
-    if ( t > tImp ) {
-        t = 0;
-    }
 }
+
+//////////
 
 // warunki początkowe
 double x[32] = { 0 };
@@ -334,9 +334,8 @@ int dos_main( ) {
     //a7=w/Lr;
 
     h = 0.1 * M_PI * ht; /* ht w milisekundach */
-    //tmin=.006*.1*M_PI;
-    tImp = .15 * 0.1 * M_PI;
-    uS = .91;
+    tImp = 0.1 * M_PI * 0.15;
+    uS = 0.91;
 
     //wkfi=.1; wkf1=.01; wkf2=.01; prog=.1; progD=.05;
     //kfi=10; kf1=1; kf2=10; kD=.8;  /*Nastawy dla Timp=.2ms */
