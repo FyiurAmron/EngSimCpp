@@ -78,20 +78,20 @@ inline double wrapAngle( const double angleRad ) {
 }
 
 void F4Dery( double dv[32], double v[32] ) {
-    tau = v[1]; /* zmienne calkowane */
-    isx = v[2];
-    isy = v[3];
-    frx = v[4];
-    fry = v[5];
-    omegaR = v[6];
+    tau = v[0]; /* zmienne calkowane */
+    isx = v[1];
+    isy = v[2];
+    frx = v[3];
+    fry = v[4];
+    omegaR = v[5];
 
-    dv[1] = 1; /* Czas */
+    dv[0] = 1; /* Czas */
     /* rownania modelu silnika */
-    dv[2] = a1 * isx + a2 * frx + omegaR * a3 * fry + a4 * usx;
-    dv[3] = a1 * isy + a2 * fry - omegaR * a3 * frx + a4 * usy;
-    dv[4] = a5 * frx + a6 * isx - omegaR * fry;
-    dv[5] = a5 * fry + a6 * isy + omegaR * frx;
-    dv[6] = ( ( frx * isy - fry * isx ) * Lm / Lr - m0 ) / JJ;
+    dv[1] = a1 * isx + a2 * frx + omegaR * a3 * fry + a4 * usx;
+    dv[2] = a1 * isy + a2 * fry - omegaR * a3 * frx + a4 * usy;
+    dv[3] = a5 * frx + a6 * isx - omegaR * fry;
+    dv[4] = a5 * fry + a6 * isy + omegaR * frx;
+    dv[5] = ( ( frx * isy - fry * isx ) * Lm / Lr - m0 ) / JJ;
 }
 
 void F4( int varCount, double h, double z[32] ) {
@@ -209,10 +209,9 @@ const double ux_out[] = {
 void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     static double t;
     static int rhoUN;
-    static bool cykl = true;
+    static int cykl = 1;
     static double t1, t2, t0;
 
-    int stan_pocz;
     double tX[PHASES] = { 0 };
 
     const double td = 0;
@@ -223,105 +222,69 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
 
     t += h;
 
-    if ( t > tImp ) { // co okres impulsowania
+    if ( t > tImp ) {
         rhoU = wrapAngle( rhoU );
-        rhoUN = floor( rhoU / ( ( 2 * M_PI ) / 6 ) ); // ktory sektor?
+        rhoUN = floor( rhoU / ( ( 2 * M_PI ) / 6 ) );
         int idu1 = rhoUN + 1;
         int idu2 = idu1 % 6 + 1;
 
         double uSX = uS * cos( rhoU );
-        double uSY = uS * sin( rhoU ); // to opoznienie symuluje czas na obl sterowania
+        double uSY = uS * sin( rhoU ); // opoznienie symulujace czas na obliczenie sterowania
         double wt = ux[idu1] * uy[idu2] - uy[idu1] * ux[idu2];
         double k = tImp / ( ud * wt );
         t1 = k * ( uSX * uy[idu2] - uSY * ux[idu2] );
         t2 = -k * ( uSX * uy[idu1] - uSY * ux[idu1] );
 
         t0 = ( tImp - t1 - t2 ) / 2;
-        cykl = !cykl;
-        sterowanie = true; //pozwala na uruchomienie sterowania
+        cykl = -cykl;
+        sterowanie = true; // uruchomia sterowanie
     }
 
-    if ( cykl ) {
-        stan_pocz = 0;
-
-        switch( rhoUN ) {
-            case 0:
-                tX[0] = t0;
-                tX[1] = t0 + t1;
-                tX[2] = t0 + t1 + t2;
-                break;
-            case 1:
-                tX[0] = t0 + t2;
-                tX[1] = t0;
-                tX[2] = t0 + t1 + t2;
-                break;
-            case 2:
-                tX[0] = t0 + t1 + t2;
-                tX[1] = t0;
-                tX[2] = t0 + t1;
-                break;
-            case 3:
-                tX[0] = t0 + t1 + t2;
-                tX[1] = t0 + t2;
-                tX[2] = t0;
-                break;
-            case 4:
-                tX[0] = t0 + t1;
-                tX[1] = t0 + t1 + t2;
-                tX[2] = t0;
-                break;
-            case 5:
-                tX[0] = t0;
-                tX[1] = t0 + t1 + t2;
-                tX[2] = t0 + t2;
-                break;
-        }
-
-        for( int i = 0; i < PHASES; i++ ) {
-            if ( sgn_iX_komp[i] > 0 ) {
-                tX[i] -= td;
-            }
-        }
+    int n, bitInit;
+    if ( cykl == 1 ) {
+        bitInit = 0;
+        n = rhoUN;
     } else {
-        stan_pocz = 1;
+        bitInit = 1;
+        n = ( rhoUN + 3 ) % 6;
+    }
 
-        switch( rhoUN ) {
-            case 0:
-                tX[0] = t0 + t1 + t2;
-                tX[1] = t0 + t2;
-                tX[2] = t0;
-                break;
-            case 1:
-                tX[0] = t0 + t1;
-                tX[1] = t0 + t1 + t2;
-                tX[2] = t0;
-                break;
-            case 2:
-                tX[0] = t0;
-                tX[1] = t0 + t1 + t2;
-                tX[2] = t0 + t2;
-                break;
-            case 3:
-                tX[0] = t0;
-                tX[1] = t0 + t1;
-                tX[2] = t0 + t1 + t2;
-                break;
-            case 4:
-                tX[0] = t0 + t2;
-                tX[1] = t0;
-                tX[2] = t0 + t1 + t2;
-                break;
-            case 5:
-                tX[0] = t0 + t1 + t2;
-                tX[1] = t0;
-                tX[2] = t0 + t1;
-                break;
-        }
+    switch( n ) {
+        case 0:
+            tX[0] = t0;
+            tX[1] = t0 + t1;
+            tX[2] = t0 + t1 + t2;
+            break;
+        case 1:
+            tX[0] = t0 + t2;
+            tX[1] = t0;
+            tX[2] = t0 + t1 + t2;
+            break;
+        case 2:
+            tX[0] = t0 + t1 + t2;
+            tX[1] = t0;
+            tX[2] = t0 + t1;
+            break;
+        case 3:
+            tX[0] = t0 + t1 + t2;
+            tX[1] = t0 + t2;
+            tX[2] = t0;
+            break;
+        case 4:
+            tX[0] = t0 + t1;
+            tX[1] = t0 + t1 + t2;
+            tX[2] = t0;
+            break;
+        case 5:
+            tX[0] = t0;
+            tX[1] = t0 + t1 + t2;
+            tX[2] = t0 + t2;
+            break;
+    }
 
-        for( int i = 0; i < PHASES; i++ ) {
-            if ( sgn_iX_komp[i] < 0 ) {
-                tX[i] -= td;
-            }
+    for( int i = 0; i < PHASES; i++ ) {
+        if ( sgn_iX_komp[i] * cykl < 0 ) {
+            tX[i] -= td;
         }
     }
 
@@ -330,11 +293,11 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
 
     for( int i = PHASES - 1; i >= 0; i-- ) {
         if ( t <= tX[i] ) {
-            bit[i] = stan_pocz;
+            bit[i] = bitInit;
         } else if ( t <= tX[i] + td ) {
             bit[i] = ( sgn_iX[i] > 0 ) ? 0 : 1;
         } else if ( t <= tImp ) {
-            bit[i] = !stan_pocz;
+            bit[i] = !bitInit;
         }
         bits <<= 1;
         bits |= bit[i];
@@ -459,7 +422,7 @@ int dos_main( ) {
             x22 = frx * isx + fry * isy;
 
             if ( timeCnt > 10 ) {
-                Trapez( integrationArgCount, tImp, x );
+                Trapez( 4, tImp, x );
 
                 // odsprzezenie
                 u1 = ( -v1 * ( a1 + a5 ) + x11 * ( x22 + a3 * x21 ) ) / a4;
@@ -481,7 +444,7 @@ int dos_main( ) {
 
         PWM( tImp, uS, rhoU, ud, h );
 
-        F4( integrationArgCount, h, y ); // rownania rozniczkowe silnika - rozwiazanie metoda RK4
+        F4( 6, h, y ); // rownania rozniczkowe silnika - rozwiazanie metoda RK4
 
         transform_XY_to_3ph( i3ph, isx, isy );
         transform_XY_to_3ph( u3ph, usx, usy );
