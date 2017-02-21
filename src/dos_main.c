@@ -298,6 +298,8 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
         }
         if ( i == PWM_DAMAGE ) {
             bit[i] = 0;
+        } else if ( i == PWM_DAMAGE - PHASES ) {
+            bit[i] = 1;
         }
         bits <<= 1;
         bits |= bit[i];
