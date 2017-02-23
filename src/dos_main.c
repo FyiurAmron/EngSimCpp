@@ -27,7 +27,7 @@ bool sterowanie = true;
 int PWM_DAMAGE = 42;
 
 double ud = 1.52; //napiecie obwodu posredniczacego
-double uS, rhoU; // modul i predkosc wirowania wektroa napiecia do pwm
+double uS, rhoU, phiU; // modul i predkosc wirowania wektroa napiecia do pwm
 double usx, usy; //napiecia zasilania silnika
 double isx, isy, frx, fry; //rownania modelu silnika
 double omegaR;
@@ -204,6 +204,7 @@ const double ux_out[] = {
 };
 
 #define PHASES  3
+#define PHASE_LEN  ( ( 2 * M_PI ) / ( PHASES * 2 ) )
 
 void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     static double t = tImp; // force update
@@ -217,20 +218,28 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     const double sgn_iX_komp[PHASES] = { 0 };
     const double sgn_iX[PHASES] = { 0 };
 
+    //const double sinPhi0 = sin( ( 2 * M_PI ) / ( PHASES * 2 ) );
+
     //////////
 
     t += h;
 
     if ( t > tImp ) {
         t -= tImp; // see how the regulation error decreased after this!!!
-        int n1 = floor( wrapAngle( rhoU ) / ( ( 2 * M_PI ) / ( PHASES * 2 ) ) ); // or just do % ( PHASES * 2 ) instead of wrapAngle() here
+        int n1 = floor( wrapAngle( rhoU ) / PHASE_LEN ); // or just do % ( PHASES * 2 ) instead of wrapAngle() here
         int n2 = ( n1 + 1 ) % ( PHASES * 2 );
 
+        //phiU = fmod( rhoU, PHASE_LEN );
         double uSX = uS * cos( rhoU );
         double uSY = uS * sin( rhoU ); // opoznienie symulujace czas na obliczenie sterowania
-        double k = tImp / ( ud * ( ux[n1] * uy[n2] - uy[n1] * ux[n2] ) );
+        //double k = tImp / ( ud * ( ux[n1] * uy[n2] - uy[n1] * ux[n2] ) );
+        double k = tImp / ud * SQRT3;
         t1 = k * ( uSX * uy[n2] - uSY * ux[n2] );
-        t2 = -k * ( uSX * uy[n1] - uSY * ux[n1] );
+        t2 = k * ( uSY * ux[n1] - uSX * uy[n1] );
+        /*
+        t2 = tImp * 2 / (ud*ud) * sin( phiU ) / sinPhi0;
+        t1 = tImp * 2 / (ud*ud) * sin( PHASE_LEN - phiU ) / sinPhi0;
+         */
         t0 = 0.5 * ( tImp - t1 - t2 );
 
         sign = -sign;
@@ -309,6 +318,31 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
     usy = uy_out[bits] * ud;
 }
 
+#if 0
+#define PHASES_NEW  3
+
+void PWM_new( double tImp, double uS, double rhoU, double ud, double h ) {
+    static double t = tImp; // force update
+    static double t1, t2, t0;
+    static double tX[PHASES] = { 0 };
+
+    static int sign = 1;
+
+    //////////
+
+    t += h;
+
+    if ( t > tImp ) { // ustaw impulsy
+
+    }
+
+    // zadawaj impulsy
+
+    usx = ux_out[bits] * ud;
+    usy = uy_out[bits] * ud;
+}
+
+#endif
 //////////
 
 // warunki początkowe
@@ -369,7 +403,7 @@ int dos_main( ) {
         inputChar = fgetc( fpSetup );
         if ( isdigit( inputChar ) ) {
             PWM_DAMAGE = inputChar - '0';
-            inputChar = fgetc( fpSetup );
+            inputChar = '#'; // ignore the rest of the line
         }
         while( inputChar == '#' ) {
             inputChar = fgetc( fpSetup );

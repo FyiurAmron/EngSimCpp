@@ -16,6 +16,8 @@ extern double x11z, x12z, x21z, x22z;
 
 extern double usx, usy;
 
+extern double rhoU, phiU;
+
 extern double timeCnt;
 
 int dos_main( );

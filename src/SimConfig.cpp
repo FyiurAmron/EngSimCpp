@@ -99,8 +99,10 @@ void Simulations( ) {
     //wChartW.charts[2]->AddSignal( &x21z, L"x21z", RGB_( 0, 255, 255 ) );
     wChartW.charts[3]->AddSignal( &usx, L"usx", RGB_( 0, 255, 255 ) );
     wChartW.charts[2]->AddSignal( &usy, L"usy", RGB_( 0, 255, 255 ) );
-    wChartW.charts[1]->AddSignal( &x22, L"x22", RGB_( 44, 134, 167 ) );
-    wChartW.charts[0]->AddSignal( &x22z, L"x22z", RGB_( 44, 134, 167 ) );
+    //wChartW.charts[1]->AddSignal( &x22, L"x22", RGB_( 44, 134, 167 ) );
+    //wChartW.charts[0]->AddSignal( &x22z, L"x22z", RGB_( 44, 134, 167 ) );
+    wChartW.charts[1]->AddSignal( &rhoU, L"rhoU", RGB_( 0, 255, 255 ) );
+    wChartW.charts[0]->AddSignal( &phiU, L"phiU", RGB_( 0, 255, 255 ) );
 
     //definiowanie poczatkowego polozenia wykresow
     //polozenie na osi X ustawia sie dla wszystkich okien jednoczesnie
@@ -123,8 +125,8 @@ void Simulations( ) {
     //wChartW.charts[2]->SetHeight( 1.1 );
     wChartW.charts[3]->SetHeight( 2.5 );
     wChartW.charts[2]->SetHeight( 2.2 );
-    wChartW.charts[1]->SetHeight( 2.2 );
-    wChartW.charts[0]->SetHeight( 2.2 );
+    wChartW.charts[1]->SetHeight( 2 * M_PI );
+    wChartW.charts[0]->SetHeight( ( 2 * M_PI ) / 6 );
 
     //////////
     //definiowanie kolorow okna (tla,siatki,etykiet)
