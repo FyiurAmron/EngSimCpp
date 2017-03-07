@@ -24,10 +24,11 @@ double tImp; /* Okres impulsowania do generowania napiecia */
 double timeCnt;
 bool sterowanie = true;
 
-int PWM_DAMAGE = 42;
+int PWM_FAULT_INIT = 42, PWM_FAULT = 42;
 
 double ud = 1.52; //napiecie obwodu posredniczacego
 double uS, rhoU, phiU; // modul i predkosc wirowania wektroa napiecia do pwm
+double rhoI;
 double usx, usy; //napiecia zasilania silnika
 double isx, isy, frx, fry; //rownania modelu silnika
 double omegaR;
@@ -37,7 +38,7 @@ double m0;
 
 // model multiskalarny
 double x11, x12, x21, x22;
-double odwr_x21, usx_zad, usy_zad, u1, u2;
+double inv_x21, usx_zad, usy_zad, u1, u2;
 double v1, v2;
 
 // regulator
@@ -122,31 +123,33 @@ void F4( int varCount, double h, double z[32] ) {
     }
 }
 
+#define LIMIT  2.5
+
 void TrapDery( double dx[4], double x[4] ) {
     //regulator x11
     //x11z = 1;
     e11 = x11z - x11;
-    x[3] = limit( x[3], 2.0 );
-    x12z = limit( x[3] + kp11 * e11, 2.0 );
+    x[3] = limit( x[3], LIMIT );
+    x12z = limit( x[3] + kp11 * e11, LIMIT );
     dx[3] = e11 * ki11;
 
     //regulator x12
     e12 = x12z - x12;
-    x[2] = limit( x[2], 2.0 );
-    v1 = limit( x[2] + kp12 * e12, 2.0 );
+    x[2] = limit( x[2], LIMIT );
+    v1 = limit( x[2] + kp12 * e12, LIMIT );
     dx[2] = e12 * ki12;
 
     //regulator x21
     //x21z = 1;
     e21 = x21z - x21;
-    x[1] = limit( x[1], 2.0 );
-    x22z = limit( x[1] + kp21 * e21, 2.0 );
+    x[1] = limit( x[1], LIMIT );
+    x22z = limit( x[1] + kp21 * e21, LIMIT );
     dx[1] = e21 * ki21;
 
     //regulator x22
     e22 = x22z - x22;
-    x[0] = limit( x[0], 2.0 );
-    v2 = limit( x[0] + kp22 * e22, 2.0 );
+    x[0] = limit( x[0], LIMIT );
+    v2 = limit( x[0] + kp22 * e22, LIMIT );
     dx[0] = e22 * ki22;
 }
 
@@ -305,9 +308,9 @@ void PWM( double tImp, double uS, double rhoU, double ud, double h ) {
         } else {
             bit[i] = !bitInit;
         }
-        if ( i == PWM_DAMAGE ) {
+        if ( i == PWM_FAULT ) {
             bit[i] = 0;
-        } else if ( i == PWM_DAMAGE - PHASES ) {
+        } else if ( i == PWM_FAULT - PHASES ) {
             bit[i] = 1;
         }
         bits <<= 1;
@@ -348,6 +351,8 @@ void PWM_new( double tImp, double uS, double rhoU, double ud, double h ) {
 // warunki początkowe
 double x[32] = { 0 };
 double y[32] = { 0 };
+
+#define PWM_FAULT_TIME  500
 
 int dos_main( ) {
     //wartosci zadane
@@ -398,11 +403,12 @@ int dos_main( ) {
 
     FILE* fpSetup = fopen( "setup.txt", "r" );
     //FILE* fpLog = fopen( "log.txt", "w" );
+    FILE* fpOut = fopen( "out.txt", "w" );
 
     if ( fpSetup != NULL ) {
         inputChar = fgetc( fpSetup );
         if ( isdigit( inputChar ) ) {
-            PWM_DAMAGE = inputChar - '0';
+            PWM_FAULT_INIT = inputChar - '0';
             inputChar = '#'; // ignore the rest of the line
         }
         while( inputChar == '#' ) {
@@ -426,6 +432,8 @@ int dos_main( ) {
      @ 800 0.5 0.1
      @ 1500 1.5 0.9
      */
+
+    bool detected = false;
 
     while( true ) {
         timeCnt += ht;
@@ -464,12 +472,12 @@ int dos_main( ) {
                 // odsprzezenie
                 u1 = ( -v1 * ( a1 + a5 ) + x11 * ( x22 + a3 * x21 ) ) / a4;
                 u2 = ( -v2 * ( a1 + a5 ) - x11 * x12 - a2 * x21 - a6 * ( isx * isx + isy * isy ) ) / a4;
-                odwr_x21 = x21;
-                if ( odwr_x21 < 0.001 ) {
-                    odwr_x21 = 0.001;
+                inv_x21 = 1.0 / x21;
+                if ( inv_x21 < 0.001 ) {
+                    inv_x21 = 0.001;
                 }
-                usx_zad = ( u2 * frx - u1 * fry ) / odwr_x21;
-                usy_zad = ( u2 * fry + u1 * frx ) / odwr_x21;
+                usx_zad = ( u2 * frx - u1 * fry ) * inv_x21;
+                usy_zad = ( u2 * fry + u1 * frx ) * inv_x21;
                 usx_zad = limit( usx_zad, 1.5 );
                 usy_zad = limit( usy_zad, 1.5 );
 
@@ -479,9 +487,31 @@ int dos_main( ) {
             sterowanie = false;
         }
 
+        if ( timeCnt > PWM_FAULT_TIME ) {
+            PWM_FAULT = PWM_FAULT_INIT;
+        }
+
         PWM( tImp, uS, rhoU, ud, h );
 
         F4( 6, h, y ); // rownania rozniczkowe silnika - rozwiazanie metoda RK4
+        /*
+                tau = y[0];
+                isx = y[1];
+                isy = y[2];
+                frx = y[3];
+                fry = y[4];
+                omegaR = y[5];
+         */
+        //if ( !detected && x21 > 2.0 * x21z ) {
+        rhoI = getRho( isx, isy );
+#define FAULT_FACTOR  2.0
+        if ( !detected ) {
+            if ( x12 > FAULT_FACTOR * LIMIT || x21 > FAULT_FACTOR * LIMIT || x22 > FAULT_FACTOR * LIMIT ) {
+                fprintf( fpOut, "awaria wykryta w momencie %f\n", timeCnt );
+                fclose( fpOut );
+                detected = true;
+            }
+        }
 
         transform_XY_to_3ph( i3ph, isx, isy );
         transform_XY_to_3ph( u3ph, usx, usy );
