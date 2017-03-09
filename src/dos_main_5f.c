@@ -11,9 +11,6 @@ double usx1, usy1, usx3, usy3;
 double isx1, isy1, isx3, isy3;
 double is1, is3, rhoU3;
 
-double stan_a_out, stan_b_out, stan_c_out, stan_d_out, stan_e_out;
-double INTR;
-
 double usx, usy;
 
 double temp[31], temp2[31];

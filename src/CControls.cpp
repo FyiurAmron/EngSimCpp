@@ -105,11 +105,15 @@ void CInputText::GetValue( wchar_t *str ) {
 }
 
 void CInputText::SetValue( ) {
-    if ( buff ) SetWindowText( hWnd, buff );
+    if ( buff ) {
+        SetWindowText( hWnd, buff );
+    }
 }
 
 void CInputText::GetValue( ) {
-    if ( buff ) GetWindowText( hWnd, buff, 255 );
+    if ( buff ) {
+        GetWindowText( hWnd, buff, 255 );
+    }
 }
 
 void CInputNum::Create( const CWindow *parent, int x, int y, int width, int height ) {
@@ -164,7 +168,9 @@ void CInputNum::SetValue( ) {
 
     swprintf(temp,_T("%.3f"),buff);
     if(buff) SetWindowText(hWnd,temp);*/
-    if ( buff ) SetValue( *buff );
+    if ( buff ) {
+        SetValue( *buff );
+    }
     //if(trackbar) trackbar->SetValue(GetValue());
 }
 
@@ -189,7 +195,8 @@ void CTrackBar::Create( const CWindow *parent, int x, int y, int width, int heig
 
     wsprintf( temp, L"%.3f", initVal );
 
-    hWnd = CreateWindowEx( 0, TRACKBAR_CLASS, L"", WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
+    hWnd = CreateWindowEx( 0, TRACKBAR_CLASS, L"", WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            x, y, width, height, parent->hWnd, ( HMENU )this, parent->hInstance, this );
     if ( hWnd ) {
         controls[hWnd] = this;
         SendMessage( hWnd, WM_SETFONT, (WPARAM) hCtrlFont, FALSE );
@@ -228,15 +235,17 @@ double CTrackBar::GetValue( ) {
 
 void CTrackBar::SetValue( ) {
     //if(buff) SetValue(*buff);
-    if ( input ) SetValue( input->ReadValue( ) );
+    if ( input ) {
+        SetValue( input->ReadValue( ) );
+    }
 }
 
 double CTrackBar::Logical2Real( int pos ) {
-    return (maxVal - minVal ) / ( maxLogicalVal - minLogicalVal )*( pos - minLogicalVal ) + minVal;
+    return ( maxVal - minVal ) / ( maxLogicalVal - minLogicalVal ) * ( pos - minLogicalVal ) + minVal;
 }
 
 int CTrackBar::Real2Logical( double val ) {
-    return (maxLogicalVal - minLogicalVal ) / ( maxVal - minVal )*( val - minVal ) + minLogicalVal;
+    return ( maxLogicalVal - minLogicalVal ) / ( maxVal - minVal ) * ( val - minVal ) + minLogicalVal;
 }
 
 void CTrackBar::SetLogicalRange( int min, int max ) {

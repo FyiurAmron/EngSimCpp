@@ -131,18 +131,14 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
                     SetXPos( charts[0]->x0 - charts[0]->xWidth );
                     break;
                 case 'Z':
-                    if ( GetKeyState( VK_CONTROL )&0x0100 ) //jesli ustawiony bit w starszym bajcie - nacisniety przycisk
-                    {
+                    if ( GetKeyState( VK_CONTROL )&0x0100 ) {
                         Autoscale( );
                     }
                     break;
-                case 0x53: //'s'
-                    if ( GetKeyState( VK_CONTROL )&0x0100 ) //jesli ustawiony bit w starszym bajcie - nacisniety przycisk
-                    {
+                case 'S':
+                    if ( GetKeyState( VK_CONTROL )&0x0100 ) {
                         CSignalsFile file;
-
                         file.SaveSignals( charts, SaveSignalCSVMultipleTimeColumn );
-
                     }
                     break;
             }
@@ -159,7 +155,6 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
             }
             break;
         case WM_PAINT:
-
             graph->Begin( TRUE );
 
             //graph->DrawText(prevPosX,wMain.height-prevPosY,sErrorVal);
@@ -229,10 +224,7 @@ LRESULT CChartWindow::ChartWndProc( HWND hWnd, UINT message, WPARAM wParam, LPAR
                 graph->DrawText( 280, graph->window->height - 320 + 15, tempStr );
             }
 
-
             graph->End( );
-
-
 
             //delete graph;
             //SendMessage(hWnd,WM_PAINT,0,0);

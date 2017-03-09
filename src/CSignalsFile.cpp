@@ -25,8 +25,6 @@ void CSignalsFile::SaveSignals( std::vector<CChart*> &charts, SaveSignalFormat f
         }
         printf( L"\r\n" );
 
-
-
         // DANE
 
         if ( format == SaveSignalCSVMultipleTimeColumn ) {

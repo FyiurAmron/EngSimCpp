@@ -38,8 +38,6 @@ outVectParam outVect[6]; //6
 
 double ux1[32], uy1[32], ux3[32], uy3[32];
 
-//int stan_a_out, stan_b_out, stan_c_out, stan_d_out, stan_e_out;
-
 double ux1out[32], uy1out[32], ux3out[32], uy3out[32];
 
 //wspolczynniki do PWm 4 wek
@@ -50,7 +48,7 @@ double a3x1, a3y1, a3x3, a3y3;
 double a4x1, a4y1, a4x3, a4y3;
 
 //czasy
-double t_a, t_b, t_c, t_d, t_e; //czas do za��czenia tranzystora w fazie (czas trwania zera)
+double tCnt[5]; //czas do za��czenia tranzystora w fazie (czas trwania zera)
 double t[6]; //6
 //skladowe zadane
 double uSX1, uSY1, uSX3, uSY3;
@@ -111,7 +109,8 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
     static double impuls;
     static int cykl = 1;
 
-    int stan_a[5], stan_b[5], stan_c[5], stan_d[5], stan_e[5];
+    int stan[5][5];
+    int stanOut[5];
 
     if ( initNeeded ) {
         //wyznaczenie wspolczynnikow skladowych wektorow, ich numery wynikaja z zapisu binarnego (f*2^0+e*2^1+....a*2^0)
@@ -448,31 +447,21 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         selVect2[4].w = selVect[4].w;
 
         //jezeli czasy ujemne - to we� wektory przeciwne
-        if ( t[1] < 0 ) {
-            t[1] *= -1;
-            selVect2[1].w = abs( 31 - selVect2[1].w );
-        }
-        if ( t[2] < 0 ) {
-            t[2] *= -1;
-            selVect2[2].w = abs( 31 - selVect2[2].w );
-        }
-        if ( t[3] < 0 ) {
-            t[3] *= -1;
-            selVect2[3].w = abs( 31 - selVect2[3].w );
-        }
-        if ( t[4] < 0 ) {
-            t[4] *= -1;
-            selVect2[4].w = abs( 31 - selVect2[4].w );
+        for( int i = 1; i < 5; i++ ) {
+            if ( t[i] < 0 ) {
+                t[i] *= -1;
+                selVect2[i].w = abs( 31 - selVect2[i].w );
+            }
         }
 
         //suma czasu trwania zer i jedynek w fazach
         //dla 4 wybranych wektor_sel�w wyluskanie bitu wektor_sel�w okre�laj�cego faz�, 1 to stan za��czenia, zero - wy��czenia
         for( int i = 1; i <= 4; i++ ) { //do 4 bo 4 wektry
-            stan_a[i] = (int(selVect2[i].w ) & 0x10 ) >> 4;
-            stan_b[i] = (int(selVect2[i].w ) & 0x08 ) >> 3;
-            stan_c[i] = (int(selVect2[i].w ) & 0x04 ) >> 2;
-            stan_d[i] = (int(selVect2[i].w ) & 0x02 ) >> 1;
-            stan_e[i] = (int(selVect2[i].w ) & 0x01 ) >> 0;
+            stan[0][i] = (int(selVect2[i].w ) & 0x10 ) >> 4;
+            stan[1][i] = (int(selVect2[i].w ) & 0x08 ) >> 3;
+            stan[2][i] = (int(selVect2[i].w ) & 0x04 ) >> 2;
+            stan[3][i] = (int(selVect2[i].w ) & 0x02 ) >> 1;
+            stan[4][i] = (int(selVect2[i].w ) & 0x01 ) >> 0;
         }
 
         //wyzerowanie czasu trwania jedynek na pocz�tku oblicze�. Przyj�te przyporzadkowanie nr fazom (a=1, b=2... e=5)
@@ -484,20 +473,10 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //i zsumowanie czas�w trwania jedynek w fazach
         //<= 4 bo 4 czasy trwania wektorow
         for( int i = 1; i <= 4; i++ ) {
-            if ( stan_a[i] == 1 ) {
-                timesOnDesc[1].timeOn += t[i];
-            }
-            if ( stan_b[i] == 1 ) {
-                timesOnDesc[2].timeOn += t[i];
-            }
-            if ( stan_c[i] == 1 ) {
-                timesOnDesc[3].timeOn += t[i];
-            }
-            if ( stan_d[i] == 1 ) {
-                timesOnDesc[4].timeOn += t[i];
-            }
-            if ( stan_e[i] == 1 ) {
-                timesOnDesc[5].timeOn += t[i];
+            for( int j = 0; j < 5; j++ ) {
+                if ( stan[j][i] == 1 ) {
+                    timesOnDesc[j + 1].timeOn += t[i];
+                }
             }
         }
 
@@ -514,13 +493,11 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //teraz czasy jedynek dotycza wylacznie wektorow aktywnych. Kolejny etap to wyluskanie zer.
         time0 = 0.5 * ( tImp - ( timesOnTmp[5].timeOn - timesOnTmp[1].timeOn ) );
         //czasy do za�aczenia tranzystora w fazie (przejscie z 0 na 1)
-        t_a = tImp - timesOnDesc[1].timeOn - time0;
-        t_b = tImp - timesOnDesc[2].timeOn - time0;
-        t_c = tImp - timesOnDesc[3].timeOn - time0;
-        t_d = tImp - timesOnDesc[4].timeOn - time0;
-        t_e = tImp - timesOnDesc[5].timeOn - time0; // na razie wektory aktywne s� na koncu cyklu. Kazdy cykl startuje z 00000
+        for( int i = 0; i < 5; i++ ) {
+            tCnt[i] = tImp - timesOnDesc[i + 1].timeOn - time0;
+        } // na razie wektory aktywne s� na koncu cyklu. Kazdy cykl startuje z 00000
 
-        //a teraz odtwarzamy wektory. To jest te� potrzebne do wyliczenia czas�w do prze�aczenia
+        //teraz odtwarzamy wektory. To jest te� potrzebne do wyliczenia czas�w do prze�aczenia
 
         //sortowanie od najkr�tszego  do najd�u�szego czasu trwania jedynki - im kr�tsza tym jest ona p�niej
         qsort( &timesOnDesc[1], 5, sizeof (timeOnDesc ), cmpTimeOn ); //alternatywna metoda sortowania
@@ -597,10 +574,12 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         }
 
         //wygenerowane skladowe w ukladzie wsp.1 i 3
-        *usx1wyg = ( t[1] * ux1out[outVect[1].w] + t[2] * ux1out[outVect[2].w] + t[3] * ux1out[outVect[3].w] + t[4] * ux1out[outVect[4].w] ) / tImp;
-        *usy1wyg = ( t[1] * uy1out[outVect[1].w] + t[2] * uy1out[outVect[2].w] + t[3] * uy1out[outVect[3].w] + t[4] * uy1out[outVect[4].w] ) / tImp;
-        *usx3wyg = ( t[1] * ux3out[outVect[1].w] + t[2] * ux3out[outVect[2].w] + t[3] * ux3out[outVect[3].w] + t[4] * ux3out[outVect[4].w] ) / tImp;
-        *usy3wyg = ( t[1] * uy3out[outVect[1].w] + t[2] * uy3out[outVect[2].w] + t[3] * uy3out[outVect[3].w] + t[4] * uy3out[outVect[4].w] ) / tImp;
+        /*
+         *usx1wyg = ( t[1] * ux1out[outVect[1].w] + t[2] * ux1out[outVect[2].w] + t[3] * ux1out[outVect[3].w] + t[4] * ux1out[outVect[4].w] ) / tImp;
+         *usy1wyg = ( t[1] * uy1out[outVect[1].w] + t[2] * uy1out[outVect[2].w] + t[3] * uy1out[outVect[3].w] + t[4] * uy1out[outVect[4].w] ) / tImp;
+         *usx3wyg = ( t[1] * ux3out[outVect[1].w] + t[2] * ux3out[outVect[2].w] + t[3] * ux3out[outVect[3].w] + t[4] * ux3out[outVect[4].w] ) / tImp;
+         *usy3wyg = ( t[1] * uy3out[outVect[1].w] + t[2] * uy3out[outVect[2].w] + t[3] * uy3out[outVect[3].w] + t[4] * uy3out[outVect[4].w] ) / tImp;
+         */
 
         cykl *= -1;
 
@@ -608,23 +587,19 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
     }
 
     if ( cykl > 0 ) {
-        stan_a_out = ( impuls <= t_a ) ? 0 : 1;
-        stan_b_out = ( impuls <= t_b ) ? 0 : 1;
-        stan_c_out = ( impuls <= t_c ) ? 0 : 1;
-        stan_d_out = ( impuls <= t_d ) ? 0 : 1;
-        stan_e_out = ( impuls <= t_e ) ? 0 : 1;
+        for( int i = 0; i < 5; i++ ) {
+            stanOut[i] = ( impuls <= tCnt[i] ) ? 0 : 1;
+        }
     } else {
-        stan_a_out = ( impuls <= tImp - t_a ) ? 1 : 0;
-        stan_b_out = ( impuls <= tImp - t_b ) ? 1 : 0;
-        stan_c_out = ( impuls <= tImp - t_c ) ? 1 : 0;
-        stan_d_out = ( impuls <= tImp - t_d ) ? 1 : 0;
-        stan_e_out = ( impuls <= tImp - t_e ) ? 1 : 0;
+        for( int i = 0; i < 5; i++ ) {
+            stanOut[i] = ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
+        }
     }
 
-    *usx1 = ux1out[(int) stan_a_out << 4 | (int) stan_b_out << 3 | (int) stan_c_out << 2 | (int) stan_d_out << 1 | (int) stan_e_out];
-    *usy1 = uy1out[(int) stan_a_out << 4 | (int) stan_b_out << 3 | (int) stan_c_out << 2 | (int) stan_d_out << 1 | (int) stan_e_out];
-    *usx3 = ux3out[(int) stan_a_out << 4 | (int) stan_b_out << 3 | (int) stan_c_out << 2 | (int) stan_d_out << 1 | (int) stan_e_out];
-    *usy3 = uy3out[(int) stan_a_out << 4 | (int) stan_b_out << 3 | (int) stan_c_out << 2 | (int) stan_d_out << 1 | (int) stan_e_out];
+    *usx1 = ux1out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
+    *usy1 = uy1out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
+    *usx3 = ux3out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
+    *usy3 = uy3out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
 
     impuls += h;
     if ( impuls > tImp + h ) { //ob1?
