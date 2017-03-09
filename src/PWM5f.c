@@ -91,7 +91,6 @@ inline double fuy3( int tA, int tB, int tC, int tD, int tE ) {
             - ( SIN72 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) );
 }
 
-
 inline int cmp( double a, double b ) {
     return ( a > b ) - ( a < b );
 }
@@ -109,6 +108,8 @@ inline int bit( int val, int bitNr ) {
 }
 
 #define PHASES  5
+#include <time.h>
+#include <stdlib.h>
 
 void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, double ud, double h,
         double *usx1, double *usy1, double *usx3, double *usy3,
@@ -292,7 +293,8 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
     }
 
     double k_ud = ud * HALF_SQRT_2DIV5;
-
+#define COMPENSATE  1
+    //#define COMPENSATE  0
     /******************************w przerwaniu***********************************************************************/
     if ( impuls == 0 ) { //czyli co okres impulsowania (uwaga MUSI byc Timp - h bo inaczej  niezgodnosc czestotliwosci
         //wylicz polozenia i skladowe wektorow zadanych
@@ -304,7 +306,6 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         uSX3 = uS3 * cos( rhoU3 );
         uSY3 = uS3 * sin( rhoU3 );
 
-        //od tego miejsca musi by� w przerwaniu
         double k = tImp / k_ud; //czasy tu wyliczone dotycz� 4 wybranych wektor_sel�w i mog� mie� dowolne warto�ci (te� ujemne)
         t[1] = ( a1x1 * uSX1 + a1y1 * uSY1 + a1x3 * uSX3 + a1y3 * uSY3 ) * k;
         t[2] = ( a2x1 * uSX1 + a2y1 * uSY1 + a2x3 * uSX3 + a2y3 * uSY3 ) * k;
@@ -319,21 +320,12 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
                 t[i] *= -1;
                 selVect2[i].w = abs( 31 - selVect2[i].w );
             }
-        }
-
-        //suma czasu trwania zer i jedynek w fazach
-        //dla 4 wybranych wektor_sel�w wyluskanie bitu wektor_sel�w okre�laj�cego faz�, 1 to stan za��czenia, zero - wy��czenia
-        for( int i = 1; i <= 4; i++ ) { //do 4 bo 4 wektry
-            for( int j = 0; j < 5; j++ ) {
+            for( int j = 0; j < 5; j++ ) { //suma czasu trwania zer i jedynek w fazach
                 stan[j][i] = bit( selVect2[i].w, 4 - j );
-            }
-        }
-
-        //wyzerowanie czasu trwania jedynek na pocz�tku oblicze�. Przyj�te przyporzadkowanie nr fazom (a=1, b=2... e=5)
-        for( int i = 1; i <= 5; i++ ) {
+            } //dla 4 wybranych wektor_sel�w wyluskanie bitu wektor_sel�w okre�laj�cego faz�, 1 to stan za��czenia, zero - wy��czenia
             timesOnDesc[i].faza = i;
             timesOnDesc[i].timeOn = 0;
-        }
+        } //wyzerowanie czasu trwania jedynek na pocz�tku oblicze�. Przyj�te przyporzadkowanie nr fazom (a=1, b=2... e=5)
 
         //i zsumowanie czas�w trwania jedynek w fazach
         //<= 4 bo 4 czasy trwania wektorow
@@ -360,6 +352,9 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //czasy do za�aczenia tranzystora w fazie (przejscie z 0 na 1)
         for( int i = 0; i < 5; i++ ) {
             tCnt[i] = tImp - timesOnDesc[i + 1].timeOn - time0;
+            if ( COMPENSATE && PWM_FAULT != 42 ) {
+                tCnt[i] += time0;
+            }
         } // na razie wektory aktywne s� na koncu cyklu. Kazdy cykl startuje z 00000
 
         //teraz odtwarzamy wektory. To jest te� potrzebne do wyliczenia czas�w do prze�aczenia
@@ -371,63 +366,81 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
 
         //wektory s� odtwarzane od ko�ca
         //wektor 11111 jest pi�ty
-        //wyzerowanie numer�w wektor�w
-        for( int i = 1; i <= 5; i++ ) {
-            outVect[i].w = 0;
-        }
         for( int j = 1, k = 5; j <= 5; j++, k-- ) {
             t[k] = timesOnDesc[j].timeOn;
             for( int i = j; i <= 5; i++ ) {
                 timesOnDesc[i].timeOn -= t[k];
-                if ( timesOnDesc[i].timeOn >= 0 ) {
-                    outVect[k].w |= 1 << ( 5 - timesOnDesc[i].faza );
-                }
             }
         }
-
-        //wyczyszczenie wektor�w o zerowej d�ugo�ci (przyjmij poprzedni)
-        for( int i = 2; i <= 5; i++ ) {
-            if ( t[i] == 0 ) {
-                outVect[i].w = outVect[i - 1].w;
-            }
-        }
-
-        /// w tym miejscu jest sekwencja 00000-a1-a2-a3-a4-11111 przy minimalnej liczbie przelaczen poiedzy kolejnymi wektorami
+        // w tym miejscu jest sekwencja 00000-a1-a2-a3-a4-11111 przy minimalnej liczbie przelaczen poiedzy kolejnymi wektorami
+        // w przypadku uszkodzenia musi wystarczyc 00000-a1-a2-a3 , a3-a2-a1-00000
 
         //czasy paswyne
         t[0] = 0.5 * ( tImp - ( t[1] + t[2] + t[3] + t[4] ) );
-        vect[0].w = 0;
-        vect[5].w = 31;
 
         cykl *= -1;
-
         *przerwanie = 1; //pozwala na uruchomienie sterowania
     }
 
     int bits = 0;
+    int bitz[5];
+
     if ( cykl == 1 ) {
         for( int i = 0; i < 5; i++ ) {
-            bits <<= 1;
-            if ( i == PWM_FAULT ) {
-                bits |= 0;
-            } else if ( i == PWM_FAULT - PHASES ) {
-                bits |= 1;
-            } else {
-                bits |= ( impuls <= tCnt[i] ) ? 0 : 1;
-            }
+            bitz[i] = ( impuls <= tCnt[i] ) ? 0 : 1;
         }
     } else {
         for( int i = 0; i < 5; i++ ) {
-            bits <<= 1;
-            if ( i == PWM_FAULT ) {
-                bits |= 1;
-            } else if ( i == PWM_FAULT - PHASES ) {
-                bits |= 0;
-            } else {
-                bits |= ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
-            }
+            bitz[i] = ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
         }
     }
+
+    bits = 0;
+    for( int i = 0; i < 5; i++ ) {
+        bits <<= 1;
+        bits |= bitz[i];
+    }
+    if ( PWM_FAULT >= 0 && PWM_FAULT <= 4 ) {
+        if ( COMPENSATE && bitz[PWM_FAULT] && ( bits /*& ( 1 << PWM_FAULT ) */) ) {
+
+            bitz[( PWM_FAULT + 1 ) % 5] = 1;
+            bitz[( PWM_FAULT + 2 ) % 5] = 0;
+            bitz[( PWM_FAULT + 3 ) % 5] = 0;
+            bitz[( PWM_FAULT + 4 ) % 5] = 1;
+
+        }
+        bitz[PWM_FAULT] = 0;
+    } else if ( PWM_FAULT >= 5 && PWM_FAULT <= 9 ) {
+        if ( COMPENSATE && !bitz[PWM_FAULT - 5] && !bits ) {
+            bitz[( PWM_FAULT - 5 + 1 ) % 5] = 0;
+            bitz[( PWM_FAULT - 5 + 2 ) % 5] = 1;
+            bitz[( PWM_FAULT - 5 + 3 ) % 5] = 1;
+            bitz[( PWM_FAULT - 5 + 4 ) % 5] = 0;
+        }
+        bitz[PWM_FAULT - 5] = 1;
+    }
+    bits = 0;
+    for( int i = 0; i < 5; i++ ) {
+        bits <<= 1;
+        bits |= bitz[i];
+    }
+    //if ( COMPENSATE )
+#if 0
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%"/*"c%c%c"*/
+#define BYTE_TO_BINARY(byte)  \
+/* (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+*/  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0')
+    FILE* fpOut = fopen( "out.txt", "a" );
+    fprintf( fpOut, BYTE_TO_BINARY_PATTERN "\n", BYTE_TO_BINARY( bits ) );
+    fclose( fpOut );
+#endif
+
     *usx1 = k_ud * ux1[bits];
     *usy1 = k_ud * uy1[bits];
     *usx3 = k_ud * ux3[bits];
