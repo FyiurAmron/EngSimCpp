@@ -11,11 +11,15 @@ extern double omegaR;
 extern double m0; /* moment obciazenia */
 #endif
 
+#if 0
 extern double x11, x12, x21, x22;
 extern double x11z, x12z, x21z, x22z;
+#endif
 
 extern double usx, usy;
-extern double isx, isy;
+//extern double isx, isy;
+extern double is1, is3;
+extern double usx1, usy1, usx3, usy3;
 
 extern double rhoU, phiU;
 

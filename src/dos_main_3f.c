@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
+
 #ifdef _WIN32
 #include "dos2win.h"
 #endif
