@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdbool.h>
 
 #define SIN72  0.30901699437494742410229341718282 //cos 2PI/5
 #define COS72  0.95105651629515357211643933337938 //sin 2PI/5
@@ -53,6 +54,7 @@ double t[6]; //6
 //skladowe zadane
 double uSX1, uSY1, uSX3, uSY3;
 
+/*
 inline double limit( const double v, const double limit ) {
     if ( v > limit ) {
         return limit;
@@ -61,6 +63,7 @@ inline double limit( const double v, const double limit ) {
     }
     return v;
 }
+ */
 
 //stany gornych tranzystorow
 
@@ -110,7 +113,6 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
     static int cykl = 1;
 
     int stan[5][5];
-    int stanOut[5];
 
     if ( initNeeded ) {
         //wyznaczenie wspolczynnikow skladowych wektorow, ich numery wynikaja z zapisu binarnego (f*2^0+e*2^1+....a*2^0)
@@ -421,6 +423,8 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         initNeeded = false;
     }
 
+    double k_ud = ud * HALF_SQRT_2DIV5;
+
     /******************************w przerwaniu***********************************************************************/
     if ( impuls == 0 ) { //czyli co okres impulsowania (uwaga MUSI byc Timp - h bo inaczej  niezgodnosc czestotliwosci
         //wylicz polozenia i skladowe wektorow zadanych
@@ -433,7 +437,6 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         uSY3 = uS3 * sin( rhoU3 );
 
         //od tego miejsca musi by� w przerwaniu
-        double k_ud = ud * HALF_SQRT_2DIV5;
         double k = tImp / k_ud;
         t[1] = ( a1x1 * uSX1 + a1y1 * uSY1 + a1x3 * uSX3 + a1y3 * uSY3 ) * k; //czasy tu wyliczone dotycz� 4 wybranych wektor_sel�w i mog� mie� dowolne warto�ci (te� ujemne). to ju� muzi byc w przerwaniu
         t[2] = ( a2x1 * uSX1 + a2y1 * uSY1 + a2x3 * uSX3 + a2y3 * uSY3 ) * k;
@@ -441,13 +444,9 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         t[4] = ( a4x1 * uSX1 + a4y1 * uSY1 + a4x3 * uSX3 + a4y3 * uSY3 ) * k;
 
         //przepisanie wybranych wektor�w (wstawionych w inicjacji) dla kt�rych wyliczono czasy (dalej wektory s� nadpisywane wi�c trzeba przepisa� je tutaj)
-        selVect2[1].w = selVect[1].w;
-        selVect2[2].w = selVect[2].w;
-        selVect2[3].w = selVect[3].w;
-        selVect2[4].w = selVect[4].w;
-
         //jezeli czasy ujemne - to we� wektory przeciwne
         for( int i = 1; i < 5; i++ ) {
+            selVect2[i].w = selVect[i].w;
             if ( t[i] < 0 ) {
                 t[i] *= -1;
                 selVect2[i].w = abs( 31 - selVect2[i].w );
@@ -457,11 +456,11 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //suma czasu trwania zer i jedynek w fazach
         //dla 4 wybranych wektor_sel�w wyluskanie bitu wektor_sel�w okre�laj�cego faz�, 1 to stan za��czenia, zero - wy��czenia
         for( int i = 1; i <= 4; i++ ) { //do 4 bo 4 wektry
-            stan[0][i] = (int(selVect2[i].w ) & 0x10 ) >> 4;
-            stan[1][i] = (int(selVect2[i].w ) & 0x08 ) >> 3;
-            stan[2][i] = (int(selVect2[i].w ) & 0x04 ) >> 2;
-            stan[3][i] = (int(selVect2[i].w ) & 0x02 ) >> 1;
-            stan[4][i] = (int(selVect2[i].w ) & 0x01 ) >> 0;
+            stan[0][i] = ( (selVect2[i].w ) & 0x10 ) >> 4;
+            stan[1][i] = ( (selVect2[i].w ) & 0x08 ) >> 3;
+            stan[2][i] = ( (selVect2[i].w ) & 0x04 ) >> 2;
+            stan[3][i] = ( (selVect2[i].w ) & 0x02 ) >> 1;
+            stan[4][i] = ( (selVect2[i].w ) & 0x01 ) >> 0;
         }
 
         //wyzerowanie czasu trwania jedynek na pocz�tku oblicze�. Przyj�te przyporzadkowanie nr fazom (a=1, b=2... e=5)
@@ -565,13 +564,14 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         vect[0].w = 0;
         vect[5].w = 31;
 
-        // to ju� zb�dne - wyliczenie sk�adowych wektor�w i napi�� wyj�ciowych falownika. Nie musi by� liczone w eksperymencie
-        for( int i = 1; i <= 30; i++ ) {
-            ux1out[i] = ux1[i] * k_ud; //wartosci skladowych wektorow
-            uy1out[i] = uy1[i] * k_ud;
-            ux3out[i] = ux3[i] * k_ud;
-            uy3out[i] = uy3[i] * k_ud;
-        }
+        /*
+                for( int i = 1; i <= 30; i++ ) {
+                    ux1out[i] = ux1[i] * k_ud; //wartosci skladowych wektorow
+                    uy1out[i] = uy1[i] * k_ud;
+                    ux3out[i] = ux3[i] * k_ud;
+                    uy3out[i] = uy3[i] * k_ud;
+                }
+         */
 
         //wygenerowane skladowe w ukladzie wsp.1 i 3
         /*
@@ -586,6 +586,7 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         *przerwanie = 1; //pozwala na uruchomienie sterowania
     }
 
+    /*
     if ( cykl > 0 ) {
         for( int i = 0; i < 5; i++ ) {
             stanOut[i] = ( impuls <= tCnt[i] ) ? 0 : 1;
@@ -595,11 +596,25 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
             stanOut[i] = ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
         }
     }
+    int bits = stanOut[0] << 4 | stanOut[1] << 3 | stanOut[2] << 2 | stanOut[3] << 1 | stanOut[4];
+     */
 
-    *usx1 = ux1out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
-    *usy1 = uy1out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
-    *usx3 = ux3out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
-    *usy3 = uy3out[(int) stanOut[0] << 4 | (int) stanOut[1] << 3 | (int) stanOut[2] << 2 | (int) stanOut[3] << 1 | (int) stanOut[4]];
+    int bits = 0;
+    if ( cykl == 1 ) {
+        for( int i = 0; i < 5; i++ ) {
+            bits <<= 1;
+            bits |= ( impuls <= tCnt[i] ) ? 0 : 1;
+        }
+    } else {
+        for( int i = 0; i < 5; i++ ) {
+            bits <<= 1;
+            bits |= ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
+        }
+    }
+    *usx1 = k_ud * ux1[bits];
+    *usy1 = k_ud * uy1[bits];
+    *usx3 = k_ud * ux3[bits];
+    *usy3 = k_ud * uy3[bits];
 
     impuls += h;
     if ( impuls > tImp + h ) { //ob1?

@@ -13,9 +13,7 @@ double is1, is3, rhoU3;
 
 double usx, usy;
 
-double temp[31], temp2[31];
-
-double TIME_s, timeCnt;
+double timeCnt;
 
 /*------------------------------------------------------------------------*/
 /* program NAPIECIE - silnik asynchroniczny zasilany z falownika napiecia */
@@ -27,12 +25,10 @@ double TIME_s, timeCnt;
 //#define   TWZG   0.1*M_PI  // przelicznik z czasu rzeczywistego na wzgledny
 #define   TWZG   1  // przelicznik z czasu rzeczywistego na wzgledny
 
-
 //deklaracje zmiennych do PWM
 double rhoU1, uS1, uS3;
 double uDC;
-double omegaU1 = 1, omegaU3 = 0.5, przyrost_kata;
-
+double omegaU1 = 1, omegaU3 = 0.5, deltaRho;
 
 //wygenerowane skladowe w PWM
 double usx1wyg, usy1wyg, usx3wyg, usy3wyg;
@@ -42,9 +38,7 @@ double R3 = 1, L3 = 1; //R3=0.31622776601683793319988935444327*1.2360,L3=10*0.31
 double R1 = 1, L1 = 1; //R1=0.31622776601683793319988935444327*1.2360,L1=10*0.31622776601683793319988935444327*3.2360;//1
 
 //zmienne dla ukladu sterowania
-bool przerwanie;
-
-int init_obiekt; //ustawianie ca�ek w obiektach reglacji
+bool interrupt;
 
 double tau; /* czas wzgledny */
 double h, ht; /* krok calkowania rzeczywisty i wzgledny */
@@ -58,7 +52,7 @@ inline double wrapAngle( const double angleRad ) {
 
 #define VAR_COUNT  5
 
-void pLR( double p_dLoad[VAR_COUNT], double pLoad[VAR_COUNT], double usx1m, double usy1m, double usx3m, double usy3m ) {
+inline void pLR( double p_dLoad[VAR_COUNT], double pLoad[VAR_COUNT], double usx1m, double usy1m, double usx3m, double usy3m ) {
     double /*ptau,*/ pisx1, pisy1, pisx3, pisy3;
 
     //ptau = pLoad[0]; /* zmienne calkowane */
@@ -75,7 +69,7 @@ void pLR( double p_dLoad[VAR_COUNT], double pLoad[VAR_COUNT], double usx1m, doub
     p_dLoad[4] = ( usy3m - pisy3 * R3 ) / L3;
 }
 
-void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m, double *isx1m, double *isy1m, double *isx3m, double *isy3m ) {
+inline void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m, double *isx1m, double *isy1m, double *isx3m, double *isy3m ) {
     static double load[VAR_COUNT]; /* zmienne calkowane modelu silnika */
     static double dLoad[VAR_COUNT];
     static double q[VAR_COUNT][VAR_COUNT];
@@ -105,7 +99,7 @@ void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m, doubl
     pLR( dLoad, load, usx1m, usy1m, usx3m, usy3m );
     for( int i = 0; i < VAR_COUNT; i++ ) {
         q[4][i] = h * dLoad[i];
-        load[i] = ( q[1][i] + q[4][i] ) / 6 + ( q[2][i] + q[3][i] ) / 3 + q[0][i];
+        load[i] = 1.0 / 6.0 * ( q[1][i] + q[4][i] ) + 1.0 / 3.0 * ( q[2][i] + q[3][i] ) + q[0][i];
 
     }
     tau = load[0];
@@ -118,29 +112,37 @@ void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m, doubl
 #include "PWM5f.c"
 
 int dos_main( ) {
-    init_obiekt = 1;
-
-    /*----------------------------------*/
-    /*  Wczytanie wartosci poczatkowych */
-    /*----------------------------------*/
     ht = 1E-4; /* krok calkowania w milisekundach */
     h = ht * TWZG; /* krok calkowania przeliczony na czas wzgledny */
     tImp = .150 * TWZG; // okres impulsowania falownika
-    przyrost_kata = 2 * M_PI * ( 0.001 * tImp / TWZG ) / ( 20E-3 ); //przyrost kata na przerwanie przy predkosci 2PI/20ms, czas w sekundach)
+    deltaRho = 2 * M_PI * ( 0.001 * tImp / TWZG ) / ( 20E-3 ); //przyrost kata na przerwanie przy predkosci 2PI/20ms, czas w sekundach)
 
-    /*----------------------------------------------------------------------*/
-    /*               Petla glowna programu symulacyjnego                    */
-    /*----------------------------------------------------------------------*/
+    /* PWM fal 5 fazowy */
+    uDC = 2;
+
+    uS1 = 1.0;
+    //US1+=2e-6; if (US1>uDC) US1=uDC;
+
+    uS3 = 0 * 0.2;
+    //US3=0.50;
+
+    //roU1=0.306;
+    ///roU3=5.364;
+    //roU1=M_PI/2;
+    //roU3=0*M_PI/2;
+
+    //temp[30]=floor(roU3/(M_PI/5));
+
     while( true ) {
         timeCnt += ht; // uplyw czasu rzeczywistego
 
-        if ( przerwanie ) {
+        if ( interrupt ) {
 
             /* kat polo�enia wektora napi�cia stojana */
-            rhoU1 += omegaU1 * 1 * przyrost_kata; // narastanie kata
+            rhoU1 += omegaU1 * 1 * deltaRho; // narastanie kata
             rhoU1 = wrapAngle( rhoU1 );
 
-            rhoU3 += omegaU3 * ( -1 ) * przyrost_kata; // narastanie kata
+            rhoU3 += omegaU3 * ( -1 ) * deltaRho; // narastanie kata
             rhoU3 = wrapAngle( rhoU3 );
 
             //regulator napiec na kondensatorach filtru
@@ -149,27 +151,13 @@ int dos_main( ) {
 
             //regulator pradu falownika sieciowego
 
-            przerwanie = false;
+            interrupt = false;
         }
 
-        /* PWM fal 5 fazowy */
-        uDC = 2;
+        PWM5f( tImp, uS1, rhoU1, uS3, rhoU3, uDC, h, &usx1, &usy1, &usx3, &usy3, &usx1wyg, &usy1wyg, &usx3wyg, &usy3wyg, &interrupt );
+        LR( h, usx1, usy1, usx3, usy3, &isx1, &isy1, &isx3, &isy3 );
 
-        uS1 = 1.0;
-        //US1+=2e-6; if (US1>uDC) US1=uDC;
-
-        uS3 = 0 * 0.2;
-        //US3=0.50;
-
-        //roU1=0.306;
-        ///roU3=5.364;
-        //roU1=M_PI/2;
-        //roU3=0*M_PI/2;
-
-        //temp[30]=floor(roU3/(M_PI/5));
-
-        PWM5f( tImp, uS1, rhoU1, uS3, rhoU3, uDC, h, &usx1, &usy1, &usx3, &usy3, &usx1wyg, &usy1wyg, &usx3wyg, &usy3wyg, &przerwanie );
-
+        //obciazenie&usx1
         //ponizsze 4 linijki
         //zakomentowane -  napiecie wyj�ciowe jest szeregiem impulsow
         //aktywne			-	napiecie wyjsciowe wyliczane jest ze wzoru t1*u1+t2*u2+.... (t to czasy, u -skladowe wektorow
@@ -179,13 +167,8 @@ int dos_main( ) {
         usx3 = usx3wyg;
         usy3 = usy3wyg;
          */
-
         usx = usx1 + usx3;
         usy = usy1 + usy3;
-
-        //obciazenie&usx1
-
-        LR( h, usx1, usy1, usx3, usy3, &isx1, &isy1, &isx3, &isy3 );
 
         is1 = sqrt( isx1 * isx1 + isy1 * isy1 );
         is3 = sqrt( isx3 * isx3 + isy3 * isy3 );
@@ -196,8 +179,6 @@ int dos_main( ) {
         //if(TIME>900) omegaRzad=1;
         //if(TIME>1500) omegaU=.8;
 
-        init_obiekt = 0;
-        /* Grafika ekranowa */
         main_mon( );
     }
 }
