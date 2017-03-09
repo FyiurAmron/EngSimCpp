@@ -1,10 +1,10 @@
 #include <math.h>
 #include <stdbool.h>
 
-#define SIN72  0.30901699437494742410229341718282 //cos 2PI/5
-#define COS72  0.95105651629515357211643933337938 //sin 2PI/5
-#define COS144    -0.80901699437494742410229341718282 //cos 4PI/5
+#define SIN72  0.95105651629515357211643933337938 //sin 2PI/5
+#define COS72  0.30901699437494742410229341718282 //cos 2PI/5
 #define SIN144     0.58778525229247312916870595463907 //sin 4PI/5
+#define COS144    -0.80901699437494742410229341718282 //cos 4PI/5
 //#define kat1sect	0.6283185307179586476925286766559 //odpelglosc katowa pomiedzy sektorami
 #define HALF_SQRT_2DIV5 0.31622776601683793319988935444327 /* * 2 */ //0,5*pierwiastek 2/5
 
@@ -67,32 +67,33 @@ inline double limit( const double v, const double limit ) {
 
 //stany gornych tranzystorow
 
-double fux1( int tA, int tB, int tC, int tD, int tE ) {
+inline double fux1( int tA, int tB, int tC, int tD, int tE ) {
     //return 0.2*((6+2*cos72+2*cos144)*(Ta-(1-Ta))+((1+7*cos72+2*cos144)*((Tb-(1-Tb))+(Te-(1-Te))))+((1+2*cos72+7*cos144)*((Tc-(1-Tc))+(Td-(1-Td)))));
     return 0.2 * ( ( 4 - 2 * COS72 - 2 * COS144 ) * ( tA - ( 1 - tA ) )
             + ( ( -1 + 3 * COS72 - 2 * COS144 ) * ( ( tB - ( 1 - tB ) ) + ( tE - ( 1 - tE ) ) ) )
             + ( ( -1 - 2 * COS72 + 3 * COS144 ) * ( ( tC - ( 1 - tC ) ) + ( tD - ( 1 - tD ) ) ) ) );
 }
 
-double fuy1( int tA, int tB, int tC, int tD, int tE ) {
-    return ( COS72 * ( ( tB - ( 1 - tB ) ) - ( tE - ( 1 - tE ) ) ) )
+inline double fuy1( int tA, int tB, int tC, int tD, int tE ) {
+    return ( SIN72 * ( ( tB - ( 1 - tB ) ) - ( tE - ( 1 - tE ) ) ) )
             + ( SIN144 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) );
 }
 
-double fux3( int tA, int tB, int tC, int tD, int tE ) {
+inline double fux3( int tA, int tB, int tC, int tD, int tE ) {
     //return 0.2*((6+2*cos144+2*cos72)*(Ta-(1-Ta))+((1+7*cos144+2*cos72)*((Tb-(1-Tb))+(Te-(1-Te))))+((1+2*cos144+7*cos72)*((Tc-(1-Tc))+(Td-(1-Td)))));
     return 0.2 * ( ( 4 - 2 * COS144 - 2 * COS72 ) * ( tA - ( 1 - tA ) )
             + ( ( -1 + 3 * COS144 - 2 * COS72 ) * ( ( tB - ( 1 - tB ) ) + ( tE - ( 1 - tE ) ) ) )
             + ( ( -1 - 2 * COS144 + 3 * COS72 ) * ( ( tC - ( 1 - tC ) ) + ( tD - ( 1 - tD ) ) ) ) );
 }
 
-double fuy3( int tA, int tB, int tC, int tD, int tE ) {
+inline double fuy3( int tA, int tB, int tC, int tD, int tE ) {
     return ( SIN144 * ( ( tB - ( 1 - tB ) ) - ( tE - ( 1 - tE ) ) ) )
-            - ( COS72 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) );
+            - ( SIN72 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) );
 }
 
-inline int cmp( int a, int b ) {
-    return (a > b ) - ( a < b );
+
+inline int cmp( double a, double b ) {
+    return ( a > b ) - ( a < b );
 }
 
 int cmpTimeOn( const void * a, const void * b ) {
@@ -103,11 +104,16 @@ int cmpTimeOnTmp( const void * a, const void * b ) {
     return cmp( ( (timeOnTmp*) a )->timeOn, ( (timeOnTmp*) b )->timeOn );
 }
 
+inline int bit( int val, int bitNr ) {
+    return ( val & ( 1 << bitNr ) ) >> bitNr;
+}
+
+#define PHASES  5
+
 void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, double ud, double h,
         double *usx1, double *usy1, double *usx3, double *usy3,
         double *usx1wyg, double *usy1wyg, double *usx3wyg, double *usy3wyg,
         bool *przerwanie ) {
-    //int przerwanie;
     static bool initNeeded = true;
     static double impuls;
     static int cykl = 1;
@@ -116,153 +122,14 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
 
     if ( initNeeded ) {
         //wyznaczenie wspolczynnikow skladowych wektorow, ich numery wynikaja z zapisu binarnego (f*2^0+e*2^1+....a*2^0)
-        //kolejnosc faz w zapise wektorow (a,b,c,d,e,f)
         //uwaga - rzeczywiste dlugosci wektorow uzyskujemy po pomnozeniu przez sqrt(2/5)*uDC/2
         //kat 0*36st (uklad wsp 1)
-        ux1[25] = fux1( 1, 1, 0, 0, 1 );
-        uy1[25] = fuy1( 1, 1, 0, 0, 1 );
-        ux3[25] = fux3( 1, 1, 0, 0, 1 );
-        uy3[25] = fuy3( 1, 1, 0, 0, 1 ); //w. Dlugi  (ukl wsp 1)
-        ux1[9] = fux1( 0, 1, 0, 0, 1 );
-        uy1[9] = fuy1( 0, 1, 0, 0, 1 );
-        ux3[9] = fux3( 0, 1, 0, 0, 1 );
-        uy3[9] = fuy3( 0, 1, 0, 0, 1 ); //w. Krotki (ukl wsp 1)
-        ux1[16] = fux1( 1, 0, 0, 0, 0 );
-        uy1[16] = fuy1( 1, 0, 0, 0, 0 );
-        ux3[16] = fux3( 1, 0, 0, 0, 0 );
-        uy3[16] = fuy3( 1, 0, 0, 0, 0 ); //w. Sredni (ukl wsp 1)
-
-        //kat 1*36st (uklad wsp 1)
-        ux1[24] = fux1( 1, 1, 0, 0, 0 );
-        uy1[24] = fuy1( 1, 1, 0, 0, 0 );
-        ux3[24] = fux3( 1, 1, 0, 0, 0 );
-        uy3[24] = fuy3( 1, 1, 0, 0, 0 ); //w. Dlugi  (ukl wsp 1)
-        ux1[26] = fux1( 1, 1, 0, 1, 0 );
-        uy1[26] = fuy1( 1, 1, 0, 1, 0 );
-        ux3[26] = fux3( 1, 1, 0, 1, 0 );
-        uy3[26] = fuy3( 1, 1, 0, 1, 0 ); //w. Krotki (ukl wsp 1)
-        ux1[29] = fux1( 1, 1, 1, 0, 1 );
-        uy1[29] = fuy1( 1, 1, 1, 0, 1 );
-        ux3[29] = fux3( 1, 1, 1, 0, 1 );
-        uy3[29] = fuy3( 1, 1, 1, 0, 1 ); //w. Sredni (ukl wsp 1)
-
-        //kat 2*36st (uklad wsp 1)
-        ux1[28] = fux1( 1, 1, 1, 0, 0 );
-        uy1[28] = fuy1( 1, 1, 1, 0, 0 );
-        ux3[28] = fux3( 1, 1, 1, 0, 0 );
-        uy3[28] = fuy3( 1, 1, 1, 0, 0 ); //w. Dlugi  (ukl wsp 1)
-        ux1[20] = fux1( 1, 0, 1, 0, 0 );
-        uy1[20] = fuy1( 1, 0, 1, 0, 0 );
-        ux3[20] = fux3( 1, 0, 1, 0, 0 );
-        uy3[20] = fuy3( 1, 0, 1, 0, 0 ); //w. Krotki (ukl wsp 1)
-        ux1[8] = fux1( 0, 1, 0, 0, 0 );
-        uy1[8] = fuy1( 0, 1, 0, 0, 0 );
-        ux3[8] = fux3( 0, 1, 0, 0, 0 );
-        uy3[8] = fuy3( 0, 1, 0, 0, 0 ); //w. Sredni (ukl wsp 1)
-
-        //kat 3*36st (uklad wsp 1)
-        ux1[12] = fux1( 0, 1, 1, 0, 0 );
-        uy1[12] = fuy1( 0, 1, 1, 0, 0 );
-        ux3[12] = fux3( 0, 1, 1, 0, 0 );
-        uy3[12] = fuy3( 0, 1, 1, 0, 0 ); //w. Dlugi  (ukl wsp 1)
-        ux1[13] = fux1( 0, 1, 1, 0, 1 );
-        uy1[13] = fuy1( 0, 1, 1, 0, 1 );
-        ux3[13] = fux3( 0, 1, 1, 0, 1 );
-        uy3[13] = fuy3( 0, 1, 1, 0, 1 ); //w. Krotki (ukl wsp 1)
-        ux1[30] = fux1( 1, 1, 1, 1, 0 );
-        uy1[30] = fuy1( 1, 1, 1, 1, 0 );
-        ux3[30] = fux3( 1, 1, 1, 1, 0 );
-        uy3[30] = fuy3( 1, 1, 1, 1, 0 ); //w. Sredni (ukl wsp 1)
-
-        //kat 4*36st (uklad wsp 1)
-        ux1[14] = fux1( 0, 1, 1, 1, 0 );
-        uy1[14] = fuy1( 0, 1, 1, 1, 0 );
-        ux3[14] = fux3( 0, 1, 1, 1, 0 );
-        uy3[14] = fuy3( 0, 1, 1, 1, 0 ); //w. Dlugi  (ukl wsp 1)
-        ux1[10] = fux1( 0, 1, 0, 1, 0 );
-        uy1[10] = fuy1( 0, 1, 0, 1, 0 );
-        ux3[10] = fux3( 0, 1, 0, 1, 0 );
-        uy3[10] = fuy3( 0, 1, 0, 1, 0 ); //w. Krotki (ukl wsp 1)
-        ux1[4] = fux1( 0, 0, 1, 0, 0 );
-        uy1[4] = fuy1( 0, 0, 1, 0, 0 );
-        ux3[4] = fux3( 0, 0, 1, 0, 0 );
-        uy3[4] = fuy3( 0, 0, 1, 0, 0 ); //w. Sredni (ukl wsp 1)
-
-        //kat 5*36st (uklad wsp 1)
-        ux1[6] = fux1( 0, 0, 1, 1, 0 );
-        uy1[6] = fuy1( 0, 0, 1, 1, 0 );
-        ux3[6] = fux3( 0, 0, 1, 1, 0 );
-        uy3[6] = fuy3( 0, 0, 1, 1, 0 ); //w. Dlugi  (ukl wsp 1)
-        ux1[22] = fux1( 1, 0, 1, 1, 0 );
-        uy1[22] = fuy1( 1, 0, 1, 1, 0 );
-        ux3[22] = fux3( 1, 0, 1, 1, 0 );
-        uy3[22] = fuy3( 1, 0, 1, 1, 0 ); //w. Krotki (ukl wsp 1)
-        ux1[15] = fux1( 0, 1, 1, 1, 1 );
-        uy1[15] = fuy1( 0, 1, 1, 1, 1 );
-        ux3[15] = fux3( 0, 1, 1, 1, 1 );
-        uy3[15] = fuy3( 0, 1, 1, 1, 1 ); //w. Sredni (ukl wsp 1)
-
-        //kat 6*36st (uklad wsp 1)
-        ux1[7] = fux1( 0, 0, 1, 1, 1 );
-        uy1[7] = fuy1( 0, 0, 1, 1, 1 );
-        ux3[7] = fux3( 0, 0, 1, 1, 1 );
-        uy3[7] = fuy3( 0, 0, 1, 1, 1 ); //w. Dlugi  (ukl wsp 1)
-        ux1[5] = fux1( 0, 0, 1, 0, 1 );
-        uy1[5] = fuy1( 0, 0, 1, 0, 1 );
-        ux3[5] = fux3( 0, 0, 1, 0, 1 );
-        uy3[5] = fuy3( 0, 0, 1, 0, 1 ); //w. Krotki (ukl wsp 1)
-        ux1[2] = fux1( 0, 0, 0, 1, 0 );
-        uy1[2] = fuy1( 0, 0, 0, 1, 0 );
-        ux3[2] = fux3( 0, 0, 0, 1, 0 );
-        uy3[2] = fuy3( 0, 0, 0, 1, 0 ); //w. Sredni (ukl wsp 1)
-
-        //kat 7*36st (uklad wsp 1)
-        ux1[3] = fux1( 0, 0, 0, 1, 1 );
-        uy1[3] = fuy1( 0, 0, 0, 1, 1 );
-        ux3[3] = fux3( 0, 0, 0, 1, 1 );
-        uy3[3] = fuy3( 0, 0, 0, 1, 1 ); //w. Dlugi  (ukl wsp 1)
-        ux1[11] = fux1( 0, 1, 0, 1, 1 );
-        uy1[11] = fuy1( 0, 1, 0, 1, 1 );
-        ux3[11] = fux3( 0, 1, 0, 1, 1 );
-        uy3[11] = fuy3( 0, 1, 0, 1, 1 ); //w. Krotki (ukl wsp 1)
-        ux1[23] = fux1( 1, 0, 1, 1, 1 );
-        uy1[23] = fuy1( 1, 0, 1, 1, 1 );
-        ux3[23] = fux3( 1, 0, 1, 1, 1 );
-        uy3[23] = fuy3( 1, 0, 1, 1, 1 ); //w. Sredni (ukl wsp 1)
-
-        //kat 8*36st (uklad wsp 1)
-        ux1[19] = fux1( 1, 0, 0, 1, 1 );
-        uy1[19] = fuy1( 1, 0, 0, 1, 1 );
-        ux3[19] = fux3( 1, 0, 0, 1, 1 );
-        uy3[19] = fuy3( 1, 0, 0, 1, 1 ); //w. Dlugi  (ukl wsp 1)
-        ux1[18] = fux1( 1, 0, 0, 1, 0 );
-        uy1[18] = fuy1( 1, 0, 0, 1, 0 );
-        ux3[18] = fux3( 1, 0, 0, 1, 0 );
-        uy3[18] = fuy3( 1, 0, 0, 1, 0 ); //w. Krotki (ukl wsp 1)
-        ux1[1] = fux1( 0, 0, 0, 0, 1 );
-        uy1[1] = fuy1( 0, 0, 0, 0, 1 );
-        ux3[1] = fux3( 0, 0, 0, 0, 1 );
-        uy3[1] = fuy3( 0, 0, 0, 0, 1 ); //w. Sredni (ukl wsp 1)
-
-        //kat 9*36st (uklad wsp 1)
-        ux1[17] = fux1( 1, 0, 0, 0, 1 );
-        uy1[17] = fuy1( 1, 0, 0, 0, 1 );
-        ux3[17] = fux3( 1, 0, 0, 0, 1 );
-        uy3[17] = fuy3( 1, 0, 0, 0, 1 ); //w. Dlugi  (ukl wsp 1)
-        ux1[21] = fux1( 1, 0, 1, 0, 1 );
-        uy1[21] = fuy1( 1, 0, 1, 0, 1 );
-        ux3[21] = fux3( 1, 0, 1, 0, 1 );
-        uy3[21] = fuy3( 1, 0, 1, 0, 1 ); //w. Krotki (ukl wsp 1)
-        ux1[27] = fux1( 1, 1, 0, 1, 1 );
-        uy1[27] = fuy1( 1, 1, 0, 1, 1 );
-        ux3[27] = fux3( 1, 1, 0, 1, 1 );
-        uy3[27] = fuy3( 1, 1, 0, 1, 1 ); //w. Sredni (ukl wsp 1)
-
-        //werktory pasywne
-        ux1[0] = 0;
-        uy1[0] = 0;
-        ux3[0] = 0;
-        uy3[0] = 0; //00000
+        for( int i = 0; i < 31; i++ ) {
+            ux1[i] = fux1( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
+            uy1[i] = fuy1( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
+            ux3[i] = fux3( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
+            uy3[i] = fuy3( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
+        }
         ux1[31] = 0;
         uy1[31] = 0;
         ux3[31] = 0;
@@ -384,7 +251,8 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
                 + ux1[selVect[2].w] * uy3[selVect[1].w] * uy1[selVect[4].w]
                 + ux1[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[2].w]
                 - ux1[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[2].w] );
-        a4x3 = invDenom * ( ux1[selVect[1].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
+        a4x3 = invDenom *
+                ( ux1[selVect[1].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
                 - ux1[selVect[1].w] * uy3[selVect[2].w] * uy1[selVect[3].w]
                 - ux1[selVect[2].w] * uy1[selVect[1].w] * uy3[selVect[3].w]
                 + ux1[selVect[2].w] * uy3[selVect[1].w] * uy1[selVect[3].w]
@@ -437,8 +305,8 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         uSY3 = uS3 * sin( rhoU3 );
 
         //od tego miejsca musi by� w przerwaniu
-        double k = tImp / k_ud;
-        t[1] = ( a1x1 * uSX1 + a1y1 * uSY1 + a1x3 * uSX3 + a1y3 * uSY3 ) * k; //czasy tu wyliczone dotycz� 4 wybranych wektor_sel�w i mog� mie� dowolne warto�ci (te� ujemne). to ju� muzi byc w przerwaniu
+        double k = tImp / k_ud; //czasy tu wyliczone dotycz� 4 wybranych wektor_sel�w i mog� mie� dowolne warto�ci (te� ujemne)
+        t[1] = ( a1x1 * uSX1 + a1y1 * uSY1 + a1x3 * uSX3 + a1y3 * uSY3 ) * k;
         t[2] = ( a2x1 * uSX1 + a2y1 * uSY1 + a2x3 * uSX3 + a2y3 * uSY3 ) * k;
         t[3] = ( a3x1 * uSX1 + a3y1 * uSY1 + a3x3 * uSX3 + a3y3 * uSY3 ) * k;
         t[4] = ( a4x1 * uSX1 + a4y1 * uSY1 + a4x3 * uSX3 + a4y3 * uSY3 ) * k;
@@ -456,11 +324,9 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //suma czasu trwania zer i jedynek w fazach
         //dla 4 wybranych wektor_sel�w wyluskanie bitu wektor_sel�w okre�laj�cego faz�, 1 to stan za��czenia, zero - wy��czenia
         for( int i = 1; i <= 4; i++ ) { //do 4 bo 4 wektry
-            stan[0][i] = ( (selVect2[i].w ) & 0x10 ) >> 4;
-            stan[1][i] = ( (selVect2[i].w ) & 0x08 ) >> 3;
-            stan[2][i] = ( (selVect2[i].w ) & 0x04 ) >> 2;
-            stan[3][i] = ( (selVect2[i].w ) & 0x02 ) >> 1;
-            stan[4][i] = ( (selVect2[i].w ) & 0x01 ) >> 0;
+            for( int j = 0; j < 5; j++ ) {
+                stan[j][i] = bit( selVect2[i].w, 4 - j );
+            }
         }
 
         //wyzerowanie czasu trwania jedynek na pocz�tku oblicze�. Przyj�te przyporzadkowanie nr fazom (a=1, b=2... e=5)
@@ -509,44 +375,13 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         for( int i = 1; i <= 5; i++ ) {
             outVect[i].w = 0;
         }
-
-        t[5] = timesOnDesc[1].timeOn;
-        for( int i = 1; i <= 5; i++ ) {
-            timesOnDesc[i].timeOn -= t[5];
-            if ( timesOnDesc[i].timeOn >= 0 ) {
-                outVect[5].w |= 1 << ( 5 - timesOnDesc[i].faza );
-            }
-        }
-
-        t[4] = timesOnDesc[2].timeOn;
-        for( int i = 2; i <= 5; i++ ) {
-            timesOnDesc[i].timeOn -= t[4];
-            if ( timesOnDesc[i].timeOn >= 0 ) {
-                outVect[4].w |= 1 << ( 5 - timesOnDesc[i].faza );
-            }
-        }
-
-        t[3] = timesOnDesc[3].timeOn;
-        for( int i = 3; i <= 5; i++ ) {
-            timesOnDesc[i].timeOn -= t[3];
-            if ( timesOnDesc[i].timeOn >= 0 ) {
-                outVect[3].w |= 1 << ( 5 - timesOnDesc[i].faza );
-            }
-        }
-
-        t[2] = timesOnDesc[4].timeOn;
-        for( int i = 4; i <= 5; i++ ) {
-            timesOnDesc[i].timeOn -= t[2];
-            if ( timesOnDesc[i].timeOn >= 0 ) {
-                outVect[2].w |= 1 << ( 5 - timesOnDesc[i].faza );
-            }
-        }
-
-        t[1] = timesOnDesc[5].timeOn;
-        for( int i = 5; i <= 5; i++ ) {
-            timesOnDesc[i].timeOn -= t[1];
-            if ( timesOnDesc[i].timeOn >= 0 ) {
-                outVect[1].w |= 1 << ( 5 - timesOnDesc[i].faza );
+        for( int j = 1, k = 5; j <= 5; j++, k-- ) {
+            t[k] = timesOnDesc[j].timeOn;
+            for( int i = j; i <= 5; i++ ) {
+                timesOnDesc[i].timeOn -= t[k];
+                if ( timesOnDesc[i].timeOn >= 0 ) {
+                    outVect[k].w |= 1 << ( 5 - timesOnDesc[i].faza );
+                }
             }
         }
 
@@ -564,51 +399,33 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         vect[0].w = 0;
         vect[5].w = 31;
 
-        /*
-                for( int i = 1; i <= 30; i++ ) {
-                    ux1out[i] = ux1[i] * k_ud; //wartosci skladowych wektorow
-                    uy1out[i] = uy1[i] * k_ud;
-                    ux3out[i] = ux3[i] * k_ud;
-                    uy3out[i] = uy3[i] * k_ud;
-                }
-         */
-
-        //wygenerowane skladowe w ukladzie wsp.1 i 3
-        /*
-         *usx1wyg = ( t[1] * ux1out[outVect[1].w] + t[2] * ux1out[outVect[2].w] + t[3] * ux1out[outVect[3].w] + t[4] * ux1out[outVect[4].w] ) / tImp;
-         *usy1wyg = ( t[1] * uy1out[outVect[1].w] + t[2] * uy1out[outVect[2].w] + t[3] * uy1out[outVect[3].w] + t[4] * uy1out[outVect[4].w] ) / tImp;
-         *usx3wyg = ( t[1] * ux3out[outVect[1].w] + t[2] * ux3out[outVect[2].w] + t[3] * ux3out[outVect[3].w] + t[4] * ux3out[outVect[4].w] ) / tImp;
-         *usy3wyg = ( t[1] * uy3out[outVect[1].w] + t[2] * uy3out[outVect[2].w] + t[3] * uy3out[outVect[3].w] + t[4] * uy3out[outVect[4].w] ) / tImp;
-         */
-
         cykl *= -1;
 
         *przerwanie = 1; //pozwala na uruchomienie sterowania
     }
 
-    /*
-    if ( cykl > 0 ) {
-        for( int i = 0; i < 5; i++ ) {
-            stanOut[i] = ( impuls <= tCnt[i] ) ? 0 : 1;
-        }
-    } else {
-        for( int i = 0; i < 5; i++ ) {
-            stanOut[i] = ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
-        }
-    }
-    int bits = stanOut[0] << 4 | stanOut[1] << 3 | stanOut[2] << 2 | stanOut[3] << 1 | stanOut[4];
-     */
-
     int bits = 0;
     if ( cykl == 1 ) {
         for( int i = 0; i < 5; i++ ) {
             bits <<= 1;
-            bits |= ( impuls <= tCnt[i] ) ? 0 : 1;
+            if ( i == PWM_FAULT ) {
+                bits |= 0;
+            } else if ( i == PWM_FAULT - PHASES ) {
+                bits |= 1;
+            } else {
+                bits |= ( impuls <= tCnt[i] ) ? 0 : 1;
+            }
         }
     } else {
         for( int i = 0; i < 5; i++ ) {
             bits <<= 1;
-            bits |= ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
+            if ( i == PWM_FAULT ) {
+                bits |= 1;
+            } else if ( i == PWM_FAULT - PHASES ) {
+                bits |= 0;
+            } else {
+                bits |= ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
+            }
         }
     }
     *usx1 = k_ud * ux1[bits];

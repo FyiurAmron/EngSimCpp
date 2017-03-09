@@ -28,10 +28,10 @@ double timeCnt;
 int PWM_FAULT_INIT = 42, PWM_FAULT = 42;
 
 double ud = 1.52; //napiecie obwodu posredniczacego
-double uS, rhoU, phiU; // modul i predkosc wirowania wektroa napiecia do pwm
-double rhoI;
+//double /*uS, rhoU, phiU*/; // modul i predkosc wirowania wektroa napiecia do pwm
+//double /*rhoI*/;
 //double usx, usy; //napiecia zasilania silnika
-double isx, isy, frx, fry; //rownania modelu silnika
+double /*isx, isy,*/ frx1, fry1, frx3, fry3; //rownania modelu silnika
 double omegaR;
 double tau; //czas wzgledny
 double a1, a2, a3, a4, a5, a6, w;
@@ -68,7 +68,7 @@ double usx1wyg, usy1wyg, usx3wyg, usy3wyg;
 
 //obciozenie
 double R3 = 1, L3 = 1; //R3=0.31622776601683793319988935444327*1.2360,L3=10*0.31622776601683793319988935444327*3.2360;
-double R1 = 1, L1 = 1; //R1=0.31622776601683793319988935444327*1.2360,L1=10*0.31622776601683793319988935444327*3.2360;//1
+//double R1 = 1, L1 = 1; //R1=0.31622776601683793319988935444327*1.2360,L1=10*0.31622776601683793319988935444327*3.2360;//1
 
 //zmienne dla ukladu sterowania
 bool interrupt = true;
@@ -144,26 +144,45 @@ void Trapez( int varCount, double h, double z[32] ) {
     }
 }
 
-#define VAR_COUNT  5
+//#define VAR_COUNT  5
+#define VAR_COUNT  10
 
 inline void pLR( double p_dLoad[VAR_COUNT], double pLoad[VAR_COUNT], double usx1m, double usy1m, double usx3m, double usy3m ) {
-    double /*ptau,*/ pisx1, pisy1, pisx3, pisy3;
+    double /*ptau,*/ isx1, isy1, isx3, isy3, frx1, fry1, frx3, fry3;
 
     //ptau = pLoad[0]; /* zmienne calkowane */
-    pisx1 = pLoad[1];
-    pisy1 = pLoad[2];
-    pisx3 = pLoad[3];
-    pisy3 = pLoad[4];
+    isx1 = pLoad[1];
+    isy1 = pLoad[2];
+    isx3 = pLoad[3];
+    isy3 = pLoad[4];
+    frx1 = pLoad[5];
+    fry1 = pLoad[6];
+    frx3 = pLoad[7];
+    fry3 = pLoad[8];
+    omegaR = pLoad[9];
 
     p_dLoad[0] = 1; /* Czas */
     /* rownania modelu silnika */
+    /*
     p_dLoad[1] = ( usx1m - pisx1 * R1 ) / L1;
     p_dLoad[2] = ( usy1m - pisy1 * R1 ) / L1;
     p_dLoad[3] = ( usx3m - pisx3 * R3 ) / L3;
     p_dLoad[4] = ( usy3m - pisy3 * R3 ) / L3;
+     */
+    p_dLoad[1] = a1 * isx1 + a2 * frx1 + omegaR * a3 * fry1 + a4 * usx1;
+    p_dLoad[2] = a1 * isy1 + a2 * fry1 - omegaR * a3 * frx1 + a4 * usy1;
+    p_dLoad[3] = a1 * isx3 + a2 * frx3 + omegaR * a3 * fry1 + a4 * usx1;
+    p_dLoad[4] = a1 * isy3 + a2 * fry3 - omegaR * a3 * frx1 + a4 * usy1;
+    p_dLoad[5] = a5 * frx1 + a6 * isx1 - omegaR * fry1;
+    p_dLoad[6] = a5 * fry1 + a6 * isy1 + omegaR * frx1;
+    p_dLoad[7] = a5 * frx3 + a6 * isx3 - omegaR * fry1;
+    p_dLoad[8] = a5 * fry3 + a6 * isy3 + omegaR * frx1;
+    p_dLoad[9] = ( ( frx1 * isy1 - fry1 * isx1 ) * Lm / Lr - m0 ) / JJ;
 }
 
-inline void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m, double *isx1m, double *isy1m, double *isx3m, double *isy3m ) {
+inline void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m,
+        double *isx1m, double *isy1m, double *isx3m, double *isy3m,
+        double *frx1m, double *fry1m, double *frx3m, double *fry3m ) {
     static double load[VAR_COUNT]; /* zmienne calkowane modelu silnika */
     static double dLoad[VAR_COUNT];
     static double q[VAR_COUNT][VAR_COUNT];
@@ -201,6 +220,11 @@ inline void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m
     *isy1m = load[2];
     *isx3m = load[3];
     *isy3m = load[4];
+    *frx1m = load[5];
+    *fry1m = load[6];
+    *frx3m = load[7];
+    *fry3m = load[8];
+    omegaR = load[9];
 }
 
 //////////
@@ -212,6 +236,8 @@ double y[32] = { 0 };
 #define PWM_FAULT_TIME  500
 
 #include "PWM5f.c"
+
+double usx1_zad, usy1_zad;
 
 int dos_main( ) {
     //wartosci zadane
@@ -335,27 +361,29 @@ int dos_main( ) {
 
             // zmienne multiskalarne
             x11 = omegaR;
-            x12 = frx * isy - fry * isx;
-            x21 = frx * frx + fry * fry;
-            x22 = frx * isx + fry * isy;
+            x12 = frx1 * isy1 - fry1 * isx1;
+            x21 = frx1 * frx1 + fry1 * fry1;
+            x22 = frx1 * isx1 + fry1 * isy1;
+            fprintf( fpOut, "%f %f %f %f\n", x11, x12, x21, x22 );
 
             if ( timeCnt > 10 ) {
                 Trapez( 4, tImp, x );
 
                 // odsprzezenie
                 u1 = ( -v1 * ( a1 + a5 ) + x11 * ( x22 + a3 * x21 ) ) / a4;
-                u2 = ( -v2 * ( a1 + a5 ) - x11 * x12 - a2 * x21 - a6 * ( isx * isx + isy * isy ) ) / a4;
+                u2 = ( -v2 * ( a1 + a5 ) - x11 * x12 - a2 * x21 - a6 * ( isx1 * isx1 + isy1 * isy1 ) ) / a4;
                 inv_x21 = 1.0 / x21;
                 if ( inv_x21 < 0.001 ) {
                     inv_x21 = 0.001;
                 }
-                usx_zad = ( u2 * frx - u1 * fry ) * inv_x21;
-                usy_zad = ( u2 * fry + u1 * frx ) * inv_x21;
-                usx_zad = limit( usx_zad, 1.5 );
-                usy_zad = limit( usy_zad, 1.5 );
+                usx1_zad = ( u2 * frx1 - u1 * fry1 ) * inv_x21;
+                usy1_zad = ( u2 * fry1 + u1 * frx1 ) * inv_x21;
+                usx1_zad = limit( usx1_zad, 1.5 );
+                usy1_zad = limit( usy1_zad, 1.5 );
+                fprintf( fpOut, "%f %f\n", usx1_zad, usy1_zad );
 
-                uS = sqrt( usx_zad * usx_zad + usy_zad * usy_zad );
-                rhoU = getRho( usx_zad, usy_zad );
+                uS1 = sqrt( usx1_zad * usx1_zad + usy1_zad * usy1_zad );
+                rhoU1 = getRho( usx1_zad, usy1_zad );
             }
             interrupt = false;
         }
@@ -365,7 +393,9 @@ int dos_main( ) {
         }
 
         PWM5f( tImp, uS1, rhoU1, uS3, rhoU3, uDC, h, &usx1, &usy1, &usx3, &usy3, &usx1wyg, &usy1wyg, &usx3wyg, &usy3wyg, &interrupt );
-        LR( h, usx1, usy1, usx3, usy3, &isx1, &isy1, &isx3, &isy3 );
+        LR( h, usx1, usy1, usx3, usy3,
+                &isx1, &isy1, &isx3, &isy3,
+                &frx1, &fry1, &frx3, &fry3 );
 
         //obciazenie&usx1
         //ponizsze 4 linijki

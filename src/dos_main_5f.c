@@ -109,6 +109,8 @@ inline void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m
     *isy3m = load[4];
 }
 
+int PWM_FAULT_INIT = 1, PWM_FAULT = 42;
+
 #include "PWM5f.c"
 
 int dos_main( ) {
@@ -152,6 +154,12 @@ int dos_main( ) {
             //regulator pradu falownika sieciowego
 
             interrupt = false;
+        }
+
+#define PWM_FAULT_TIME  500
+
+        if ( timeCnt > PWM_FAULT_TIME ) {
+            PWM_FAULT = PWM_FAULT_INIT;
         }
 
         PWM5f( tImp, uS1, rhoU1, uS3, rhoU3, uDC, h, &usx1, &usy1, &usx3, &usy3, &usx1wyg, &usy1wyg, &usx3wyg, &usy3wyg, &interrupt );

@@ -103,22 +103,24 @@ void Simulations( ) {
 //    wChartW.charts[2]->AddSignal( &x21z, L"x21z", RGB_( 0, 255, 255 ) );
     //wChartW.charts[3]->AddSignal( &usx, L"usx", RGB_( 0, 255, 255 ) );
     //wChartW.charts[2]->AddSignal( &usy, L"usy", RGB_( 0, 255, 255 ) );
-    wChartW.charts[3]->AddSignal( &isx, L"isx", RGB_( 0, 255, 255 ) );
-    wChartW.charts[2]->AddSignal( &isy, L"isy", RGB_( 0, 255, 255 ) );
+    wChartW.charts[3]->AddSignal( &isx1, L"isx1", RGB_( 0, 255, 255 ) );
+    wChartW.charts[2]->AddSignal( &isy1, L"isy1", RGB_( 0, 255, 255 ) );
     //wChartW.charts[1]->AddSignal( &x22, L"x22", RGB_( 44, 134, 167 ) );
     //wChartW.charts[0]->AddSignal( &x22z, L"x22z", RGB_( 44, 134, 167 ) );
-    wChartW.charts[1]->AddSignal( &rhoU, L"rhoU", RGB_( 0, 255, 255 ) );
-    wChartW.charts[0]->AddSignal( &rhoU, L"rhoI", RGB_( 0, 255, 255 ) );
-     /**/
+    wChartW.charts[1]->AddSignal( &rhoU1, L"rhoU", RGB_( 0, 255, 255 ) );
+    wChartW.charts[0]->AddSignal( &rhoU1, L"rhoI", RGB_( 0, 255, 255 ) );
+     */
+
     wChartW.charts[7]->AddSignal( &usx1, L"usx1", RGB_( 0, 255, 255 ) );
     wChartW.charts[6]->AddSignal( &usy1, L"usy1", RGB_( 0, 255, 255 ) );
     wChartW.charts[5]->AddSignal( &usx3, L"usx3", RGB_( 0, 255, 255 ) );
     wChartW.charts[4]->AddSignal( &usy3, L"usy3", RGB_( 0, 255, 255 ) );
     wChartW.charts[3]->AddSignal( &is1, L"is1", RGB_( 0, 255, 255 ) );
     wChartW.charts[2]->AddSignal( &is3, L"is3", RGB_( 0, 255, 255 ) );
+    //wChartW.charts[1]->AddSignal( &rhoU1, L"rhoU", RGB_( 0, 255, 255 ) );
     wChartW.charts[1]->AddSignal( &usx, L"usx", RGB_( 0, 255, 255 ) );
     wChartW.charts[0]->AddSignal( &usy, L"usy", RGB_( 0, 255, 255 ) );
-
+/*/
     //definiowanie poczatkowego polozenia wykresow
     //polozenie na osi X ustawia sie dla wszystkich okien jednoczesnie
     //polozenia na osi Y okresla sie dla kazdego wykresu oddzielnie
