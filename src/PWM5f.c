@@ -52,7 +52,7 @@ double a4x1, a4y1, a4x3, a4y3;
 double tCnt[5]; //czas do za��czenia tranzystora w fazie (czas trwania zera)
 double t[6]; //6
 //skladowe zadane
-double uSX1, uSY1, uSX3, uSY3;
+double uSx1, uSy1, uSX3, uSY3;
 
 /*
 inline double limit( const double v, const double limit ) {
@@ -66,29 +66,34 @@ inline double limit( const double v, const double limit ) {
  */
 
 //stany gornych tranzystorow
+#define SCALE_FACTOR  0.5
 
 inline double fux1( int tA, int tB, int tC, int tD, int tE ) {
     //return 0.2*((6+2*cos72+2*cos144)*(Ta-(1-Ta))+((1+7*cos72+2*cos144)*((Tb-(1-Tb))+(Te-(1-Te))))+((1+2*cos72+7*cos144)*((Tc-(1-Tc))+(Td-(1-Td)))));
-    return 0.2 * ( ( 4 - 2 * COS72 - 2 * COS144 ) * ( tA - ( 1 - tA ) )
+    return SCALE_FACTOR
+            * ( 0.2 * ( ( 4 - 2 * COS72 - 2 * COS144 ) * ( tA - ( 1 - tA ) )
             + ( ( -1 + 3 * COS72 - 2 * COS144 ) * ( ( tB - ( 1 - tB ) ) + ( tE - ( 1 - tE ) ) ) )
-            + ( ( -1 - 2 * COS72 + 3 * COS144 ) * ( ( tC - ( 1 - tC ) ) + ( tD - ( 1 - tD ) ) ) ) );
+            + ( ( -1 - 2 * COS72 + 3 * COS144 ) * ( ( tC - ( 1 - tC ) ) + ( tD - ( 1 - tD ) ) ) ) ) );
 }
 
 inline double fuy1( int tA, int tB, int tC, int tD, int tE ) {
-    return ( SIN72 * ( ( tB - ( 1 - tB ) ) - ( tE - ( 1 - tE ) ) ) )
-            + ( SIN144 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) );
+    return SCALE_FACTOR
+            * ( ( SIN72 * ( ( tB - ( 1 - tB ) ) - ( tE - ( 1 - tE ) ) ) )
+            + ( SIN144 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) ) );
 }
 
 inline double fux3( int tA, int tB, int tC, int tD, int tE ) {
     //return 0.2*((6+2*cos144+2*cos72)*(Ta-(1-Ta))+((1+7*cos144+2*cos72)*((Tb-(1-Tb))+(Te-(1-Te))))+((1+2*cos144+7*cos72)*((Tc-(1-Tc))+(Td-(1-Td)))));
-    return 0.2 * ( ( 4 - 2 * COS144 - 2 * COS72 ) * ( tA - ( 1 - tA ) )
+    return SCALE_FACTOR
+            * ( 0.2 * ( ( 4 - 2 * COS144 - 2 * COS72 ) * ( tA - ( 1 - tA ) )
             + ( ( -1 + 3 * COS144 - 2 * COS72 ) * ( ( tB - ( 1 - tB ) ) + ( tE - ( 1 - tE ) ) ) )
-            + ( ( -1 - 2 * COS144 + 3 * COS72 ) * ( ( tC - ( 1 - tC ) ) + ( tD - ( 1 - tD ) ) ) ) );
+            + ( ( -1 - 2 * COS144 + 3 * COS72 ) * ( ( tC - ( 1 - tC ) ) + ( tD - ( 1 - tD ) ) ) ) ) );
 }
 
 inline double fuy3( int tA, int tB, int tC, int tD, int tE ) {
-    return ( SIN144 * ( ( tB - ( 1 - tB ) ) - ( tE - ( 1 - tE ) ) ) )
-            - ( SIN72 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) );
+    return SCALE_FACTOR
+            * ( ( SIN144 * ( ( tB - ( 1 - tB ) ) - ( tE - ( 1 - tE ) ) ) )
+            - ( SIN72 * ( ( tC - ( 1 - tC ) ) - ( tD - ( 1 - tD ) ) ) ) );
 }
 
 inline int cmp( double a, double b ) {
@@ -110,24 +115,30 @@ inline int bit( int val, int bitNr ) {
 #define PHASES  5
 #include <time.h>
 #include <stdlib.h>
+#define PHI  0.618
+//#define K_VEC  PHI*PHI
+#define K_VEC  PHI * 0.9
+// przybliżona wartość analityczna
 
 void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, double ud, double h,
         double *usx1, double *usy1, double *usx3, double *usy3,
         double *usx1wyg, double *usy1wyg, double *usx3wyg, double *usy3wyg,
         bool *przerwanie ) {
     static bool initNeeded = true;
-    static double impuls;
-    static int cykl = 1;
+    static double t;
+    static int kierunek = 1;
 
-    int stan[5][5];
+    //static int baseVec[] = { 0b00001, 0b00010, 0b00100, 0b01000, 0b01001 };
+    //static int baseVec[] = { 0b01001, 0b01000, 0b00100, 0b00010, 0b00001 }; // 2-vec compensation
+    static int baseVec[] = { 0b01001, 0, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0 };
+    static int baseVecCount = sizeof ( baseVec ) / sizeof ( baseVec[0] ); // PHASES, PHASES * 2 etc.
+    //static int baseVec[] = { 0b10000, 0b01000, 0b00100, 0b00010, 0b00001 };
 
     if ( initNeeded ) {
-        //wyznaczenie wspolczynnikow skladowych wektorow, ich numery wynikaja z zapisu binarnego (f*2^0+e*2^1+....a*2^0)
-        //uwaga - rzeczywiste dlugosci wektorow uzyskujemy po pomnozeniu przez sqrt(2/5)*uDC/2
-        //kat 0*36st (uklad wsp 1)
         for( int i = 0; i < 31; i++ ) {
             ux1[i] = fux1( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
             uy1[i] = fuy1( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
+            //printf( "[%d] %f %f\n", i, ux1[i], uy1[i] );
             ux3[i] = fux3( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
             uy3[i] = fuy3( bit( i, 4 ), bit( i, 3 ), bit( i, 2 ), bit( i, 1 ), bit( i, 0 ) );
         }
@@ -136,302 +147,98 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         ux3[31] = 0;
         uy3[31] = 0; //11111
 
-        //wyb�r 4 dowolnych wektor�w (tworz�cych macierz odwracaln�)
-        selVect[1].w = 25;
-        selVect[2].w = 28;
-        selVect[3].w = 10;
-        selVect[4].w = 11;
-
-        /*wektor_sel[1].W=1;
-        wektor_sel[2].W=2;
-        wektor_sel[3].W=3;
-        wektor_sel[4].W=30;*/
-
-        double invDenom = 1 /
-                ( ux1[selVect[1].w] * ux3[selVect[2].w] * uy1[selVect[3].w] * uy3[selVect[4].w]
-                - ux1[selVect[1].w] * ux3[selVect[2].w] * uy3[selVect[3].w] * uy1[selVect[4].w]
-                - ux1[selVect[1].w] * ux3[selVect[3].w] * uy1[selVect[2].w] * uy3[selVect[4].w]
-                + ux1[selVect[1].w] * ux3[selVect[3].w] * uy3[selVect[2].w] * uy1[selVect[4].w]
-                + ux1[selVect[1].w] * ux3[selVect[4].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
-                - ux1[selVect[1].w] * ux3[selVect[4].w] * uy3[selVect[2].w] * uy1[selVect[3].w]
-                - ux3[selVect[1].w] * ux1[selVect[2].w] * uy1[selVect[3].w] * uy3[selVect[4].w]
-                + ux3[selVect[1].w] * ux1[selVect[2].w] * uy3[selVect[3].w] * uy1[selVect[4].w]
-                + ux3[selVect[1].w] * ux1[selVect[3].w] * uy1[selVect[2].w] * uy3[selVect[4].w]
-                - ux3[selVect[1].w] * ux1[selVect[3].w] * uy3[selVect[2].w] * uy1[selVect[4].w]
-                - ux3[selVect[1].w] * ux1[selVect[4].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
-                + ux3[selVect[1].w] * ux1[selVect[4].w] * uy3[selVect[2].w] * uy1[selVect[3].w]
-                + ux1[selVect[2].w] * ux3[selVect[3].w] * uy1[selVect[1].w] * uy3[selVect[4].w]
-                - ux1[selVect[2].w] * ux3[selVect[3].w] * uy3[selVect[1].w] * uy1[selVect[4].w]
-                - ux1[selVect[2].w] * ux3[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[3].w]
-                + ux1[selVect[2].w] * ux3[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[3].w]
-                - ux3[selVect[2].w] * ux1[selVect[3].w] * uy1[selVect[1].w] * uy3[selVect[4].w]
-                + ux3[selVect[2].w] * ux1[selVect[3].w] * uy3[selVect[1].w] * uy1[selVect[4].w]
-                + ux3[selVect[2].w] * ux1[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[3].w]
-                - ux3[selVect[2].w] * ux1[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[3].w]
-                + ux1[selVect[3].w] * ux3[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[2].w]
-                - ux1[selVect[3].w] * ux3[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[2].w]
-                - ux3[selVect[3].w] * ux1[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[2].w]
-                + ux3[selVect[3].w] * ux1[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[2].w] );
-
-        a1x1 = invDenom *
-                ( ux3[selVect[2].w] * uy1[selVect[3].w] * uy3[selVect[4].w]
-                - ux3[selVect[2].w] * uy3[selVect[3].w] * uy1[selVect[4].w]
-                - ux3[selVect[3].w] * uy1[selVect[2].w] * uy3[selVect[4].w]
-                + ux3[selVect[3].w] * uy3[selVect[2].w] * uy1[selVect[4].w]
-                + ux3[selVect[4].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
-                - ux3[selVect[4].w] * uy3[selVect[2].w] * uy1[selVect[3].w] );
-        a2x1 = -invDenom
-                * ( ux3[selVect[1].w] * uy1[selVect[3].w] * uy3[selVect[4].w]
-                - ux3[selVect[1].w] * uy3[selVect[3].w] * uy1[selVect[4].w]
-                - ux3[selVect[3].w] * uy1[selVect[1].w] * uy3[selVect[4].w]
-                + ux3[selVect[3].w] * uy3[selVect[1].w] * uy1[selVect[4].w]
-                + ux3[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[3].w]
-                - ux3[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[3].w] );
-        a3x1 = invDenom *
-                ( ux3[selVect[1].w] * uy1[selVect[2].w] * uy3[selVect[4].w]
-                - ux3[selVect[1].w] * uy3[selVect[2].w] * uy1[selVect[4].w]
-                - ux3[selVect[2].w] * uy1[selVect[1].w] * uy3[selVect[4].w]
-                + ux3[selVect[2].w] * uy3[selVect[1].w] * uy1[selVect[4].w]
-                + ux3[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[2].w]
-                - ux3[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[2].w] );
-        a4x1 = -invDenom *
-                ( ux3[selVect[1].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
-                - ux3[selVect[1].w] * uy3[selVect[2].w] * uy1[selVect[3].w]
-                - ux3[selVect[2].w] * uy1[selVect[1].w] * uy3[selVect[3].w]
-                + ux3[selVect[2].w] * uy3[selVect[1].w] * uy1[selVect[3].w]
-                + ux3[selVect[3].w] * uy1[selVect[1].w] * uy3[selVect[2].w]
-                - ux3[selVect[3].w] * uy3[selVect[1].w] * uy1[selVect[2].w] );
-
-        a1y1 = invDenom *
-                ( ux1[selVect[2].w] * ux3[selVect[3].w] * uy3[selVect[4].w]
-                - ux1[selVect[2].w] * ux3[selVect[4].w] * uy3[selVect[3].w]
-                - ux3[selVect[2].w] * ux1[selVect[3].w] * uy3[selVect[4].w]
-                + ux3[selVect[2].w] * ux1[selVect[4].w] * uy3[selVect[3].w]
-                + ux1[selVect[3].w] * ux3[selVect[4].w] * uy3[selVect[2].w]
-                - ux3[selVect[3].w] * ux1[selVect[4].w] * uy3[selVect[2].w] );
-        a2y1 = -invDenom *
-                ( ux1[selVect[1].w] * ux3[selVect[3].w] * uy3[selVect[4].w]
-                - ux1[selVect[1].w] * ux3[selVect[4].w] * uy3[selVect[3].w]
-                - ux3[selVect[1].w] * ux1[selVect[3].w] * uy3[selVect[4].w]
-                + ux3[selVect[1].w] * ux1[selVect[4].w] * uy3[selVect[3].w]
-                + ux1[selVect[3].w] * ux3[selVect[4].w] * uy3[selVect[1].w]
-                - ux3[selVect[3].w] * ux1[selVect[4].w] * uy3[selVect[1].w] );
-        a3y1 = invDenom *
-                ( ux1[selVect[1].w] * ux3[selVect[2].w] * uy3[selVect[4].w]
-                - ux1[selVect[1].w] * ux3[selVect[4].w] * uy3[selVect[2].w]
-                - ux3[selVect[1].w] * ux1[selVect[2].w] * uy3[selVect[4].w]
-                + ux3[selVect[1].w] * ux1[selVect[4].w] * uy3[selVect[2].w]
-                + ux1[selVect[2].w] * ux3[selVect[4].w] * uy3[selVect[1].w]
-                - ux3[selVect[2].w] * ux1[selVect[4].w] * uy3[selVect[1].w] );
-        a4y1 = -invDenom *
-                ( ux1[selVect[1].w] * ux3[selVect[2].w] * uy3[selVect[3].w]
-                - ux1[selVect[1].w] * ux3[selVect[3].w] * uy3[selVect[2].w]
-                - ux3[selVect[1].w] * ux1[selVect[2].w] * uy3[selVect[3].w]
-                + ux3[selVect[1].w] * ux1[selVect[3].w] * uy3[selVect[2].w]
-                + ux1[selVect[2].w] * ux3[selVect[3].w] * uy3[selVect[1].w]
-                - ux3[selVect[2].w] * ux1[selVect[3].w] * uy3[selVect[1].w] );
-
-        a1x3 = -invDenom *
-                ( ux1[selVect[2].w] * uy1[selVect[3].w] * uy3[selVect[4].w]
-                - ux1[selVect[2].w] * uy3[selVect[3].w] * uy1[selVect[4].w]
-                - ux1[selVect[3].w] * uy1[selVect[2].w] * uy3[selVect[4].w]
-                + ux1[selVect[3].w] * uy3[selVect[2].w] * uy1[selVect[4].w]
-                + ux1[selVect[4].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
-                - ux1[selVect[4].w] * uy3[selVect[2].w] * uy1[selVect[3].w] );
-        a2x3 = invDenom *
-                ( ux1[selVect[1].w] * uy1[selVect[3].w] * uy3[selVect[4].w]
-                - ux1[selVect[1].w] * uy3[selVect[3].w] * uy1[selVect[4].w]
-                - ux1[selVect[3].w] * uy1[selVect[1].w] * uy3[selVect[4].w]
-                + ux1[selVect[3].w] * uy3[selVect[1].w] * uy1[selVect[4].w]
-                + ux1[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[3].w]
-                - ux1[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[3].w] );
-        a3x3 = -invDenom *
-                ( ux1[selVect[1].w] * uy1[selVect[2].w] * uy3[selVect[4].w]
-                - ux1[selVect[1].w] * uy3[selVect[2].w] * uy1[selVect[4].w]
-                - ux1[selVect[2].w] * uy1[selVect[1].w] * uy3[selVect[4].w]
-                + ux1[selVect[2].w] * uy3[selVect[1].w] * uy1[selVect[4].w]
-                + ux1[selVect[4].w] * uy1[selVect[1].w] * uy3[selVect[2].w]
-                - ux1[selVect[4].w] * uy3[selVect[1].w] * uy1[selVect[2].w] );
-        a4x3 = invDenom *
-                ( ux1[selVect[1].w] * uy1[selVect[2].w] * uy3[selVect[3].w]
-                - ux1[selVect[1].w] * uy3[selVect[2].w] * uy1[selVect[3].w]
-                - ux1[selVect[2].w] * uy1[selVect[1].w] * uy3[selVect[3].w]
-                + ux1[selVect[2].w] * uy3[selVect[1].w] * uy1[selVect[3].w]
-                + ux1[selVect[3].w] * uy1[selVect[1].w] * uy3[selVect[2].w]
-                - ux1[selVect[3].w] * uy3[selVect[1].w] * uy1[selVect[2].w] );
-
-        a1y3 = -invDenom *
-                ( ux1[selVect[2].w] * ux3[selVect[3].w] * uy1[selVect[4].w]
-                - ux1[selVect[2].w] * ux3[selVect[4].w] * uy1[selVect[3].w]
-                - ux3[selVect[2].w] * ux1[selVect[3].w] * uy1[selVect[4].w]
-                + ux3[selVect[2].w] * ux1[selVect[4].w] * uy1[selVect[3].w]
-                + ux1[selVect[3].w] * ux3[selVect[4].w] * uy1[selVect[2].w]
-                - ux3[selVect[3].w] * ux1[selVect[4].w] * uy1[selVect[2].w] );
-        a2y3 = invDenom *
-                ( ux1[selVect[1].w] * ux3[selVect[3].w] * uy1[selVect[4].w]
-                - ux1[selVect[1].w] * ux3[selVect[4].w] * uy1[selVect[3].w]
-                - ux3[selVect[1].w] * ux1[selVect[3].w] * uy1[selVect[4].w]
-                + ux3[selVect[1].w] * ux1[selVect[4].w] * uy1[selVect[3].w]
-                + ux1[selVect[3].w] * ux3[selVect[4].w] * uy1[selVect[1].w]
-                - ux3[selVect[3].w] * ux1[selVect[4].w] * uy1[selVect[1].w] );
-        a3y3 = -invDenom *
-                ( ux1[selVect[1].w] * ux3[selVect[2].w] * uy1[selVect[4].w]
-                - ux1[selVect[1].w] * ux3[selVect[4].w] * uy1[selVect[2].w]
-                - ux3[selVect[1].w] * ux1[selVect[2].w] * uy1[selVect[4].w]
-                + ux3[selVect[1].w] * ux1[selVect[4].w] * uy1[selVect[2].w]
-                + ux1[selVect[2].w] * ux3[selVect[4].w] * uy1[selVect[1].w]
-                - ux3[selVect[2].w] * ux1[selVect[4].w] * uy1[selVect[1].w] );
-        a4y3 = invDenom *
-                ( ux1[selVect[1].w] * ux3[selVect[2].w] * uy1[selVect[3].w]
-                - ux1[selVect[1].w] * ux3[selVect[3].w] * uy1[selVect[2].w]
-                - ux3[selVect[1].w] * ux1[selVect[2].w] * uy1[selVect[3].w]
-                + ux3[selVect[1].w] * ux1[selVect[3].w] * uy1[selVect[2].w]
-                + ux1[selVect[2].w] * ux3[selVect[3].w] * uy1[selVect[1].w]
-                - ux3[selVect[2].w] * ux1[selVect[3].w] * uy1[selVect[1].w] );
-
         initNeeded = false;
     }
 
-    double k_ud = ud * HALF_SQRT_2DIV5;
-#define COMPENSATE  1
-    //#define COMPENSATE  0
-    /******************************w przerwaniu***********************************************************************/
-    if ( impuls == 0 ) { //czyli co okres impulsowania (uwaga MUSI byc Timp - h bo inaczej  niezgodnosc czestotliwosci
-        //wylicz polozenia i skladowe wektorow zadanych
+    //double k_ud = ud * HALF_SQRT_2DIV5;
+    //double k_ud = ud / 2;
+
+    if ( t == 0 ) {
         rhoU1 = wrapAngle( rhoU1 );
         rhoU3 = wrapAngle( rhoU3 );
 
-        uSX1 = uS1 * cos( rhoU1 );
-        uSY1 = uS1 * sin( rhoU1 );
-        uSX3 = uS3 * cos( rhoU3 );
-        uSY3 = uS3 * sin( rhoU3 );
+        uS1 /= ud;
+        uSx1 = uS1 * cos( rhoU1 );
+        uSy1 = uS1 * sin( rhoU1 );
+        //uSX3 = uS3 * cos( rhoU3 );
+        //uSY3 = uS3 * sin( rhoU3 );
 
-        double k = tImp / k_ud; //czasy tu wyliczone dotycz� 4 wybranych wektor_sel�w i mog� mie� dowolne warto�ci (te� ujemne)
-        t[1] = ( a1x1 * uSX1 + a1y1 * uSY1 + a1x3 * uSX3 + a1y3 * uSY3 ) * k;
-        t[2] = ( a2x1 * uSX1 + a2y1 * uSY1 + a2x3 * uSX3 + a2y3 * uSY3 ) * k;
-        t[3] = ( a3x1 * uSX1 + a3y1 * uSY1 + a3x3 * uSX3 + a3y3 * uSY3 ) * k;
-        t[4] = ( a4x1 * uSX1 + a4y1 * uSY1 + a4x3 * uSX3 + a4y3 * uSY3 ) * k;
-
-        //przepisanie wybranych wektor�w (wstawionych w inicjacji) dla kt�rych wyliczono czasy (dalej wektory s� nadpisywane wi�c trzeba przepisa� je tutaj)
-        //jezeli czasy ujemne - to we� wektory przeciwne
-        for( int i = 1; i < 5; i++ ) {
-            selVect2[i].w = selVect[i].w;
-            if ( t[i] < 0 ) {
-                t[i] *= -1;
-                selVect2[i].w = abs( 31 - selVect2[i].w );
-            }
-            for( int j = 0; j < 5; j++ ) { //suma czasu trwania zer i jedynek w fazach
-                stan[j][i] = bit( selVect2[i].w, 4 - j );
-            } //dla 4 wybranych wektor_sel�w wyluskanie bitu wektor_sel�w okre�laj�cego faz�, 1 to stan za��czenia, zero - wy��czenia
-            timesOnDesc[i].faza = i;
-            timesOnDesc[i].timeOn = 0;
-        } //wyzerowanie czasu trwania jedynek na pocz�tku oblicze�. Przyj�te przyporzadkowanie nr fazom (a=1, b=2... e=5)
-
-        //i zsumowanie czas�w trwania jedynek w fazach
-        //<= 4 bo 4 czasy trwania wektorow
-        for( int i = 1; i <= 4; i++ ) {
-            for( int j = 0; j < 5; j++ ) {
-                if ( stan[j][i] == 1 ) {
-                    timesOnDesc[j + 1].timeOn += t[i];
-                }
-            }
+        //printf("%f\n", rhoU1);
+        int section = (int) ( rhoU1 / ( 2 * M_PI / baseVecCount ) );
+        //printf("%d\n", part);
+        int vec1 = baseVec[section];
+        if ( vec1 == 0 ) {
+            vec1 = baseVec[section - 1];
         }
+        int vec2 = baseVec[( section + 1 ) % baseVecCount];
+        if ( vec2 == 0 ) {
+            vec2 = baseVec[( section + 2 ) % baseVecCount];
+        }
+        double x1 = ux1[vec1], x2 = ux1[vec2];
+        double y1 = uy1[vec1], y2 = uy1[vec2];
+        //printf( "%d %d %f\n", vec1, vec2, ux1[vec1]*ux1[vec1] + uy1[vec1]*uy1[vec1] );
 
-        //przpisujemy te czasy do zmiennnych pomocniczych
-        for( int i = 1; i <= 5; i++ ) {
-            timesOnTmp[i].timeOn = timesOnDesc[i].timeOn;
-        }
-        //sortowanie od najkr�tszego  do najd�u�szego czasu trwania jedynki - im kr�tsza tym jest ona p�niej. najkr�sza to wektor 11111
-        qsort( &timesOnTmp[1], 5, sizeof (timeOnTmp ), cmpTimeOnTmp ); //alternatywna metoda sortowania
-        //tu najkr�tszy czas to 1111. ten czas odejmujemy od wszystkich czas�w trwania jedynek
-        for( int i = 1; i <= 5; i++ ) {
-            timesOnDesc[i].timeOn -= timesOnTmp[1].timeOn;
-        }
-        //teraz czasy jedynek dotycza wylacznie wektorow aktywnych. Kolejny etap to wyluskanie zer.
-        time0 = 0.5 * ( tImp - ( timesOnTmp[5].timeOn - timesOnTmp[1].timeOn ) );
-        //czasy do za�aczenia tranzystora w fazie (przejscie z 0 na 1)
+        // inverse matrix
+        double tImp_detInv = tImp / ( x1 * y2 - x2 * y1 );
+        double t1 = tImp_detInv * ( uSx1 * y2 - uSy1 * x2 ) * K_VEC;
+        double t2 = tImp_detInv * ( uSy1 * x1 - uSx1 * y1 ) * K_VEC;
+
+        //double t0 = 1.0 - t1 - t2;
+
+        //printf( "[%f] {%f %f} in {%f %f}, {%f %f} [%d %d] {%f %f %f}\n", rhoU1, uSx1, uSy1, x1, y1, x2, y2, vec1, vec2, t0, t1, t2 );
+        //printf( "[%f] {%f %f} in {%f %f}, {%f %f} [%d %d] {%f %f}\n", rhoU1, uSx1, uSy1, x1, y1, x2, y2, vec1, vec2, t1, t2 );
+
         for( int i = 0; i < 5; i++ ) {
-            tCnt[i] = tImp - timesOnDesc[i + 1].timeOn - time0;
-            if ( COMPENSATE && PWM_FAULT != 42 ) {
-                tCnt[i] += time0;
+            int mask = 1 << i;
+            if ( vec1 & mask ) {
+                tCnt[i] = t1;
+            } else {
+                tCnt[i] = 0;
             }
-        } // na razie wektory aktywne s� na koncu cyklu. Kazdy cykl startuje z 00000
-
-        //teraz odtwarzamy wektory. To jest te� potrzebne do wyliczenia czas�w do prze�aczenia
-
-        //sortowanie od najkr�tszego  do najd�u�szego czasu trwania jedynki - im kr�tsza tym jest ona p�niej
-        qsort( &timesOnDesc[1], 5, sizeof (timeOnDesc ), cmpTimeOn ); //alternatywna metoda sortowania
-
-        //usuwamy ostatni wektor (to jest wektor 11111)
-
-        //wektory s� odtwarzane od ko�ca
-        //wektor 11111 jest pi�ty
-        for( int j = 1, k = 5; j <= 5; j++, k-- ) {
-            t[k] = timesOnDesc[j].timeOn;
-            for( int i = j; i <= 5; i++ ) {
-                timesOnDesc[i].timeOn -= t[k];
+            if ( vec2 & mask ) {
+                tCnt[i] += t2;
+            }
+            if ( tCnt[i] == 0 ) {
+                tCnt[i] = -tImp;
             }
         }
-        // w tym miejscu jest sekwencja 00000-a1-a2-a3-a4-11111 przy minimalnej liczbie przelaczen poiedzy kolejnymi wektorami
-        // w przypadku uszkodzenia musi wystarczyc 00000-a1-a2-a3 , a3-a2-a1-00000
 
-        //czasy paswyne
-        t[0] = 0.5 * ( tImp - ( t[1] + t[2] + t[3] + t[4] ) );
-
-        cykl *= -1;
-        *przerwanie = 1; //pozwala na uruchomienie sterowania
+        kierunek *= -1;
+        *przerwanie = 1; // uruchamia sterowanie
+#ifdef VERBOSE
+        FILE* fpOut = fopen( "out.txt", "a" );
+        fprintf( fpOut, "*** %d\n", kierunek );
+        for( int i = 4; i >= 0; i-- ) {
+            fprintf( fpOut, "%f ", tCnt[i] );
+        }
+        fprintf( fpOut, "\n***\n" );
+        fclose( fpOut );
+#endif
     }
 
     int bits = 0;
     int bitz[5];
 
-    if ( cykl == 1 ) {
+    if ( kierunek == 1 ) {
         for( int i = 0; i < 5; i++ ) {
-            bitz[i] = ( impuls <= tCnt[i] ) ? 0 : 1;
+            bitz[i] = ( t > tImp - tCnt[i] ) ? 1 : 0;
         }
     } else {
         for( int i = 0; i < 5; i++ ) {
-            bitz[i] = ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
+            bitz[i] = ( t < tCnt[i] ) ? 1 : 0;
         }
     }
 
     bits = 0;
-    for( int i = 0; i < 5; i++ ) {
+    for( int i = 4; i >= 0; i-- ) {
         bits <<= 1;
         bits |= bitz[i];
     }
-    if ( PWM_FAULT >= 0 && PWM_FAULT <= 4 ) {
-        if ( COMPENSATE && bitz[PWM_FAULT] && ( bits /*& ( 1 << PWM_FAULT ) */) ) {
 
-            bitz[( PWM_FAULT + 1 ) % 5] = 1;
-            bitz[( PWM_FAULT + 2 ) % 5] = 0;
-            bitz[( PWM_FAULT + 3 ) % 5] = 0;
-            bitz[( PWM_FAULT + 4 ) % 5] = 1;
-
-        }
-        bitz[PWM_FAULT] = 0;
-    } else if ( PWM_FAULT >= 5 && PWM_FAULT <= 9 ) {
-        if ( COMPENSATE && !bitz[PWM_FAULT - 5] && !bits ) {
-            bitz[( PWM_FAULT - 5 + 1 ) % 5] = 0;
-            bitz[( PWM_FAULT - 5 + 2 ) % 5] = 1;
-            bitz[( PWM_FAULT - 5 + 3 ) % 5] = 1;
-            bitz[( PWM_FAULT - 5 + 4 ) % 5] = 0;
-        }
-        bitz[PWM_FAULT - 5] = 1;
-    }
-    bits = 0;
-    for( int i = 0; i < 5; i++ ) {
-        bits <<= 1;
-        bits |= bitz[i];
-    }
-    //if ( COMPENSATE )
-#if 0
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%"/*"c%c%c"*/
+#ifdef VERBOSE
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c"/*"%c%c%c"*/
 #define BYTE_TO_BINARY(byte)  \
-/* (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-*/  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
   (byte & 0x08 ? '1' : '0'), \
   (byte & 0x04 ? '1' : '0'), \
   (byte & 0x02 ? '1' : '0'), \
@@ -441,13 +248,14 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
     fclose( fpOut );
 #endif
 
-    *usx1 = k_ud * ux1[bits];
-    *usy1 = k_ud * uy1[bits];
-    *usx3 = k_ud * ux3[bits];
-    *usy3 = k_ud * uy3[bits];
+    *usx1 = ud * ux1[bits];
+    *usy1 = ud * uy1[bits];
+    *usx3 = ud * ux3[bits];
+    *usy3 = ud * uy3[bits];
 
-    impuls += h;
-    if ( impuls > tImp + h ) { //ob1?
-        impuls = 0; //czyli co okres impulsowania
+    if ( t > tImp ) {
+        t = 0;
+    } else {
+        t += h;
     }
 }

@@ -28,7 +28,7 @@ double timeCnt;
 //deklaracje zmiennych do PWM
 double rhoU1, uS1, uS3;
 double uDC;
-double omegaU1 = 1, omegaU3 = 0.5, deltaRho;
+double omegaU1 = 1, omegaU3 = 1.0/3, deltaRho;
 
 //wygenerowane skladowe w PWM
 double usx1wyg, usy1wyg, usx3wyg, usy3wyg;
@@ -120,7 +120,7 @@ int dos_main( ) {
     deltaRho = 2 * M_PI * ( 0.001 * tImp / TWZG ) / ( 20E-3 ); //przyrost kata na przerwanie przy predkosci 2PI/20ms, czas w sekundach)
 
     /* PWM fal 5 fazowy */
-    uDC = 2;
+    uDC = 0.5;
 
     uS1 = 1.0;
     //US1+=2e-6; if (US1>uDC) US1=uDC;
@@ -140,11 +140,11 @@ int dos_main( ) {
 
         if ( interrupt ) {
 
-            /* kat polo�enia wektora napi�cia stojana */
-            rhoU1 += omegaU1 * 1 * deltaRho; // narastanie kata
+            /* kat polozenia wektora napiecia stojana */
+            rhoU1 += omegaU1 * deltaRho;
             rhoU1 = wrapAngle( rhoU1 );
 
-            rhoU3 += omegaU3 * ( -1 ) * deltaRho; // narastanie kata
+            rhoU3 -= omegaU3 * deltaRho;
             rhoU3 = wrapAngle( rhoU3 );
 
             //regulator napiec na kondensatorach filtru
