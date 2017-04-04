@@ -293,8 +293,7 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
     }
 
     double k_ud = ud * HALF_SQRT_2DIV5;
-#define COMPENSATE  1
-    //#define COMPENSATE  0
+
     /******************************w przerwaniu***********************************************************************/
     if ( impuls == 0 ) { //czyli co okres impulsowania (uwaga MUSI byc Timp - h bo inaczej  niezgodnosc czestotliwosci
         //wylicz polozenia i skladowe wektorow zadanych
@@ -352,9 +351,6 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //czasy do za�aczenia tranzystora w fazie (przejscie z 0 na 1)
         for( int i = 0; i < 5; i++ ) {
             tCnt[i] = tImp - timesOnDesc[i + 1].timeOn - time0;
-            if ( COMPENSATE && PWM_FAULT != 42 ) {
-                tCnt[i] += time0;
-            }
         } // na razie wektory aktywne s� na koncu cyklu. Kazdy cykl startuje z 00000
 
         //teraz odtwarzamy wektory. To jest te� potrzebne do wyliczenia czas�w do prze�aczenia
@@ -387,38 +383,26 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
 
     if ( cykl == 1 ) {
         for( int i = 0; i < 5; i++ ) {
-            bitz[i] = ( impuls <= tCnt[i] ) ? 0 : 1;
+            if ( PWM_FAULT == i ) {
+                bitz[i] = 0;
+            } else if ( PWM_FAULT - 5 == i ) {
+                bitz[i] = 1;
+            } else {
+                bitz[i] = ( impuls <= tCnt[i] ) ? 0 : 1;
+            }
         }
     } else {
         for( int i = 0; i < 5; i++ ) {
-            bitz[i] = ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
+            if ( PWM_FAULT == i ) {
+                bitz[i] = 0;
+            } else if ( PWM_FAULT - 5 == i ) {
+                bitz[i] = 1;
+            } else {
+                bitz[i] = ( impuls <= tImp - tCnt[i] ) ? 1 : 0;
+            }
         }
     }
 
-    bits = 0;
-    for( int i = 0; i < 5; i++ ) {
-        bits <<= 1;
-        bits |= bitz[i];
-    }
-    if ( PWM_FAULT >= 0 && PWM_FAULT <= 4 ) {
-        if ( COMPENSATE && bitz[PWM_FAULT] && ( bits /*& ( 1 << PWM_FAULT ) */) ) {
-
-            bitz[( PWM_FAULT + 1 ) % 5] = 1;
-            bitz[( PWM_FAULT + 2 ) % 5] = 0;
-            bitz[( PWM_FAULT + 3 ) % 5] = 0;
-            bitz[( PWM_FAULT + 4 ) % 5] = 1;
-
-        }
-        bitz[PWM_FAULT] = 0;
-    } else if ( PWM_FAULT >= 5 && PWM_FAULT <= 9 ) {
-        if ( COMPENSATE && !bitz[PWM_FAULT - 5] && !bits ) {
-            bitz[( PWM_FAULT - 5 + 1 ) % 5] = 0;
-            bitz[( PWM_FAULT - 5 + 2 ) % 5] = 1;
-            bitz[( PWM_FAULT - 5 + 3 ) % 5] = 1;
-            bitz[( PWM_FAULT - 5 + 4 ) % 5] = 0;
-        }
-        bitz[PWM_FAULT - 5] = 1;
-    }
     bits = 0;
     for( int i = 0; i < 5; i++ ) {
         bits <<= 1;

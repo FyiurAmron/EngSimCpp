@@ -1,4 +1,4 @@
-0 przykladowe dane w formacie np.
+1 przykladowe dane w formacie np.
 # time x11z m0
 @   0 1.0 1.0
 @ 300 0.5 0.9

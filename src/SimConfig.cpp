@@ -118,9 +118,12 @@ void Simulations( ) {
     wChartW.charts[3]->AddSignal( &is1, L"is1", RGB_( 0, 255, 255 ) );
     wChartW.charts[2]->AddSignal( &is3, L"is3", RGB_( 0, 255, 255 ) );
     //wChartW.charts[1]->AddSignal( &rhoU1, L"rhoU", RGB_( 0, 255, 255 ) );
-    wChartW.charts[1]->AddSignal( &usx, L"usx", RGB_( 0, 255, 255 ) );
-    wChartW.charts[0]->AddSignal( &usy, L"usy", RGB_( 0, 255, 255 ) );
-/*/
+    //wChartW.charts[1]->AddSignal( &usx, L"usx", RGB_( 0, 255, 255 ) );
+    //wChartW.charts[0]->AddSignal( &usy, L"usy", RGB_( 0, 255, 255 ) );
+    wChartW.charts[1]->AddSignal( &isx1, L"isx1", RGB_( 0, 255, 255 ) );
+    wChartW.charts[0]->AddSignal( &isy1, L"isy1", RGB_( 0, 255, 255 ) );
+
+    /*/
     //definiowanie poczatkowego polozenia wykresow
     //polozenie na osi X ustawia sie dla wszystkich okien jednoczesnie
     //polozenia na osi Y okresla sie dla kazdego wykresu oddzielnie

@@ -28,7 +28,7 @@ double timeCnt;
 //deklaracje zmiennych do PWM
 double rhoU1, uS1, uS3;
 double uDC;
-double omegaU1 = 1, omegaU3 = 1.0/3, deltaRho;
+double omegaU1 = 1, omegaU3 = 1.0 / 3, deltaRho;
 
 //wygenerowane skladowe w PWM
 double usx1wyg, usy1wyg, usx3wyg, usy3wyg;
@@ -109,9 +109,9 @@ inline void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m
     *isy3m = load[4];
 }
 
-int PWM_FAULT_INIT = 1, PWM_FAULT = 42;
+int PWM_FAULT = 42, PWM_FAULT_INIT = 1000000;
 
-#include "PWM5f.c"
+#include "PWM5f_1.c"
 
 int dos_main( ) {
     ht = 1E-4; /* krok calkowania w milisekundach */
@@ -134,6 +134,34 @@ int dos_main( ) {
     //roU3=0*M_PI/2;
 
     //temp[30]=floor(roU3/(M_PI/5));
+
+    int nextTimeTrigger = -1;
+    int inputChar;
+
+    FILE* fpSetup = fopen( "setup.txt", "r" );
+    //FILE* fpLog = fopen( "log.txt", "w" );
+    FILE* fpOut = fopen( "out.txt", "w" );
+
+    if ( fpSetup != NULL ) {
+        inputChar = fgetc( fpSetup );
+        if ( isdigit( inputChar ) ) {
+            PWM_FAULT_INIT = inputChar - '0';
+            inputChar = '#'; // ignore the rest of the line
+        }
+        while( inputChar == '#' ) {
+            inputChar = fgetc( fpSetup );
+            while( inputChar != '\n' && inputChar != EOF ) {
+                inputChar = fgetc( fpSetup );
+            }
+            inputChar = fgetc( fpSetup );
+        }
+        if ( inputChar == EOF ) {
+            nextTimeTrigger = -1;
+        } else {
+            fscanf( fpSetup, "%d", &nextTimeTrigger );
+            //fprintf( fpLog, "%d", nextTimeTrigger );
+        }
+    }
 
     while( true ) {
         timeCnt += ht; // uplyw czasu rzeczywistego
