@@ -111,16 +111,23 @@ inline void LR( double h, double usx1m, double usy1m, double usx3m, double usy3m
 
 int PWM_FAULT = 42, PWM_FAULT_INIT = 1000000;
 
-#include "PWM5f_1.c"
+#include "PWM5f.c"
 
 int dos_main( ) {
+/*
+        if ( timeCnt > 10 ) {
+            return 0;
+        }
+*/
+
     ht = 1E-4; /* krok calkowania w milisekundach */
     h = ht * TWZG; /* krok calkowania przeliczony na czas wzgledny */
     tImp = .150 * TWZG; // okres impulsowania falownika
     deltaRho = 2 * M_PI * ( 0.001 * tImp / TWZG ) / ( 20E-3 ); //przyrost kata na przerwanie przy predkosci 2PI/20ms, czas w sekundach)
 
     /* PWM fal 5 fazowy */
-    uDC = 0.5;
+    //uDC = 0.5;
+    uDC = 2.0;
 
     uS1 = 1.0;
     //US1+=2e-6; if (US1>uDC) US1=uDC;
@@ -184,10 +191,11 @@ int dos_main( ) {
             interrupt = false;
         }
 
-#define PWM_FAULT_TIME  500
+#define PWM_FAULT_TIME  100
 
-        if ( timeCnt > PWM_FAULT_TIME ) {
+        if ( timeCnt > PWM_FAULT_TIME && PWM_FAULT != PWM_FAULT_INIT ) {
             PWM_FAULT = PWM_FAULT_INIT;
+            baseVecNr = 1;
         }
 
         PWM5f( tImp, uS1, rhoU1, uS3, rhoU3, uDC, h, &usx1, &usy1, &usx3, &usy3, &usx1wyg, &usy1wyg, &usx3wyg, &usy3wyg, &interrupt );
@@ -206,8 +214,43 @@ int dos_main( ) {
         usx = usx1 + usx3;
         usy = usy1 + usy3;
 
+        float is1_old = is1;
         is1 = sqrt( isx1 * isx1 + isy1 * isy1 );
         is3 = sqrt( isx3 * isx3 + isy3 * isy3 );
+
+        //float dI = is1_old - is1;
+
+#define BUF_LEN  1000
+//#define TRESH  0.5
+#define TRESH  10
+        static int cnt = 0;
+        static float iArr[BUF_LEN * 2] = {0};
+        static float iSum = 0;
+
+        iSum -= iArr[cnt];
+        int offset = (cnt + BUF_LEN / 2 ) % BUF_LEN;
+
+        iSum += iArr[offset];
+        iArr[cnt] = is1;
+        cnt++;
+        cnt %= BUF_LEN;
+        //printf( "is1 = %.5f iAvg = %.5f @ %.5f\n", is1, iAvg, timeCnt );
+        //printf( "%f\n", abs( is1 - iAvg ) );
+      if ( timeCnt > 2.0 ) { // gdy minie czas na rozruch/wypelnienie bufora
+        float iAvg = iSum / (BUF_LEN /2);
+        if ( fabs( is1 - iAvg ) / iAvg > TRESH ) {
+            printf( "is1 = %.5f iAvg = %.5f delta = %.5f @ %.5f\n", is1, iAvg, fabs( is1 - iAvg ) / iAvg, timeCnt );
+            float angle = atan2( isy1, isx1 );
+            float angleDeg = angle / M_PI * 180;
+            if ( angleDeg < 0 ) {
+                angleDeg += 360;
+            }
+            int faza = (angleDeg - 36) / 72; // TODO lekko poprawic lapanie
+            printf( "wykryto fault w fazie %d (%f)\n", faza, angleDeg );
+            // przykladowa kompensacja
+            baseVecNr = 2;            
+        }
+      }
 
         /* skokowe zmieny wielkosci zadanych i zaklocajacych */
         //if(TIME>500)  m0=1;

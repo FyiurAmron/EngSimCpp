@@ -120,6 +120,23 @@ inline int bit( int val, int bitNr ) {
 #define K_VEC  PHI * 0.9
 // przybliżona wartość analityczna
 
+    //static int baseVec[] = { 0b10000, 0b01000, 0b00100, 0b00010, 0b00001 };
+    //static int baseVec[] = { 0b01001, 0b01000, 0b00100, 0b00010, 0b00001 }; // 2-vec compensation
+
+int baseVecNr = 0;
+
+#define BASE_VEC_COUNT  10
+int baseVecAll[4][BASE_VEC_COUNT] = {
+    { 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0b10001 }, // normalne
+    { 0b00000, 0b01000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0b00001 }, // fault faza 1
+    //{ 0b10000, 0b10000, 0b00000, 0b00100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0b10001 }, // fault faza 2
+    
+    //{ 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00100, 0b00000, 0b00001, 0b00001, 0b10001 }, // fault faza 4
+    //{ 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00010, 0b00000, 0b10000 }, // fault faza 5
+    { 0b01001, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja
+    { -1, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja alt.
+};
+
 void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, double ud, double h,
         double *usx1, double *usy1, double *usx3, double *usy3,
         double *usx1wyg, double *usy1wyg, double *usx3wyg, double *usy3wyg,
@@ -128,11 +145,7 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
     static double t;
     static int kierunek = 1;
 
-    //static int baseVec[] = { 0b00001, 0b00010, 0b00100, 0b01000, 0b01001 };
-    //static int baseVec[] = { 0b01001, 0b01000, 0b00100, 0b00010, 0b00001 }; // 2-vec compensation
-    static int baseVec[] = { 0b01001, 0, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0 };
-    static int baseVecCount = sizeof ( baseVec ) / sizeof ( baseVec[0] ); // PHASES, PHASES * 2 etc.
-    //static int baseVec[] = { 0b10000, 0b01000, 0b00100, 0b00010, 0b00001 };
+    int* baseVec = baseVecAll[baseVecNr];
 
     if ( initNeeded ) {
         for( int i = 0; i < 31; i++ ) {
@@ -164,15 +177,19 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //uSY3 = uS3 * sin( rhoU3 );
 
         //printf("%f\n", rhoU1);
-        int section = (int) ( rhoU1 / ( 2 * M_PI / baseVecCount ) );
+        int section = (int) ( rhoU1 / ( 2 * M_PI / BASE_VEC_COUNT ) );
         //printf("%d\n", part);
         int vec1 = baseVec[section];
-        if ( vec1 == 0 ) {
-            vec1 = baseVec[section - 1];
+        int offset = 0;
+        while ( vec1 == -1 ) {
+            offset++;
+            vec1 = baseVec[( section - offset + BASE_VEC_COUNT ) % BASE_VEC_COUNT];
         }
-        int vec2 = baseVec[( section + 1 ) % baseVecCount];
-        if ( vec2 == 0 ) {
-            vec2 = baseVec[( section + 2 ) % baseVecCount];
+        int vec2 = baseVec[( section + 1 ) % BASE_VEC_COUNT];
+        offset = 1;
+        while ( vec2 == -1 ) {
+            offset++;
+            vec2 = baseVec[( section + offset ) % BASE_VEC_COUNT];
         }
         double x1 = ux1[vec1], x2 = ux1[vec2];
         double y1 = uy1[vec1], y2 = uy1[vec2];
@@ -183,7 +200,7 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         double t1 = tImp_detInv * ( uSx1 * y2 - uSy1 * x2 ) * K_VEC;
         double t2 = tImp_detInv * ( uSy1 * x1 - uSx1 * y1 ) * K_VEC;
 
-        //double t0 = 1.0 - t1 - t2;
+        double t0 = 1.0 - t1 - t2;
 
         //printf( "[%f] {%f %f} in {%f %f}, {%f %f} [%d %d] {%f %f %f}\n", rhoU1, uSx1, uSy1, x1, y1, x2, y2, vec1, vec2, t0, t1, t2 );
         //printf( "[%f] {%f %f} in {%f %f}, {%f %f} [%d %d] {%f %f}\n", rhoU1, uSx1, uSy1, x1, y1, x2, y2, vec1, vec2, t1, t2 );
