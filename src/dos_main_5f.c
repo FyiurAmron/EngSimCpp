@@ -214,11 +214,45 @@ int dos_main( ) {
         usx = usx1 + usx3;
         usy = usy1 + usy3;
 
+        double is[5];
+        double io = 0;
+        is[0] = 1.1708204 * io - 0.19543951 * isx1 + 0.94868330 * isx3 - 0.60150096 * isy1 + 0.97324899 * isy3;
+        is[1] = 0.44721360 * io + 0.19543951 * isx1 - 0.51166727 * isx3 + 0.60150096 * isy1 + 0.37174803 * isy3;
+        is[2] = -0.27639320 * io + 0.31622777 * isx1 - 0.12078826 * isx3 + 0.97324899 * isy1 - 1.5747499 * isy3;
+        is[3] = 1.6180340 * io - 1.8512296 * isx1 + 0.70710678 * isx3 - 1.3449970 * isy1 + 2.1762509 * isy3;
+        is[4] = -0.72360680 * io + 1.5350018 * isx1 - 1.0233345 * isx3 + 0.37174803 * isy1 - 1.9464980 * isy3;
+
         float is1_old = is1;
         is1 = sqrt( isx1 * isx1 + isy1 * isy1 );
         is3 = sqrt( isx3 * isx3 + isy3 * isy3 );
 
         //float dI = is1_old - is1;
+
+        if ( timeCnt > 10.0 && is1 < 0.1 && baseVecNr != 2 ) {
+            int nMin = -1;
+            int min = 42;
+            for ( int i = 0; i < 5; i++ ) {
+                is[i] = fabs( is[i] );
+                if ( is[i] < min ) {
+                    nMin = i;
+                    min = is[i];
+                }
+            }
+            printf( "wykryto fault w fazie %d @ t == %f\n", nMin + 1, timeCnt );
+            printf( "is %f %f %f %f %f\n", is[0], is[1], is[2], is[3], is[4] );
+            // przykladowa kompensacja
+            baseVecNr = 2;
+            //uS1 = 0.33;
+        }
+
+        if ( baseVecNr == 2 ) {
+            if ( is3 > 0.5 ) {
+                //uS1 *= 0.999999;
+                uS1 *= 0.99999;
+            }
+        }
+
+#if 0
 
 #define BUF_LEN  1000
 //#define TRESH  0.5
@@ -251,7 +285,7 @@ int dos_main( ) {
             baseVecNr = 2;            
         }
       }
-
+#endif
         /* skokowe zmieny wielkosci zadanych i zaklocajacych */
         //if(TIME>500)  m0=1;
         //if(TIME>1000) m0=0.1;
