@@ -77,12 +77,8 @@ void Simulations( ) {
     wChartW.AddKeyProc( OnKeyChart, NULL );
     wChartW.Create( L"symulacja", 1280, 1000 );
 
-    //dodawanie obszarów wykresów do okna
-    wChartW.AddCharts( 8 );
-    //wChartW.AddCharts( 4 );
-
-    //definiowanie rejestrowanych i wyświetlanych sygnałów
 #if 0
+    wChartW.AddCharts( 5 );
     wChartW.charts[0]->AddSignal( &gamma, L"gamma", RGB_( 240, 0, 220 ) );
     wChartW.charts[1]->AddSignal( &i1, L"i1", RGB_( 44, 134, 167 ) );
     wChartW.charts[2]->AddSignal( &i2, L"i2", RGB_( 0, 255, 255 ) );
@@ -111,6 +107,28 @@ void Simulations( ) {
     wChartW.charts[0]->AddSignal( &rhoU1, L"rhoI", RGB_( 0, 255, 255 ) );
      */
 
+//#define FAZY
+#ifdef FAZY
+    wChartW.AddCharts( 5 );
+    wChartW.charts[4]->AddSignal( &is[0], L"ia", RGB_( 0, 255, 255 ) );
+    wChartW.charts[3]->AddSignal( &is[1], L"ib", RGB_( 0, 255, 255 ) );
+    wChartW.charts[2]->AddSignal( &is[2], L"ic", RGB_( 0, 255, 255 ) );
+    wChartW.charts[1]->AddSignal( &is[3], L"id", RGB_( 0, 255, 255 ) );
+    wChartW.charts[0]->AddSignal( &is[4], L"ie", RGB_( 0, 255, 255 ) );
+
+    wChartW.charts[4]->SetYPos( -1.5 );
+    wChartW.charts[3]->SetYPos( -1.5 );
+    wChartW.charts[2]->SetYPos( -1.5 );
+    wChartW.charts[1]->SetYPos( -1.5 );
+    wChartW.charts[0]->SetYPos( -1.5 );
+
+    wChartW.charts[4]->SetHeight( 3 );
+    wChartW.charts[3]->SetHeight( 3 );
+    wChartW.charts[2]->SetHeight( 3 );
+    wChartW.charts[1]->SetHeight( 3 );
+    wChartW.charts[0]->SetHeight( 3 );
+#else
+    wChartW.AddCharts( 8 );
     wChartW.charts[7]->AddSignal( &usx1, L"usx1", RGB_( 0, 255, 255 ) );
     wChartW.charts[6]->AddSignal( &usy1, L"usy1", RGB_( 0, 255, 255 ) );
     wChartW.charts[5]->AddSignal( &usx3, L"usx3", RGB_( 0, 255, 255 ) );
@@ -166,7 +184,7 @@ void Simulations( ) {
     wChartW.charts[2]->SetHeight( 0.5 );
     wChartW.charts[1]->SetHeight( 3 );
     wChartW.charts[0]->SetHeight( 3 );
-
+#endif
     //////////
     //definiowanie kolorow okna (tla,siatki,etykiet)
     wChartW.SetColors( RGBA( 0, 0, 0, 128 ), RGBA( 255, 255, 255, 100 ), RGB_( 255, 255, 0 ) );

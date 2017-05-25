@@ -125,15 +125,21 @@ inline int bit( int val, int bitNr ) {
 
 int baseVecNr = 0;
 
+extern double is[];
+
+#define PHASE_DAM  0 // fault faza 1
+
 #define BASE_VEC_COUNT  10
 int baseVecAll[4][BASE_VEC_COUNT] = {
     { 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0b10001 }, // normalne
-    //{ 0b00000, 0b01000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0b00001 }, // fault faza 1
+    { 0b00000, 0b01000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0b00001 }, // fault faza 1
     //{ 0b10000, 0b10000, 0b00000, 0b00100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, 0b10001 }, // fault faza 2
     
-    { 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00100, 0b00000, 0b00001, 0b00001, 0b10001 }, // fault faza 4
+    //{ 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00100, 0b00000, 0b00001, 0b00001, 0b10001 }, // fault faza 4
     //{ 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00010, 0b00000, 0b10000 }, // fault faza 5
-    { 0b01001, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja
+
+    { 0b01001, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja 1 f1
+    //{ 0b01001, -1, 0b00100, 0b00101, 0b00001, 0b01001, 0b01000, 0b01010, 0b00010, -1 }, // kompensacja 2 f1
     { -1, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja alt.
 };
 
@@ -179,6 +185,11 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         //printf("%f\n", rhoU1);
         int section = (int) ( rhoU1 / ( 2 * M_PI / BASE_VEC_COUNT ) );
         //printf("%d\n", part);
+        if ( baseVecNr == 1 && baseVecAll[0][section] ^ baseVecAll[1][section] ) { // symulacja uszkodzenia w sekcji z uszkodzona faza
+            if ( is[PHASE_DAM] < 0 ) {
+                baseVec = baseVecAll[0]; // nie widac uszkodzenia
+            }
+        }
         int vec1 = baseVec[section];
         int offset = 0;
         while ( vec1 == -1 ) {

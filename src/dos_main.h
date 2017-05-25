@@ -16,6 +16,8 @@ extern double x11, x12, x21, x22;
 extern double x11z, x12z, x21z, x22z;
 //#endif
 
+extern double is[5];
+
 extern double usx, usy;
 extern double isx1, isy1;
 extern double is1, is3;

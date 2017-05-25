@@ -34,8 +34,12 @@ double omegaU1 = 1, omegaU3 = 1.0 / 3, deltaRho;
 double usx1wyg, usy1wyg, usx3wyg, usy3wyg;
 
 //obciozenie
-double R3 = 1, L3 = 1; //R3=0.31622776601683793319988935444327*1.2360,L3=10*0.31622776601683793319988935444327*3.2360;
-double R1 = 1, L1 = 1; //R1=0.31622776601683793319988935444327*1.2360,L1=10*0.31622776601683793319988935444327*3.2360;//1
+#define  R3  1
+#define  L3  1
+//R3=0.31622776601683793319988935444327*1.2360,L3=10*0.31622776601683793319988935444327*3.2360;
+#define  R1  1
+#define  L1  1
+//R1=0.31622776601683793319988935444327*1.2360,L1=10*0.31622776601683793319988935444327*3.2360;//1
 
 //zmienne dla ukladu sterowania
 bool interrupt;
@@ -113,7 +117,9 @@ int PWM_FAULT = 42, PWM_FAULT_INIT = 1000000;
 
 #include "PWM5f.c"
 
-int dos_main( ) {
+double is[5];
+
+int dos_main( void ) {
 /*
         if ( timeCnt > 10 ) {
             return 0;
@@ -214,7 +220,7 @@ int dos_main( ) {
         usx = usx1 + usx3;
         usy = usy1 + usy3;
 
-        double is[5];
+        //double is[5];
         double io = 0;
         is[0] = 1.1708204 * io - 0.19543951 * isx1 + 0.94868330 * isx3 - 0.60150096 * isy1 + 0.97324899 * isy3;
         is[1] = 0.44721360 * io + 0.19543951 * isx1 - 0.51166727 * isx3 + 0.60150096 * isy1 + 0.37174803 * isy3;
@@ -248,7 +254,8 @@ int dos_main( ) {
         if ( baseVecNr == 2 ) {
             if ( is3 > 0.5 ) {
                 //uS1 *= 0.999999;
-                uS1 *= 0.99999;
+                //uS1 *= 0.99999;
+                //uS1 *= 0.999;
             }
         }
 
@@ -292,6 +299,6 @@ int dos_main( ) {
         //if(TIME>900) omegaRzad=1;
         //if(TIME>1500) omegaU=.8;
 
-        main_mon( );
+        main_mon();
     }
 }
