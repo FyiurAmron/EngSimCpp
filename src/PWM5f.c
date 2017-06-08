@@ -138,7 +138,10 @@ int baseVecAll[4][BASE_VEC_COUNT] = {
     //{ 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00100, 0b00000, 0b00001, 0b00001, 0b10001 }, // fault faza 4
     //{ 0b10000, 0b11000, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00010, 0b00000, 0b10000 }, // fault faza 5
 
-    { 0b01001, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja 1 f1
+    //{ 0b01001, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja 1 f1
+    //{ 0b01001, -1, 0b01000, -1, 0b01110, 0b00110, 0b00111, -1, 0b00001, -1 }, // kompensacja 1 f1
+    { 0b01001, -1, 0b01000, -1, 0b00100, 0b00110, 0b00010, -1, 0b00001, -1 }, // kompensacja 1 f1
+    //{ -1, -1, 0b01000, -1, 0b00100, -1, 0b00010, -1, 0b00001, -1 }, // kompensacja 1 f1
     //{ 0b01001, -1, 0b00100, 0b00101, 0b00001, 0b01001, 0b01000, 0b01010, 0b00010, -1 }, // kompensacja 2 f1
     { -1, -1, 0b01000, 0b01100, 0b00100, 0b00110, 0b00010, 0b00011, 0b00001, -1 }, // kompensacja alt.
 };
@@ -211,7 +214,52 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
         double t1 = tImp_detInv * ( uSx1 * y2 - uSy1 * x2 ) * K_VEC;
         double t2 = tImp_detInv * ( uSy1 * x1 - uSx1 * y1 ) * K_VEC;
 
-        double t0 = 1.0 - t1 - t2;
+//#define VEC4
+
+        double t3 = 0, t4 = 0;
+        int vec3 = 0, vec4 = 0;
+        bool v13 = true, v24 = true;
+#ifdef VEC4
+        switch ( vec1 ) {
+            case 0b00100:
+                vec1 = 0b01110;
+                vec3 = 0b01010;
+                break;
+            case 0b00010:
+                vec1 = 0b00111;
+                vec3 = 0b00101;
+                break;
+            default:
+                v13 = false;
+                break;
+        }
+        switch ( vec2 ) {
+            case 0b00100:
+                vec2 = 0b01110;
+                vec4 = 0b01010;
+                break;
+            case 0b00010:
+                vec2 = 0b00111;
+                vec4 = 0b00101;
+                break;
+            default:
+                v24 = false;
+                break;
+        }
+
+        if ( v13 ) {
+            t1 /= 2;
+            t3 = t1 / PHI;
+            t1 *= PHI;
+        }
+        if ( v24 ) {
+            t2 /= 2;
+            t4 = t2 / PHI;
+            t2 *= PHI;
+        }
+#endif
+
+        double t0 = 1.0 - t1 - t2 - t3 - t4;
 
         //printf( "[%f] {%f %f} in {%f %f}, {%f %f} [%d %d] {%f %f %f}\n", rhoU1, uSx1, uSy1, x1, y1, x2, y2, vec1, vec2, t0, t1, t2 );
         //printf( "[%f] {%f %f} in {%f %f}, {%f %f} [%d %d] {%f %f}\n", rhoU1, uSx1, uSy1, x1, y1, x2, y2, vec1, vec2, t1, t2 );
@@ -225,6 +273,12 @@ void PWM5f( double tImp, double uS1, double rhoU1, double uS3, double rhoU3, dou
             }
             if ( vec2 & mask ) {
                 tCnt[i] += t2;
+            }
+            if ( vec3 & mask ) {
+                tCnt[i] += t3;
+            }
+            if ( vec4 & mask ) {
+                tCnt[i] += t4;
             }
             if ( tCnt[i] == 0 ) {
                 tCnt[i] = -tImp;

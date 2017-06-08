@@ -20,6 +20,7 @@ extern double is[5];
 
 extern double usx, usy;
 extern double isx1, isy1;
+extern double isx3, isy3;
 extern double is1, is3;
 extern double usx1, usy1, usx3, usy3;
 

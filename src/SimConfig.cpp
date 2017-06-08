@@ -138,8 +138,8 @@ void Simulations( ) {
     //wChartW.charts[1]->AddSignal( &rhoU1, L"rhoU", RGB_( 0, 255, 255 ) );
     //wChartW.charts[1]->AddSignal( &usx, L"usx", RGB_( 0, 255, 255 ) );
     //wChartW.charts[0]->AddSignal( &usy, L"usy", RGB_( 0, 255, 255 ) );
-    wChartW.charts[1]->AddSignal( &isx1, L"isx1", RGB_( 0, 255, 255 ) );
-    wChartW.charts[0]->AddSignal( &isy1, L"isy1", RGB_( 0, 255, 255 ) );
+    wChartW.charts[1]->AddSignal( &isx3, L"isx3", RGB_( 0, 255, 255 ) );
+    wChartW.charts[0]->AddSignal( &isy3, L"isy3", RGB_( 0, 255, 255 ) );
 
     /*/
     //definiowanie poczatkowego polozenia wykresow
